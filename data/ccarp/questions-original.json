@@ -10,19 +10,19 @@
   "options": [
    {
     "key": "A",
-    "text": "Classify each submission with a fast, cheap model, then dispatch it to a claim-type-specific prompt pipeline, with liability claims routed to the human adjuster queue."
+    "text": "Classify each submission with a cheap model, route it to a claim-type prompt pipeline, and send liability claims to humans."
    },
    {
     "key": "B",
-    "text": "Build one autonomous agent with tools covering every claim type and let it decide the handling path on each submission."
+    "text": "Build one autonomous agent with tools covering every claim type and let it decide the handling path on each submission, calling tools as it sees fit."
    },
    {
     "key": "C",
-    "text": "Run all three claim-type pipelines in parallel on every submission and select the output with the highest self-reported confidence."
+    "text": "Run all three claim-type pipelines in parallel on every submission and select the output with the highest self-reported confidence score."
    },
    {
     "key": "D",
-    "text": "Write one large prompt containing the handling rules for all three claim types and let the model apply the relevant ones."
+    "text": "Write one large prompt with the handling rules for all three claim types and let the model apply the relevant ones."
    }
   ],
   "correct": [
@@ -57,7 +57,7 @@
    },
    {
     "key": "C",
-    "text": "A single call with extended thinking enabled and a large max_tokens, producing all 40 fields, the validation verdict and the letter in one response."
+    "text": "A single call with extended thinking and a large max_tokens, producing all 40 fields, the verdict and the letter in one response."
    },
    {
     "key": "D",
@@ -88,23 +88,23 @@
   "options": [
    {
     "key": "A",
-    "text": "The work is breadth-first and parallelisable, with independent lines of investigation that do not depend on each other."
+    "text": "The work splits into independent lines of investigation that run in parallel."
    },
    {
     "key": "B",
-    "text": "The information to be examined greatly exceeds what fits in a single context window."
+    "text": "The information to be examined greatly exceeds what fits in the context window of one agent alone."
    },
    {
     "key": "C",
-    "text": "The task requires every worker to share the same evolving context and coordinate tightly on shared state."
+    "text": "The task requires every worker to share the same evolving context and coordinate tightly on shared state at each step."
    },
    {
     "key": "D",
-    "text": "The team wants lower total token consumption than a single-agent implementation."
+    "text": "The team wants lower total token consumption than a single-agent implementation would use for the same work."
    },
    {
     "key": "E",
-    "text": "The output must be byte-for-byte reproducible across runs."
+    "text": "The output must be byte-for-byte reproducible across runs of the same input and settings."
    }
   ],
   "correct": [
@@ -132,7 +132,7 @@
   "options": [
    {
     "key": "A",
-    "text": "Place the whole corpus in the prompt behind a cache breakpoint and let the model answer directly from it."
+    "text": "Cache the whole corpus in the prompt and answer straight from it."
    },
    {
     "key": "B",
@@ -171,7 +171,7 @@
   "options": [
    {
     "key": "A",
-    "text": "Prepend a short chunk-specific context blurb to each chunk before both embedding and BM25 indexing, then rerank the merged candidate set."
+    "text": "Prepend a short chunk-specific context blurb to each chunk before embedding and BM25 indexing, then rerank the merged candidates."
    },
    {
     "key": "B",
@@ -183,7 +183,7 @@
    },
    {
     "key": "D",
-    "text": "Switch the answering model to the largest available model and enable extended thinking."
+    "text": "Switch the answering model to the largest available model and enable extended thinking so it reasons more carefully about each retrieved passage."
    }
   ],
   "correct": [
@@ -210,19 +210,19 @@
   "options": [
    {
     "key": "A",
-    "text": "An evaluator-optimizer loop where a generator drafts and a separate critic scores against the style guide until the draft passes or a retry cap is hit."
+    "text": "An evaluator-optimizer loop: a critic scores each draft against the style guide, with a retry cap."
    },
    {
     "key": "B",
-    "text": "A routing workflow that sends each product to a category-specific description prompt."
+    "text": "A routing workflow that sends each product to a category-specific description prompt tuned to that category's tone."
    },
    {
     "key": "C",
-    "text": "An orchestrator agent that decomposes each description into sections and delegates each to a worker."
+    "text": "An orchestrator agent that decomposes each description into sections and delegates each section to a worker."
    },
    {
     "key": "D",
-    "text": "Parallel sectioning where one call writes features, one writes benefits, and a third concatenates them."
+    "text": "Parallel sectioning where one call writes features, one writes benefits, and a third call concatenates them."
    }
   ],
   "correct": [
@@ -249,27 +249,27 @@
   "options": [
    {
     "key": "A",
-    "text": "Compact the conversation when it approaches the context limit, preserving decisions and discarding redundant tool output."
+    "text": "Compact the conversation near the context limit, preserving decisions and discarding redundant tool output."
    },
    {
     "key": "B",
-    "text": "Have the agent write structured notes to persistent storage outside the context window and read them back when needed."
+    "text": "Keep structured notes in external storage and read them back when needed."
    },
    {
     "key": "C",
-    "text": "Delegate bounded investigations to subagents that return condensed summaries rather than raw tool output."
+    "text": "Delegate bounded investigations to subagents that return condensed summaries, not raw tool output."
    },
    {
     "key": "D",
-    "text": "Raise max_tokens so the agent can produce longer responses per turn."
+    "text": "Raise max_tokens so the agent can produce longer responses on every turn of the run."
    },
    {
     "key": "E",
-    "text": "Lower the temperature so the agent is more deterministic across the run."
+    "text": "Lower the temperature so the agent is more deterministic across a whole run of tool calls."
    },
    {
     "key": "F",
-    "text": "Increase the number of tools available so the agent has more diagnostic options."
+    "text": "Increase the number of tools available so the agent has more diagnostic options to choose from during an investigation."
    }
   ],
   "correct": [
@@ -298,7 +298,7 @@
   "options": [
    {
     "key": "A",
-    "text": "Voting: run the same classification prompt several times with diverse framings and require agreement before an automated removal."
+    "text": "Voting: run the same classification prompt several times with varied framings and require agreement before automated removal."
    },
    {
     "key": "B",
@@ -306,7 +306,7 @@
    },
    {
     "key": "C",
-    "text": "Sectioning: split each listing into title, description and images and classify each independently."
+    "text": "Sectioning: split each listing into title, description and images and classify each independently, then combine the results into one verdict."
    },
    {
     "key": "D",
@@ -337,11 +337,11 @@
   "options": [
    {
     "key": "A",
-    "text": "Start with the simplest composable pattern that could work, and add agentic autonomy only when the simpler approach demonstrably falls short."
+    "text": "Start with the simplest composable pattern, adding agentic autonomy only when it demonstrably falls short."
    },
    {
     "key": "B",
-    "text": "Build the evaluation set first so that any later increase in system complexity can be justified by a measured improvement."
+    "text": "Build the evaluation set first so that any later increase in system complexity can be justified by a measured improvement on that evaluation set."
    },
    {
     "key": "C",
@@ -353,7 +353,7 @@
    },
    {
     "key": "E",
-    "text": "Give the agent write access to refunds from day one so that the demo shows end-to-end value."
+    "text": "Give the agent write access to refunds from day one to show end-to-end value."
    }
   ],
   "correct": [
@@ -381,7 +381,7 @@
   "options": [
    {
     "key": "A",
-    "text": "Enable the Citations feature on the document blocks so the API returns cited text with document and page locations."
+    "text": "Enable Citations on the document blocks so the API returns cited text with page locations."
    },
    {
     "key": "B",
@@ -389,7 +389,7 @@
    },
    {
     "key": "C",
-    "text": "Use structured outputs with a JSON schema requiring a quote string and a page number per claim."
+    "text": "Use structured outputs with a JSON schema requiring a quote and a page number."
    },
    {
     "key": "D",
@@ -420,15 +420,15 @@
   "options": [
    {
     "key": "A",
-    "text": "Batch requests are priced at a 50% discount to the standard synchronous rates."
+    "text": "Batch requests are priced at a 50% discount to the standard synchronous rates, and caching discounts stack."
    },
    {
     "key": "B",
-    "text": "Batches are asynchronous with a processing window of up to 24 hours, which suits a job with no interactive consumer."
+    "text": "Batches run asynchronously within a 24-hour window, which suits offline jobs."
    },
    {
     "key": "C",
-    "text": "Batch requests are guaranteed to return in the same order they were submitted."
+    "text": "Batch results are guaranteed to come back in the same order the requests were submitted."
    },
    {
     "key": "D",
@@ -436,7 +436,7 @@
    },
    {
     "key": "E",
-    "text": "Batch requests support server-sent event streaming so progress can be shown per file."
+    "text": "Batch requests support server-sent event streaming so progress can be shown per file as each request in the batch completes."
    }
   ],
   "correct": [
@@ -542,7 +542,7 @@
   "options": [
    {
     "key": "A",
-    "text": "At the end of the static system prompt, so the stable prefix is cached and the varying conversation follows it."
+    "text": "At the end of the static system prompt, so the stable prefix is cached."
    },
    {
     "key": "B",
@@ -550,11 +550,11 @@
    },
    {
     "key": "C",
-    "text": "At the start of the system prompt, so caching begins as early as possible."
+    "text": "At the start of the system prompt, so caching begins as early as possible in the request."
    },
    {
     "key": "D",
-    "text": "On each tool definition individually, so every tool is cached separately."
+    "text": "On each tool definition individually, so every tool is cached separately from the others."
    }
   ],
   "correct": [
@@ -581,15 +581,15 @@
   "options": [
    {
     "key": "A",
-    "text": "Tool definitions sit before the system prompt in the cacheable ordering, so changing the tools array on each request invalidates the system prompt cache too."
+    "text": "Tools come before the system prompt in the cache order, so a changing tools array invalidates both."
    },
    {
     "key": "B",
-    "text": "The system prompt is below the minimum cacheable token length for the model in use."
+    "text": "The system prompt is below the minimum cacheable token length for the model in use, so no cache entry is ever written."
    },
    {
     "key": "C",
-    "text": "The default cache lifetime is too short for the request rate, so entries expire between calls."
+    "text": "The default cache lifetime is too short for the request rate, so entries expire between calls and every request pays for a fresh write."
    },
    {
     "key": "D",
@@ -620,23 +620,23 @@
   "options": [
    {
     "key": "A",
-    "text": "The extended one-hour cache costs more to write than the default, so it pays off only when the read volume across the hour exceeds the extra write cost."
+    "text": "The one-hour cache costs more to write, so it pays off only if reads outweigh the extra cost."
    },
    {
     "key": "B",
-    "text": "With idle gaps longer than the default five-minute lifetime, the default cache would expire and force a full re-write on each burst."
+    "text": "Idle gaps over five minutes let the default cache expire before each burst."
    },
    {
     "key": "C",
-    "text": "The extended cache eliminates write costs entirely after the first request."
+    "text": "The extended cache eliminates write costs entirely after the first request in each one-hour window of use."
    },
    {
     "key": "D",
-    "text": "Cache lifetime is measured from the end of the response, so a long generation extends the window."
+    "text": "Cache lifetime is measured from the end of the response, so a long generation extends the window further."
    },
    {
     "key": "E",
-    "text": "Switching to the extended lifetime also removes the per-request breakpoint limit."
+    "text": "Switching to the extended lifetime also removes the per-request cache breakpoint limit for the request."
    }
   ],
   "correct": [
@@ -668,7 +668,7 @@
    },
    {
     "key": "B",
-    "text": "Lower the thinking budget below the documented minimum so reasoning is skipped for short questions."
+    "text": "Lower the thinking budget below the documented minimum so reasoning is skipped entirely for short, simple questions."
    },
    {
     "key": "C",
@@ -742,15 +742,15 @@
   "options": [
    {
     "key": "A",
-    "text": "Model performance degrades as the context window fills, so the goal is the smallest set of high-signal tokens rather than the largest set of possibly relevant ones."
+    "text": "Performance degrades as the context window fills, so aim for the smallest set of high-signal tokens, not the largest."
    },
    {
     "key": "B",
-    "text": "Few-shot examples always harm accuracy once the model has a system prompt, so they should be removed."
+    "text": "Few-shot examples always harm accuracy once the model has a system prompt, because they compete with its instructions, so they should be removed."
    },
    {
     "key": "C",
-    "text": "Long contexts exceed the model's training distribution and cause it to refuse, so requests should be split."
+    "text": "Long contexts exceed the model's training distribution and cause it to refuse, so requests should be split into smaller calls."
    },
    {
     "key": "D",
@@ -781,15 +781,15 @@
   "options": [
    {
     "key": "A",
-    "text": "Enable tool-result clearing so older tool outputs are removed from the prompt once an input-token threshold is crossed, keeping the most recent few."
+    "text": "Enable tool-result clearing so older tool outputs are removed once an input-token threshold is crossed."
    },
    {
     "key": "B",
-    "text": "Give the agent a memory tool so it can persist findings to files before older tool results are cleared."
+    "text": "Give the agent a memory tool so it can write its findings to files before older tool results are cleared, and read them back in later turns."
    },
    {
     "key": "C",
-    "text": "Reduce max_tokens so each response is shorter and the conversation grows more slowly."
+    "text": "Reduce max_tokens so each response is shorter and the conversation grows more slowly over the many turns of the run."
    },
    {
     "key": "D",
@@ -825,7 +825,7 @@
   "options": [
    {
     "key": "A",
-    "text": "Split into two calls: one citation-enabled call to produce grounded prose with source pointers, and a second call that structures those results into the required JSON."
+    "text": "Split into two calls: a citation-enabled call for grounded prose with source pointers, then a call that structures it into JSON."
    },
    {
     "key": "B",
@@ -833,7 +833,7 @@
    },
    {
     "key": "C",
-    "text": "Drop citations and require the schema to include a quote field and a character offset for each assertion."
+    "text": "Drop citations and require the schema to include a quote field and a character offset for each assertion, then validate the offsets in code."
    },
    {
     "key": "D",
@@ -864,15 +864,15 @@
   "options": [
    {
     "key": "A",
-    "text": "Instruct the model to first extract word-for-word quotes relevant to the question, then answer using only those quotes."
+    "text": "Have the model extract verbatim quotes relevant to the question, then answer only from those."
    },
    {
     "key": "B",
-    "text": "Explicitly permit the model to answer that the document does not address the question."
+    "text": "Explicitly permit the model to answer that the document does not address the question, rather than forcing an answer."
    },
    {
     "key": "C",
-    "text": "Raise the temperature so the model explores more phrasings before settling on an answer."
+    "text": "Raise the temperature so the model explores more phrasings."
    },
    {
     "key": "D",
@@ -908,19 +908,19 @@
   "options": [
    {
     "key": "A",
-    "text": "Rewrite the instructions to be explicit and unambiguous about the task and the required output shape."
+    "text": "Rewrite the instructions to state the task and output shape clearly."
    },
    {
     "key": "B",
-    "text": "Add the role description, since persona framing sets the overall register."
+    "text": "Add the role description first, since persona framing sets the overall register of every answer."
    },
    {
     "key": "C",
-    "text": "Add the four worked examples, since examples subsume written instructions."
+    "text": "Add the four worked examples first, since examples subsume written instructions entirely."
    },
    {
     "key": "D",
-    "text": "Wrap the inputs in tags, since structure is what the model attends to most."
+    "text": "Wrap the inputs in tags first, since structure is what the model attends to most of all."
    }
   ],
   "correct": [
@@ -947,7 +947,7 @@
   "options": [
    {
     "key": "A",
-    "text": "A remote MCP server using the Streamable HTTP transport, fronted by the gateway with OAuth-issued bearer tokens."
+    "text": "A remote MCP server using Streamable HTTP, fronted by the gateway with OAuth-issued bearer tokens."
    },
    {
     "key": "B",
@@ -986,11 +986,11 @@
   "options": [
    {
     "key": "A",
-    "text": "Return a tier-filtered tools list from tools/list, declare the tools listChanged capability, and emit a tools list changed notification when the tier changes so clients refresh."
+    "text": "Filter tools/list by tier, declare listChanged and notify clients when the tier changes."
    },
    {
     "key": "B",
-    "text": "Return every tool from tools/list and reject unlicensed calls at tools/call with an error."
+    "text": "Return every tool from tools/list and reject unlicensed calls at tools/call with an explanatory error response."
    },
    {
     "key": "C",
@@ -998,7 +998,7 @@
    },
    {
     "key": "D",
-    "text": "Publish one MCP server binary per tier and have customers reinstall when their tier changes."
+    "text": "Publish one MCP server binary per tier and have customers reinstall it whenever their tier changes."
    }
   ],
   "correct": [
@@ -1025,27 +1025,27 @@
   "options": [
    {
     "key": "A",
-    "text": "Creating a work order is a tool, because tools are executable functions the model invokes to take action."
+    "text": "Creating a work order is a tool, because tools are functions the model invokes."
    },
    {
     "key": "B",
-    "text": "The equipment hierarchy is a resource, because resources are data sources that supply contextual information."
+    "text": "The equipment hierarchy is a resource, because resources are data sources that supply contextual information to the model."
    },
    {
     "key": "C",
-    "text": "The troubleshooting interview template is a prompt, because prompts are reusable templates that structure an interaction."
+    "text": "The troubleshooting interview template is a prompt, because prompts are reusable interaction templates."
    },
    {
     "key": "D",
-    "text": "The equipment hierarchy should be a tool, because any data the model reads must be fetched through a tool call."
+    "text": "The equipment hierarchy should be a tool, because any data the model reads must be fetched through a tool call rather than supplied as context."
    },
    {
     "key": "E",
-    "text": "Creating a work order should be a prompt, because it is a repeatable operator workflow."
+    "text": "Creating a work order should be a prompt, because it is repeatable."
    },
    {
     "key": "F",
-    "text": "The troubleshooting template should be a resource, because it is static text stored on the server."
+    "text": "The troubleshooting template should be a resource, because it is static text on the server."
    }
   ],
   "correct": [
@@ -1113,7 +1113,7 @@
   "options": [
    {
     "key": "A",
-    "text": "Paginate and filter by default, return semantically meaningful identifiers alongside technical IDs, and add a response_format parameter offering concise or detailed output."
+    "text": "Paginate and filter by default, return meaningful names beside technical IDs, and add a response_format parameter for concise or detailed output."
    },
    {
     "key": "B",
@@ -1121,7 +1121,7 @@
    },
    {
     "key": "C",
-    "text": "Return only UUIDs and require the agent to call a second tool to resolve each one to a name."
+    "text": "Return only UUIDs and require the agent to call a second tool to resolve each one to a name, keeping every individual response as small as possible and avoiding unused fields."
    },
    {
     "key": "D",
@@ -1152,7 +1152,7 @@
   "options": [
    {
     "key": "A",
-    "text": "Namespace tool names by service and resource, for example jira_issues_search and confluence_pages_search, and make each description state what the tool is for."
+    "text": "Namespace tool names by service and resource (jira_issues_search) and give each a clear description."
    },
    {
     "key": "B",
@@ -1160,11 +1160,11 @@
    },
    {
     "key": "C",
-    "text": "Increase the thinking budget so the model reasons longer about which search to call."
+    "text": "Increase the thinking budget so the model reasons longer about which of the five search tools to call on each incoming request."
    },
    {
     "key": "D",
-    "text": "Instruct the model in the system prompt to always ask the user which system to search."
+    "text": "Instruct the model in the system prompt to always ask the user which system to search before it calls a tool."
    }
   ],
   "correct": [
@@ -1191,19 +1191,19 @@
   "options": [
    {
     "key": "A",
-    "text": "Require the call in configuration: force parse_remittance with tool_choice where the model accepts it, otherwise use structured outputs."
+    "text": "Force parse_remittance with tool_choice, or use structured outputs on models that reject forcing."
    },
    {
     "key": "B",
-    "text": "Set tool_choice to auto and add a system prompt instruction to always call the tool."
+    "text": "Set tool_choice to auto and add a system prompt instruction that the model must always call the tool before replying."
    },
    {
     "key": "C",
-    "text": "Set tool_choice to none and parse the prose response with a schema validator."
+    "text": "Set tool_choice to none and parse the prose response with a schema validator after the model has replied."
    },
    {
     "key": "D",
-    "text": "Disable parallel tool use so the model commits to a single tool."
+    "text": "Disable parallel tool use so the model commits to a single tool call on each turn and cannot split its output."
    }
   ],
   "correct": [
@@ -1230,11 +1230,11 @@
   "options": [
    {
     "key": "A",
-    "text": "Cache the corpus behind a breakpoint, since on most current models tokens served from cache do not count toward the input tokens per minute limit."
+    "text": "Cache the corpus behind a breakpoint, since on most current models cache reads do not count toward the input tokens per minute limit."
    },
    {
     "key": "B",
-    "text": "Split each request into two calls, each carrying half the corpus, so no single request is as large."
+    "text": "Split each request into two calls, each carrying half the corpus, so that no single request is as large and each call fits the per-minute window."
    },
    {
     "key": "C",
@@ -1308,11 +1308,11 @@
   "options": [
    {
     "key": "A",
-    "text": "Replace per-request streaming with polling the batch status and retrieving the results file when the batch ends."
+    "text": "Replace streaming with polling the batch status and fetch the results file when it ends."
    },
    {
     "key": "B",
-    "text": "Attach a custom_id to every request, because results are not guaranteed to come back in submission order."
+    "text": "Attach a unique custom_id to every request, because results are not guaranteed to come back in submission order and must be matched to inputs."
    },
    {
     "key": "C",
@@ -1352,7 +1352,7 @@
   "options": [
    {
     "key": "A",
-    "text": "Stream the response so tokens are delivered incrementally and the connection stays active throughout generation."
+    "text": "Stream the response so the connection stays active during generation."
    },
    {
     "key": "B",
@@ -1360,7 +1360,7 @@
    },
    {
     "key": "C",
-    "text": "Move the workload to the batch API so the timeout no longer applies."
+    "text": "Move the workload to the batch API so the synchronous request timeout no longer applies."
    },
    {
     "key": "D",
@@ -1438,7 +1438,7 @@
    },
    {
     "key": "C",
-    "text": "Validate the arguments in application code and send a corrective follow-up message when they are wrong."
+    "text": "Validate the arguments in application code and send a corrective follow-up message to the model when they are wrong."
    },
    {
     "key": "D",
@@ -1469,11 +1469,11 @@
   "options": [
    {
     "key": "A",
-    "text": "Discover tools progressively rather than loading every server's full tool list up front."
+    "text": "Discover tools progressively instead of loading all tool lists up front."
    },
    {
     "key": "B",
-    "text": "Subscribe to tool list changed notifications where servers support them, while still re-polling periodically because notification delivery is best effort."
+    "text": "Subscribe to tool list changed notifications, but still re-poll since delivery is best effort."
    },
    {
     "key": "C",
@@ -1481,11 +1481,11 @@
    },
    {
     "key": "D",
-    "text": "Require every federated server to expose fewer than five tools as a platform standard."
+    "text": "Require every federated server to expose fewer than five tools as a platform-wide standard for all teams."
    },
    {
     "key": "E",
-    "text": "Ask the model to call tools/list itself as its first action in every session."
+    "text": "Ask the model to call tools/list itself as its first action in every session before it does anything else."
    }
   ],
   "correct": [
@@ -1513,11 +1513,11 @@
   "options": [
    {
     "key": "A",
-    "text": "Generate a much larger set of cases that mirror the real input distribution and structure them so most can be graded automatically."
+    "text": "Build a far larger set mirroring real inputs, graded mostly automatically."
    },
    {
     "key": "B",
-    "text": "Expand to 25 hand-graded cases, prioritising depth of human judgement over volume."
+    "text": "Expand to 25 hand-graded cases, prioritising depth of human judgement over volume of cases."
    },
    {
     "key": "C",
@@ -1525,7 +1525,7 @@
    },
    {
     "key": "D",
-    "text": "Replace the test cases with a production canary and judge quality from customer complaints."
+    "text": "Replace the test cases with a production canary and judge quality from customer complaints and support tickets."
    }
   ],
   "correct": [
@@ -1552,7 +1552,7 @@
   "options": [
    {
     "key": "A",
-    "text": "Replace the open-ended quality question with a concrete rubric and a constrained output, and have the grader reason before emitting the verdict."
+    "text": "Replace the open-ended quality question with a concrete rubric and a constrained output, and have the grader reason before the verdict."
    },
    {
     "key": "B",
@@ -1564,7 +1564,7 @@
    },
    {
     "key": "D",
-    "text": "Use the same model and the same prompt as the generator so the grader shares its understanding of the task."
+    "text": "Use the same model and the same prompt as the generator, so the grader shares its understanding of the task and applies the same criteria and assumptions."
    }
   ],
   "correct": [
@@ -1591,7 +1591,7 @@
   "options": [
    {
     "key": "A",
-    "text": "Grade the ICD-10 code with code-based exact matching against the gold answer."
+    "text": "Grade the ICD-10 code by exact match against the gold answer."
    },
    {
     "key": "B",
@@ -1599,15 +1599,15 @@
    },
    {
     "key": "C",
-    "text": "Grade the ICD-10 code with a model-based grader so near-miss codes get partial credit."
+    "text": "Grade the ICD-10 code with a model-based grader so near-miss codes get partial credit for being clinically close."
    },
    {
     "key": "D",
-    "text": "Grade the empathy dimension with exact string matching against approved phrasings."
+    "text": "Grade the empathy dimension with exact string matching against a list of approved phrasings from the clinical team."
    },
    {
     "key": "E",
-    "text": "Grade both dimensions by human review only, since clinical content is involved."
+    "text": "Grade both dimensions by human review only, since the content is clinical."
    }
   ],
   "correct": [
@@ -1674,15 +1674,15 @@
   "options": [
    {
     "key": "A",
-    "text": "Grade the end state against criteria the shortlist must satisfy, and separately track trajectory metrics such as tool error rate and step count as diagnostics rather than pass conditions."
+    "text": "Grade the end state against criteria and track tool error rate and step count as diagnostics, not pass conditions."
    },
    {
     "key": "B",
-    "text": "Pin the agent's temperature to zero so the trajectory becomes deterministic and the existing assertions pass."
+    "text": "Pin the agent's temperature to zero so the trajectory becomes deterministic and the existing assertions pass again without change."
    },
    {
     "key": "C",
-    "text": "Assert on the set of tools used, ignoring order, so any permutation passes."
+    "text": "Assert on the set of tools used, ignoring order, so any permutation of the expected tool calls passes the test every time."
    },
    {
     "key": "D",
@@ -1713,7 +1713,7 @@
   "options": [
    {
     "key": "A",
-    "text": "Enable streaming so users see output as it is produced instead of waiting for the full response."
+    "text": "Enable streaming so users see output as it is produced."
    },
    {
     "key": "B",
@@ -1721,7 +1721,7 @@
    },
    {
     "key": "C",
-    "text": "Increase max_tokens so the model does not have to plan around a ceiling."
+    "text": "Increase max_tokens so the model does not have to plan around a ceiling and can write the full answer."
    },
    {
     "key": "D",
@@ -1729,7 +1729,7 @@
    },
    {
     "key": "E",
-    "text": "Raise temperature so the model commits to a phrasing sooner."
+    "text": "Raise temperature so the model commits to a phrasing sooner in generation."
    }
   ],
   "correct": [
@@ -1757,19 +1757,19 @@
   "options": [
    {
     "key": "A",
-    "text": "Score both models on the same held-out eval set and compare against the stated 2-point tolerance before switching."
+    "text": "Score both models on one held-out eval set against the 2-point tolerance."
    },
    {
     "key": "B",
-    "text": "Re-tune the prompt for the smaller model rather than reusing the frontier model's prompt unchanged."
+    "text": "Re-tune the prompt for the smaller model rather than reusing the frontier model's prompt unchanged, so each model is compared with a fair prompt."
    },
    {
     "key": "C",
-    "text": "Switch in production and monitor campaign conversion for a quarter to see whether it moves."
+    "text": "Switch in production and monitor campaign conversion for a full quarter to see whether it moves."
    },
    {
     "key": "D",
-    "text": "Assume the smaller model is equivalent because it shares the same tokenizer and API surface."
+    "text": "Assume the smaller model is equivalent because it shares the same tokenizer and API surface as the larger one."
    },
    {
     "key": "E",
@@ -1801,19 +1801,19 @@
   "options": [
    {
     "key": "A",
-    "text": "Cache the taxonomy prefix, then move the nightly run onto the batch API, then consider a smaller model only if the target is still unmet."
+    "text": "Cache the taxonomy prefix, batch the nightly run, then consider a smaller model."
    },
    {
     "key": "B",
-    "text": "Switch to the smallest model first, then cache the taxonomy, then move to batch."
+    "text": "Switch to the smallest model first, then cache the taxonomy, then move the nightly run to batch."
    },
    {
     "key": "C",
-    "text": "Move to batch first, then reduce the taxonomy by summarising it, then cache what remains."
+    "text": "Move to batch first, then reduce the taxonomy by summarising it, then cache what remains of it."
    },
    {
     "key": "D",
-    "text": "Reduce document length by pre-summarising each document, then cache the taxonomy."
+    "text": "Reduce document length by pre-summarising each document, then cache the taxonomy afterwards."
    }
   ],
   "correct": [
@@ -1840,15 +1840,15 @@
   "options": [
    {
     "key": "A",
-    "text": "Run the same prompt several times and flag documents where the outputs disagree on material facts."
+    "text": "Run the same prompt several times and flag documents where the outputs disagree on material facts across the runs."
    },
    {
     "key": "B",
-    "text": "Add a verification pass in which the model must locate a supporting quote for each claim and retract any claim it cannot support."
+    "text": "Require a supporting quote for each claim and retract any claim that lacks one."
    },
    {
     "key": "C",
-    "text": "Increase the summary length so more of the filing is represented in the output."
+    "text": "Increase the summary length so more of the filing is represented in the output text itself."
    },
    {
     "key": "D",
@@ -1856,7 +1856,7 @@
    },
    {
     "key": "E",
-    "text": "Cache the filings so repeated requests are cheaper."
+    "text": "Cache the filings so repeated requests are cheaper and identical documents are not reprocessed."
    }
   ],
   "correct": [
@@ -1884,15 +1884,15 @@
   "options": [
    {
     "key": "A",
-    "text": "Run the existing eval suite against the new model, review the cases that regress, adjust the prompt for the new model and re-measure before cutting over."
+    "text": "Score the new model on the existing evals, adapt the prompt, re-measure, then cut over."
    },
    {
     "key": "B",
-    "text": "Cut over on the retirement date and roll back if production error rates rise."
+    "text": "Cut over on the retirement date and roll back if production error rates rise in the first week."
    },
    {
     "key": "C",
-    "text": "Keep the pinned snapshot and request an exception, since the prompt is tuned to it."
+    "text": "Keep the pinned snapshot and ask the provider for an extension, since the prompt was tuned to it."
    },
    {
     "key": "D",
@@ -1962,11 +1962,11 @@
   "options": [
    {
     "key": "A",
-    "text": "Build an evaluation suite of realistic tasks that each require several tool calls, run agents against it, and use the transcripts to drive tool improvements."
+    "text": "Build an evaluation suite of realistic multi-tool-call tasks, run agents against it, and use the transcripts to improve the tools."
    },
    {
     "key": "B",
-    "text": "Add unit tests asserting that each tool returns the correct payload for a fixed set of inputs."
+    "text": "Add unit tests asserting that each tool returns the correct payload for a fixed set of inputs, and run them on every change to the server."
    },
    {
     "key": "C",
@@ -2001,11 +2001,11 @@
   "options": [
    {
     "key": "A",
-    "text": "Treat all email content as untrusted data and require an explicit approval step before any state-changing tool call such as a refund."
+    "text": "Treat email content as untrusted data and require explicit approval before any state-changing tool call such as a refund."
    },
    {
     "key": "B",
-    "text": "Add a system prompt instruction telling the model to ignore instructions found inside email bodies."
+    "text": "Add a system prompt instruction telling the model to ignore any instructions it finds inside email bodies and to treat them only as customer text."
    },
    {
     "key": "C",
@@ -2013,7 +2013,7 @@
    },
    {
     "key": "D",
-    "text": "Move the refund tool onto a separate MCP server so it is architecturally isolated from the email tool."
+    "text": "Move the refund tool onto a separate MCP server so it is architecturally isolated from the email tool and its credentials and tokens."
    }
   ],
   "correct": [
@@ -2040,23 +2040,23 @@
   "options": [
    {
     "key": "A",
-    "text": "Deploy deny rules through managed policy settings, which developers cannot override from user or project settings."
+    "text": "Deploy deny rules through managed policy settings, which developers cannot override."
    },
    {
     "key": "B",
-    "text": "Configure a PostToolUse hook that posts Bash tool invocations to the SIEM endpoint, distributed through managed settings so it cannot be disabled locally."
+    "text": "Configure a PostToolUse hook that posts Bash invocations to the SIEM, delivered through managed settings so it cannot be disabled."
    },
    {
     "key": "C",
-    "text": "Add the rules to a project CLAUDE.md checked into every repository."
+    "text": "Add the rules to a project CLAUDE.md checked into every repository, so Claude reads them each session."
    },
    {
     "key": "D",
-    "text": "Ask each team to add the deny rules to their own project settings file and audit compliance quarterly."
+    "text": "Ask each team to add the deny rules to their own project settings file and audit compliance quarterly, with exceptions approved by the team lead and recorded in a wiki."
    },
    {
     "key": "E",
-    "text": "Rely on the default permission prompt so that a developer must approve each command before it runs."
+    "text": "Rely on the default permission prompt so that a developer must approve each command before it runs, including commands issued by subagents and scripts."
    }
   ],
   "correct": [
@@ -2084,7 +2084,7 @@
   "options": [
    {
     "key": "A",
-    "text": "CLAUDE.md is guidance rather than enforcement; the rule belongs in a deny permission rule or a PreToolUse hook that blocks the action."
+    "text": "CLAUDE.md is guidance, not enforcement; use a deny permission rule or PreToolUse hook to block it."
    },
    {
     "key": "B",
@@ -2092,7 +2092,7 @@
    },
    {
     "key": "C",
-    "text": "The instruction was phrased negatively; rewriting it as a positive statement will make the model comply."
+    "text": "The rule was phrased negatively; stating it positively will make the model comply."
    },
    {
     "key": "D",
@@ -2162,7 +2162,7 @@
   "options": [
    {
     "key": "A",
-    "text": "A PostToolUse hook matching the write and edit tools that invokes the organisation's scanner and records the result."
+    "text": "A PostToolUse hook matching the write and edit tools that runs the organisation's scanner and records the result."
    },
    {
     "key": "B",
@@ -2174,7 +2174,7 @@
    },
    {
     "key": "D",
-    "text": "A prompt in the managed CLAUDE.md instructing the assistant to check for secrets before writing files."
+    "text": "A prompt in the managed CLAUDE.md instructing the assistant to check for secrets before writing any file and to report what it found."
    }
   ],
   "correct": [
@@ -2201,11 +2201,11 @@
   "options": [
    {
     "key": "A",
-    "text": "Automate approvals, and route every candidate denial to a human decision-maker with the model's analysis attached as a recommendation."
+    "text": "Automate approvals; route every denial to a human who decides, with the model's analysis as input."
    },
    {
     "key": "B",
-    "text": "Automate both decisions and give applicants an appeal route for denials."
+    "text": "Automate both decisions and give applicants an appeal route for denials, reviewing a denial only if it is contested."
    },
    {
     "key": "C",
@@ -2213,7 +2213,7 @@
    },
    {
     "key": "D",
-    "text": "Hold both decisions for human review until accuracy exceeds 99% on both classes."
+    "text": "Hold both decisions for human review until accuracy exceeds 99% on both classes, then reassess automation."
    }
   ],
   "correct": [
@@ -2240,11 +2240,11 @@
   "options": [
    {
     "key": "A",
-    "text": "Use the Usage and Cost Admin API for spend, with each business unit in its own workspace, and the Compliance API Activity Feed for organisation activity logs."
+    "text": "Use the Usage and Cost Admin API with one workspace per unit and the Compliance API Activity Feed for logs."
    },
    {
     "key": "B",
-    "text": "Have each business unit self-report spend from its own application logs and reconcile monthly against the invoice."
+    "text": "Have each business unit self-report spend from its own application logs and reconcile monthly against the invoice from the vendor."
    },
    {
     "key": "C",
@@ -2252,7 +2252,7 @@
    },
    {
     "key": "D",
-    "text": "Instrument every application call with OpenTelemetry and derive cost from token counts and published prices."
+    "text": "Instrument every application call with OpenTelemetry and derive cost from token counts and published prices per model."
    }
   ],
   "correct": [
@@ -2279,7 +2279,7 @@
   "options": [
    {
     "key": "A",
-    "text": "Enable sandboxing so Bash commands run with filesystem and network isolation."
+    "text": "Enable sandboxing to isolate Bash filesystem and network access."
    },
    {
     "key": "B",
@@ -2291,7 +2291,7 @@
    },
    {
     "key": "D",
-    "text": "Add a broad allow rule for all Bash commands to reduce approval fatigue."
+    "text": "Allow all Bash commands to reduce approval fatigue."
    },
    {
     "key": "E",
@@ -2323,19 +2323,19 @@
   "options": [
    {
     "key": "A",
-    "text": "Treat the server as untrusted third-party code: review it, prefer servers from providers you trust or write your own, and scope its permissions before enabling it."
+    "text": "Treat it as untrusted code: review it, prefer trusted providers, scope its permissions."
    },
    {
     "key": "B",
-    "text": "Enable it, since directory listing implies the provider has security-audited the server."
+    "text": "Enable it, since directory listing implies the provider has security-audited the server and vetted its data handling."
    },
    {
     "key": "C",
-    "text": "Enable it in production but restrict it to read-only tools, which removes the data exposure concern."
+    "text": "Enable it in production but restrict it to read-only tools, which removes the data exposure concern entirely."
    },
    {
     "key": "D",
-    "text": "Enable it only for administrators, since they are trained to spot anomalous behaviour."
+    "text": "Enable it only for administrators, since they are trained to spot anomalous behaviour in tool output."
    }
   ],
   "correct": [
@@ -2370,7 +2370,7 @@
    },
    {
     "key": "C",
-    "text": "Keep authorisation of transfers behind the bank's own authenticated systems so no model output can effect one."
+    "text": "Keep authorisation of transfers behind the bank's own authenticated systems so no model output can effect one, however the model is manipulated."
    },
    {
     "key": "D",
@@ -2411,11 +2411,11 @@
   "options": [
    {
     "key": "A",
-    "text": "Configure Claude Code to authenticate and route inference through the organisation's existing cloud provider deployment, controlling access through that provider's identity and access policies."
+    "text": "Run Claude Code through the organisation's existing cloud provider deployment, with access governed by that provider's IAM policies."
    },
    {
     "key": "B",
-    "text": "Have each engineer log in with a personal subscription account and rely on the vendor's default region selection."
+    "text": "Have each engineer log in with a personal subscription account and rely on the vendor's default region selection and standard terms for every request they make."
    },
    {
     "key": "C",
@@ -2528,15 +2528,15 @@
   "options": [
    {
     "key": "A",
-    "text": "Present the retirement date as a scheduled, known change with a migration window, a re-validation plan against the existing eval suite, and a cutover date set well inside the window."
+    "text": "Present the retirement as a scheduled change: migration window, eval re-validation, cutover date with slack."
    },
    {
     "key": "B",
-    "text": "Report that no action is needed until the retirement date, since the current snapshot continues to work unchanged until then."
+    "text": "Report that no action is needed until the retirement date, since the current snapshot continues to work unchanged until the day it is switched off."
    },
    {
     "key": "C",
-    "text": "Recommend removing the pin and always calling the latest model so retirements never affect the system."
+    "text": "Recommend removing the pin and always calling the latest model alias, so that retirements never affect the running system."
    },
    {
     "key": "D",
@@ -2567,11 +2567,11 @@
   "options": [
    {
     "key": "A",
-    "text": "Explain that outputs are probabilistic rather than deterministic, then describe the controls that make behaviour measurable and bounded: a versioned prompt, an eval suite with agreed thresholds, logged inputs and outputs, and human sign-off on high-risk classifications."
+    "text": "Explain that outputs are probabilistic, then offer measurable controls: a versioned prompt, eval thresholds, logged outputs and human sign-off on high-risk cases."
    },
    {
     "key": "B",
-    "text": "Agree, and commit to setting temperature to zero so that identical inputs always produce identical outputs."
+    "text": "Agree, and commit to setting temperature to zero so that identical inputs always produce identical outputs on every review, including after model updates and prompt changes."
    },
    {
     "key": "C",
@@ -2606,19 +2606,19 @@
   "options": [
    {
     "key": "A",
-    "text": "Run the assistant in shadow mode against live traffic with humans still deciding, compare outcomes, then enable automated decisions for the segments where agreement is highest and expand from there."
+    "text": "Shadow the humans on live traffic, then automate segments with highest agreement."
    },
    {
     "key": "B",
-    "text": "Enable automated decisions for all traffic on a Monday with a documented rollback plan."
+    "text": "Enable automated decisions for all traffic on a Monday with a documented rollback plan in place."
    },
    {
     "key": "C",
-    "text": "Extend the historical evaluation to 4,000 cases and go live once results hold."
+    "text": "Extend the historical evaluation to 4,000 cases and go live once the results hold steady."
    },
    {
     "key": "D",
-    "text": "Enable automated decisions only for the highest-value refunds, where scrutiny is greatest."
+    "text": "Enable automated decisions only for the highest-value refunds, where scrutiny is greatest and errors are noticed."
    }
   ],
   "correct": [
@@ -2645,7 +2645,7 @@
   "options": [
    {
     "key": "A",
-    "text": "Model the instruction block as mostly cache reads with periodic writes, apply the batch discount to the whole workload, and price the per-document tokens at the discounted rate."
+    "text": "Model the instruction block as mostly cache reads with periodic writes, and apply the batch discount to the whole workload."
    },
    {
     "key": "B",
@@ -2657,7 +2657,7 @@
    },
    {
     "key": "D",
-    "text": "Price on the highest-cost model in the family to give a conservative ceiling, and ignore caching and batch discounts."
+    "text": "Price on the highest-cost model in the family to give a conservative ceiling, and ignore caching and batch discounts since they complicate the forecast."
    }
   ],
   "correct": [
@@ -2684,7 +2684,7 @@
   "options": [
    {
     "key": "A",
-    "text": "Establish per-team baseline usage and outcome measurement from day one so adoption can be seen by team rather than only in aggregate."
+    "text": "Track usage and outcomes per team from day one, not just in aggregate."
    },
    {
     "key": "B",
@@ -2728,7 +2728,7 @@
   "options": [
    {
     "key": "A",
-    "text": "Convert the reported failures into a structured eval set, categorise them by failure mode, and measure how much of the total each category accounts for."
+    "text": "Categorise the failures into an eval set and measure each mode's share."
    },
    {
     "key": "B",
@@ -2736,11 +2736,11 @@
    },
    {
     "key": "C",
-    "text": "Upgrade to the most capable model available and re-run the pilot."
+    "text": "Upgrade to the most capable model available and re-run the pilot to see whether answers improve."
    },
    {
     "key": "D",
-    "text": "Add a retrieval layer, since wrong answers usually indicate missing context."
+    "text": "Add a retrieval layer to the pipeline, since wrong answers usually indicate missing context."
    }
   ],
   "correct": [
@@ -2806,15 +2806,15 @@
   "options": [
    {
     "key": "A",
-    "text": "State that these techniques significantly reduce but do not eliminate hallucination, describe the residual risk, and set out the detective and corrective controls including human review before publication."
+    "text": "State that the techniques reduce but do not eliminate hallucination, describe the residual risk, and list controls and human review."
    },
    {
     "key": "B",
-    "text": "State that with citations enabled every claim is verified against the source, so hallucination has been eliminated."
+    "text": "State that with citations enabled every claim is verified against the source document, so hallucination has been eliminated for this deployment."
    },
    {
     "key": "C",
-    "text": "State that hallucination is an inherent property of the technology and therefore outside the firm's control."
+    "text": "State that hallucination is an inherent property of the technology and therefore outside the firm's control, so no further controls are expected."
    },
    {
     "key": "D",
@@ -2845,19 +2845,19 @@
   "options": [
    {
     "key": "A",
-    "text": "Company-wide reminders in the managed policy location, per-service commands in project instruction files within each service directory, and personal preferences in the user-scope file."
+    "text": "Company rules in the managed policy file, service commands in each service directory, personal preferences in user scope."
    },
    {
     "key": "B",
-    "text": "All three in a single project instruction file at the monorepo root, ordered from most general to most specific."
+    "text": "All three in a single project instruction file at the monorepo root, ordered from most general to most specific, so every service reads them."
    },
    {
     "key": "C",
-    "text": "Company-wide reminders and per-service commands in each engineer's user-scope file, with personal preferences in the project file."
+    "text": "Company-wide reminders and per-service commands in each engineer's user-scope file, with personal preferences in the shared project file."
    },
    {
     "key": "D",
-    "text": "All three in the managed policy location so that nothing can be overridden."
+    "text": "All three in the managed policy location so that nothing can be overridden by any engineer, team, repository or local settings file."
    }
   ],
   "correct": [
@@ -2927,7 +2927,7 @@
    },
    {
     "key": "B",
-    "text": "Disable the highest-cardinality identifying attributes, such as per-session identifiers, on metrics where per-session detail is not needed."
+    "text": "Disable per-session identifiers on metrics that do not need them."
    },
    {
     "key": "C",
@@ -2939,7 +2939,7 @@
    },
    {
     "key": "E",
-    "text": "Export metrics to the console so the team can inspect them directly."
+    "text": "Export metrics to the console exporter so the team can inspect them directly as they arrive."
    }
   ],
   "correct": [
@@ -2967,11 +2967,11 @@
   "options": [
    {
     "key": "A",
-    "text": "The Claude Agent SDK, which provides the agent loop, built-in tools, permissions, subagents, hooks and MCP support as a library in Python or TypeScript."
+    "text": "The Claude Agent SDK, which provides the agent loop, built-in tools, permissions, subagents, hooks and MCP support as a Python or TypeScript library."
    },
    {
     "key": "B",
-    "text": "The Messages API through the standard client SDK, implementing the tool execution loop in their own service code."
+    "text": "The Messages API through the standard client SDK, implementing the tool execution loop, permissions and context management in their own service code, maintaining the loop as the API evolves."
    },
    {
     "key": "C",
@@ -3006,7 +3006,7 @@
   "options": [
    {
     "key": "A",
-    "text": "Trim the main file to the facts that matter in every session and move the rest into path-scoped rule files that load only when Claude works on matching files."
+    "text": "Trim the main file to always-needed facts and move the rest into path-scoped rules that load only for matching files."
    },
    {
     "key": "B",
@@ -3014,11 +3014,11 @@
    },
    {
     "key": "C",
-    "text": "Move the entire file contents into the user-scope instruction file so it applies across all projects."
+    "text": "Move the entire file contents into the user-scope instruction file so it applies across all projects and loads in every session on the machine."
    },
    {
     "key": "D",
-    "text": "Repeat the most important instructions three times in the file so they are more likely to be followed."
+    "text": "Repeat the most important instructions three times in the file, near the top and bottom, so they are more likely to be followed."
    }
   ],
   "correct": [

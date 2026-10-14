@@ -56,7 +56,7 @@
  ],
  "bankNotes": {
   "fresh": "Written against the CCAR-P Exam Guide objectives. Option lengths are balanced, so length gives nothing away.",
-  "original": "From girishr/ClaudeCertifiedArchitect-Professional-Prep. In single-answer items the correct option is usually the longest; judge on content.",
+  "original": "From girishr/ClaudeCertifiedArchitect-Professional-Prep (CC BY 4.0), with option lengths rebalanced so length gives nothing away.",
   "": "All banks mixed. Each question shows which bank it comes from.",
   "matrix": "Each question lists several statements; pick a value from the dropdown next to each. A question counts as correct only when every row is right."
  },

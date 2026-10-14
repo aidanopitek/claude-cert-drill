@@ -7,8 +7,8 @@ Free, unofficial study site for two Anthropic certification exams:
 - **Claude Certified Developer – Foundations (CCDV-F)**: cheat sheets and study notes, and 426 practice questions.
 
 Every question shows its answer, an explanation and a link to the relevant Anthropic documentation the moment you
-answer. Answer options are shuffled each time, and option lengths are balanced so the longest option is not a tell
-(except the CCAR-P "Prep kit 75" bank, see below). Scores are kept in your own browser only.
+answer. Answer options are shuffled each time, and option lengths are balanced in every bank so the longest option
+is not a tell. Scores are kept in your own browser only.
 
 **Open the site:** https://aidanopitek.github.io/claude-cert-drill/
 
@@ -19,8 +19,6 @@ code.claude.com, anthropic.com engineering posts, the MCP specification). Outdat
 removed, and every question's reference points to Anthropic documentation, except a few general-engineering items
 that have none. Model features and limits change often: if something looks wrong, use **Report on GitHub** on the
 question card, or open an issue.
-
-Known gap: in the CCAR-P "Prep kit 75" bank the correct option is still usually the longest one.
 
 ## Project layout
 
