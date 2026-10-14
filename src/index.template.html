@@ -240,14 +240,14 @@ footer { margin-top: 48px; font-size: 12.5px; color: var(--ink-soft); border-top
 
     <div id="view-quiz" role="tabpanel" hidden>
       <div class="toolbar">
+        <select id="q-pool" aria-label="Mode">
+          <option value="all">Practice: every question</option>
+          <option value="unseen">Practice: not answered yet</option>
+          <option value="missed">Practice: ones I got wrong</option>
+          <option value="mock">Mock exam</option>
+        </select>
         <select id="q-set" aria-label="Question bank"></select>
         <select id="q-domain" aria-label="Domain"></select>
-        <select id="q-pool" aria-label="Question set">
-          <option value="all">All questions</option>
-          <option value="mock">Exam-weighted mock</option>
-          <option value="unseen">Not answered yet</option>
-          <option value="missed">Ones I got wrong</option>
-        </select>
         <span class="progress" id="q-progress"></span>
       </div>
       <p class="banknote" id="banknote"></p>
@@ -425,7 +425,7 @@ function initQuiz() {
   $("#q-set").value = C.banks.some(b => b[0] === saved) ? saved : C.defaultBank;
   const names = Object.keys(C.weights).sort((a, b) => weightOf(b) - weightOf(a));
   $("#q-domain").innerHTML = `<option value="">All domains</option>` + names.map(n => `<option value="${esc(n)}">${esc(n)} (${weightOf(n)}%)</option>`).join("");
-  $("#q-pool").options[1].textContent = `Exam-weighted mock (${C.items})`;
+  $("#q-pool").querySelector('option[value="mock"]').textContent = `Mock exam: ${C.items} questions, real domain weights`;
   buildDeck(); renderLedger();
 }
 function mockDeck(pool) {
@@ -440,13 +440,15 @@ function mockDeck(pool) {
 }
 function buildDeck() {
   const dom = $("#q-domain").value, pool = $("#q-pool").value;
-  $("#banknote").textContent = C.bankNotes[$("#q-set").value] || "";
+  $("#banknote").textContent = pool === "mock"
+    ? `Mock exam: ${C.items} questions drawn from all banks, in the same domain proportions as the real ${C.code} exam. The bank and domain filters do not apply. Scores still count in the panel.`
+    : (C.bankNotes[$("#q-set").value] || "");
   $("#banknote").classList.toggle("warn", /longest/.test($("#banknote").textContent));
   if (pool === "mock") {
-    $("#q-domain").value = ""; $("#q-domain").disabled = true;
-    deck = mockDeck(Q.filter(inSet));
+    $("#q-domain").value = ""; $("#q-domain").disabled = true; $("#q-set").disabled = true;
+    deck = mockDeck(Q);
   } else {
-    $("#q-domain").disabled = false;
+    $("#q-domain").disabled = false; $("#q-set").disabled = false;
     deck = shuffle(Q.filter(q => inSet(q) && (!dom || q.domain === dom) &&
       (pool === "all" || (pool === "unseen" && !(q.id in results)) || (pool === "missed" && results[q.id] === false))));
   }

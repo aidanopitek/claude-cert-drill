@@ -4,7 +4,7 @@
  "code": "CCAR-P",
  "short": "Architect · Professional",
  "eyebrow": "Claude Certified Architect · Professional",
- "lede": "A scenario guide built on the official exam objectives, the prep kit's quick-recall notes, and 112 scenario questions with the answer and explanation shown when you submit.",
+ "lede": "A scenario guide built on the official exam objectives, the prep kit's quick-recall notes, and 117 scenario questions with the answer and explanation shown when you submit.",
  "facts": [
   "<b>63</b> items",
   "<b>120</b> min",
@@ -39,7 +39,7 @@
  "banks": [
   [
    "fresh",
-   "Fresh 37"
+   "Fresh 42, exam-weighted"
   ],
   [
    "original",
@@ -47,11 +47,11 @@
   ],
   [
    "",
-   "All banks (112)"
+   "All banks (117)"
   ]
  ],
  "bankNotes": {
-  "fresh": "Written against the CCAR-P Exam Guide objectives, including assess-each-statement questions with a dropdown per row. Close to the exam's domain weights, with Governance slightly over-represented; use the exam-weighted mock for exact weights. Option lengths are balanced.",
+  "fresh": "Written against the CCAR-P Exam Guide objectives, including assess-each-statement questions with a dropdown per row. Domain mix follows the exam weights to within one question per domain. Option lengths are balanced.",
   "original": "From girishr/ClaudeCertifiedArchitect-Professional-Prep (CC BY 4.0), with option lengths rebalanced so length gives nothing away.",
   "": "All banks mixed. Each question shows which bank it comes from."
  },

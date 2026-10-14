@@ -3,7 +3,7 @@
 Free, unofficial study site for two Anthropic certification exams:
 
 - **Claude Certified Architect – Professional (CCAR-P)**: scenario guide by official objective, quick-recall notes,
-  and 112 practice questions, including assess-each-statement items.
+  and 117 practice questions, including assess-each-statement items.
 - **Claude Certified Developer – Foundations (CCDV-F)**: cheat sheets and study notes, and 426 practice questions.
 
 Every question shows its answer, an explanation and a link to the relevant Anthropic documentation the moment you
@@ -31,6 +31,13 @@ src/index.template.html          the page (HTML, CSS and JavaScript)
 scripts/build.py                 builds dist/index.html
 scripts/check.py                 validates the banks (run in CI on every pull request)
 ```
+
+## Quiz modes
+
+- **Practice** (every question, not answered yet, or ones you got wrong): filter by bank and domain.
+- **Mock exam**: 63 (CCAR-P) or 53 (CCDV-F) questions drawn from all banks in the official domain proportions.
+
+Click an option to select it, then **Submit**. **Back** and **Next** move through the set.
 
 ## Build locally
 

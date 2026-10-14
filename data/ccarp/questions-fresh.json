@@ -1536,5 +1536,205 @@
   "correct": [],
   "selectCount": 1,
   "verified": true
+ },
+ {
+  "domain": "Stakeholder Communication & Lifecycle Management",
+  "difficulty": "medium",
+  "scenario": "A business sponsor wants to start a six-week pilot of a contract-review assistant next Monday. Nobody has written down what the pilot must show.",
+  "question": "Which TWO should be agreed before the pilot starts? (Select TWO)",
+  "options": [
+   {
+    "key": "A",
+    "text": "The accuracy threshold on a named eval set, the size of that set, and who signs off that the pilot passed."
+   },
+   {
+    "key": "B",
+    "text": "The production architecture, including the vector store and the hosting region for every environment after launch."
+   },
+   {
+    "key": "C",
+    "text": "Kill criteria: the results that would stop the project instead of extending it."
+   },
+   {
+    "key": "D",
+    "text": "The marketing launch date for the full product, so the pilot team knows when it must be ready for customers."
+   },
+   {
+    "key": "E",
+    "text": "A three-year contract with a single model vendor, to lock in pricing early."
+   }
+  ],
+  "correct": [
+   "A",
+   "C"
+  ],
+  "explanation": "Acceptance criteria and kill criteria are set at the start of a pilot, against a dataset and an owner, so the result cannot be reinterpreted afterwards. Without them a pilot drifts and the sponsor cannot make a go or no-go decision.",
+  "distractorNotes": {
+   "B": "Designing the full production stack before value is proven is over-engineering for a pilot.",
+   "D": "Committing to a launch date before the pilot shows results sets the project up to miss it.",
+   "E": "Long vendor commitments before a pilot reports remove the option to change course on its findings."
+  },
+  "reference": "https://platform.claude.com/docs/en/test-and-evaluate/define-success",
+  "id": 131,
+  "type": "multi",
+  "selectCount": 2,
+  "set": "fresh",
+  "verified": true
+ },
+ {
+  "domain": "Stakeholder Communication & Lifecycle Management",
+  "difficulty": "medium",
+  "scenario": "Evals show that moving an invoice-coding assistant from a larger model to a smaller one cuts cost per invoice by 70%, while accuracy on the agreed eval set drops from 95% to 94%. The CFO must approve the change.",
+  "question": "How should the architect present the decision?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Recommendation first, then cost per invoice before and after, the rework the lost point causes, and the ask."
+   },
+   {
+    "key": "B",
+    "text": "Show the full benchmark tables for both models side by side and let the CFO weigh the trade-off on their own."
+   },
+   {
+    "key": "C",
+    "text": "Explain how the two model tiers differ in architecture, reasoning depth and context handling, with diagrams of each."
+   },
+   {
+    "key": "D",
+    "text": "Present only the cost saving, since a one-point accuracy change is too small to matter."
+   }
+  ],
+  "correct": [
+   "A"
+  ],
+  "explanation": "An executive decision needs the recommendation, the few numbers that matter in business terms (cost per case and the cost of the extra errors), and a clear ask. Translating an accuracy point into rework time makes the trade-off concrete.",
+  "distractorNotes": {
+   "B": "Raw benchmark tables put the analysis on the executive instead of giving a recommendation.",
+   "C": "Technical detail suits engineers, not a budget decision.",
+   "D": "Hiding the accuracy drop undermines trust when it surfaces later; state it and its impact."
+  },
+  "reference": "https://platform.claude.com/docs/en/about-claude/models/choosing-a-model",
+  "id": 132,
+  "type": "single",
+  "selectCount": 1,
+  "set": "fresh",
+  "verified": true
+ },
+ {
+  "domain": "Claude Models, Prompting & Context Engineering",
+  "difficulty": "medium",
+  "scenario": "An assistant answers questions about 60-page supplier contracts that are pasted into each request. Answers often miss clauses or quote terms that are not in the contract.",
+  "question": "Which prompt structure best addresses this?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Place the question first, then the contract, so the model knows what to look for before it reads the clauses."
+   },
+   {
+    "key": "B",
+    "text": "Put the contract first in tags and the question last, and ask for the relevant quotes before the answer."
+   },
+   {
+    "key": "C",
+    "text": "Summarise the contract to one page in a first call, then answer from the summary."
+   },
+   {
+    "key": "D",
+    "text": "Raise the temperature so the model explores more of the document before answering."
+   }
+  ],
+  "correct": [
+   "B"
+  ],
+  "explanation": "Anthropic's guidance for long documents is to put them at the top with the query at the end, wrap them in tags, and for long inputs ask Claude to extract word-for-word quotes first. Grounding the answer in quotes reduces missed clauses and invented terms.",
+  "distractorNotes": {
+   "A": "Putting the query before a long document tends to reduce response quality compared with putting it at the end.",
+   "C": "A one-page summary drops exactly the clause-level detail the questions need.",
+   "D": "Sampling temperature does not make the model read more of the input, and newer models reject non-default values."
+  },
+  "reference": "https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/reduce-hallucinations",
+  "id": 133,
+  "type": "single",
+  "selectCount": 1,
+  "set": "fresh",
+  "verified": true
+ },
+ {
+  "domain": "Evaluation, Testing & Optimization",
+  "difficulty": "medium",
+  "scenario": "A team wants to grade 5,000 open-ended support answers per release with an LLM judge instead of human reviewers.",
+  "question": "What should they do before relying on the judge's scores?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Use the most capable model as the judge, because a stronger model grades more accurately than any rubric could."
+   },
+   {
+    "key": "B",
+    "text": "Let the judge score freely from 1 to 100 so it can express fine differences between two similar answers."
+   },
+   {
+    "key": "C",
+    "text": "Use a detailed rubric with a discrete scale, and check its grades against human labels on a sample."
+   },
+   {
+    "key": "D",
+    "text": "Have the model that wrote the answers grade its own output, since it best understands what it meant to say."
+   }
+  ],
+  "correct": [
+   "C"
+  ],
+  "explanation": "LLM-based grading scales, but only after it is shown to agree with human judgement on a labelled sample. A specific rubric and a discrete scale make grades consistent; Anthropic's eval guidance recommends both.",
+  "distractorNotes": {
+   "A": "A stronger model can still be systematically wrong; agreement with humans has to be measured.",
+   "B": "Wide free-form scales make grades noisy and hard to calibrate.",
+   "D": "Self-grading without a rubric or human calibration tends to rate its own output generously."
+  },
+  "reference": "https://platform.claude.com/docs/en/test-and-evaluate/develop-tests",
+  "id": 134,
+  "type": "single",
+  "selectCount": 1,
+  "set": "fresh",
+  "verified": true
+ },
+ {
+  "domain": "Solution Design & Architecture",
+  "difficulty": "medium",
+  "scenario": "A finance team wants to automate invoice approval. Every invoice goes through the same five steps: extract fields, match the purchase order, check the budget, flag anomalies, then approve or route it. Invoices over 50,000 must be approved by a person.",
+  "question": "Which design fits best?",
+  "options": [
+   {
+    "key": "A",
+    "text": "An autonomous agent with tools for each step that decides its own path per invoice."
+   },
+   {
+    "key": "B",
+    "text": "A multi-agent system with one agent per step, coordinated by a lead agent."
+   },
+   {
+    "key": "C",
+    "text": "A fixed workflow with model calls where judgement is needed and a human gate above the threshold."
+   },
+   {
+    "key": "D",
+    "text": "A single prompt that performs all five steps and outputs the decision directly."
+   }
+  ],
+  "correct": [
+   "C"
+  ],
+  "explanation": "The steps are known in advance, so a workflow with predefined code paths is cheaper, more predictable and easier to audit than an agent. Model calls handle extraction and anomaly judgement, and the human checkpoint sits before the irreversible high-value approval.",
+  "distractorNotes": {
+   "A": "Autonomy suits tasks whose steps cannot be predicted; here they are fixed, so it only adds cost and variance.",
+   "B": "Multi-agent coordination multiplies token use and suits independent, breadth-first work, not a fixed sequence.",
+   "D": "One prompt for every step is hard to validate step by step and gives no place for the human approval gate."
+  },
+  "reference": "https://www.anthropic.com/engineering/building-effective-agents",
+  "id": 135,
+  "type": "single",
+  "selectCount": 1,
+  "set": "fresh",
+  "verified": true
  }
 ]
