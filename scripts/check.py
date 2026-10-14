@@ -19,7 +19,7 @@ for exam in SITE["exams"]:
     cert = json.loads((d / "exam.json").read_text())
     weights = cert["weights"]
     ids = set()
-    for bank, _ in cert["banks"]:
+    for bank in [b for b, _ in cert["banks"]] + cert.get("hiddenBanks", []):
         if not bank:
             continue
         f = d / f"questions-{bank}.json"

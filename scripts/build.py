@@ -77,7 +77,7 @@ def load_exam(exam):
     d = DATA / exam
     cert = json.loads((d / "exam.json").read_text())
     qs = []
-    for bank, _label in cert["banks"]:
+    for bank in [b for b, _ in cert["banks"]] + cert.get("hiddenBanks", []):
         if bank and (d / f"questions-{bank}.json").exists():
             qs += json.loads((d / f"questions-{bank}.json").read_text())
     cert["questions"] = qs

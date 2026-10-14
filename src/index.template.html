@@ -1,3 +1,9 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Free, unofficial study site for the Claude Certified Architect (CCAR-P) and Developer (CCDV-F) exams: cheat sheets and 538 practice questions checked against Anthropic documentation.">
 <title>Claude Cert Drill Desk</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -34,6 +40,8 @@
   --bad: #ff8f87; --bad-wash: #3d1f1e; --warn: #e8b85a; color-scheme: dark;
 }
 * { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; }
 body { background: var(--paper); color: var(--ink); font: 15px/1.6 var(--body); }
 .wrap { max-width: 860px; margin: 0 auto; padding-inline: 16px; padding-block: 0 64px; }
 
@@ -159,8 +167,11 @@ mark { background: var(--accent-wash); color: inherit; padding: 0 2px; border-ra
 .ref { font-size: 13px; word-break: break-word; }
 .actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
 .btn { font: 600 14px/1 var(--body); padding: 11px 16px; border-radius: 8px; border: 1px solid var(--rule); background: var(--sheet); color: var(--ink); cursor: pointer; }
+a.btn { text-decoration: none; display: inline-flex; align-items: center; }
 .btn.primary { background: var(--accent); border-color: var(--accent); color: var(--sheet); }
 .btn:disabled { opacity: .45; cursor: default; }
+.actions .spacer { flex: 1 1 auto; }
+.keys { font-size: 12px; color: var(--ink-soft); margin-top: 10px; }
 .hint { font-size: 13px; color: var(--warn); margin-top: 10px; }
 .ledger h3 { font: 650 15px/1.2 var(--display); margin: 0 0 12px; }
 .total { font: 750 30px/1 var(--display); font-variant-numeric: tabular-nums; }
@@ -178,6 +189,8 @@ mark { background: var(--accent-wash); color: inherit; padding: 0 2px; border-ra
 footer { margin-top: 48px; font-size: 12.5px; color: var(--ink-soft); border-top: 1px solid var(--rule); padding-top: 14px; display: grid; gap: 6px; }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 </style>
+</head>
+<body>
 
 <div class="wrap">
   <div class="certbar" role="group" aria-label="Certification">
@@ -242,6 +255,7 @@ footer { margin-top: 48px; font-size: 12.5px; color: var(--ink-soft); border-top
         <div class="card" id="q-card"></div>
         <aside class="card ledger" id="ledger"></aside>
       </div>
+      <p class="keys">Keys: A–F select · Enter submits, then goes to the next question · ← Back · → Next or skip</p>
     </div>
   </main>
 
@@ -436,7 +450,7 @@ function buildDeck() {
     deck = shuffle(Q.filter(q => inSet(q) && (!dom || q.domain === dom) &&
       (pool === "all" || (pool === "unseen" && !(q.id in results)) || (pool === "missed" && results[q.id] === false))));
   }
-  pos = 0; renderQ();
+  pos = 0; states = []; renderQ();
 }
 // "Report on GitHub" opens a pre-filled issue when the site is built with a repo in site.json.
 function reportLink(q) {
@@ -444,68 +458,35 @@ function reportLink(q) {
   const p = new URLSearchParams({ template: "report-question.yml", title: `[${C.code}] Question #${q.id}`, exam: C.code, question_id: String(q.id) });
   return `<a class="btn" href="https://github.com/${DATA.repo}/issues/new?${p}" target="_blank" rel="noopener">Report on GitHub</a>`;
 }
-function bankName(s) { return { amey: "Amey-Thakur", breeganzo: "Breeganzo", nirav: "NiravRVaghasiya", fresh: "Fresh 30", original: "Prep kit", matrix: "Assess each" }[s] || s; }
-function renderMatrix(q) {
-  const card = $("#q-card");
-  const rows = shuffle(q.rows.map((r, i) => ({ ...r, i })));
-  $("#q-progress").textContent = `${pos + 1} / ${deck.length}`;
-  card.innerHTML = `
-    <div class="qmeta"><span class="chip plain">#${esc(q.id)}</span><span class="chip plain">Assess each</span><span class="chip">${esc(q.domain)}</span><span class="chip sel">${rows.length} statements</span></div>
-    <p class="question">${esc(q.question)}</p>
-    <table class="mx"><tbody>${rows.map(r => `<tr data-i="${r.i}"><td class="stmt">${esc(r.text)}<span class="ans"></span></td><td><select aria-label="Your assessment"><option value="">Choose…</option>${q.choices.map(c => `<option>${esc(c)}</option>`).join("")}</select></td></tr>`).join("")}</tbody></table>
-    <div id="fb"></div>
-    <div class="actions"><button class="btn" id="skip" type="button">Skip</button><button class="btn primary" id="check" type="button" disabled>Check answers</button><button class="btn primary" id="next" type="button" hidden>Next question</button><button class="btn" id="flag" type="button" aria-pressed="${flags.includes(q.id)}">${flags.includes(q.id) ? "Flagged" : "Flag as wrong"}</button>${reportLink(q)}</div>`;
-  const sels = $$("#q-card .mx select");
-  const left = () => sels.filter(s => !s.value).length;
-  sels.forEach(s => s.onchange = () => { $("#check").disabled = left() > 0; $("#fb").innerHTML = left() ? `<p class="hint">${left()} more to assess.</p>` : ""; });
-  $("#check").onclick = () => {
-    answered = true;
-    let ok = true;
-    $$("#q-card .mx tr").forEach(tr => {
-      const r = q.rows[+tr.dataset.i], v = $("select", tr).value, good = v === r.answer;
-      ok = ok && good; $("select", tr).disabled = true; tr.classList.add(good ? "right" : "wrong");
-      $(".ans", tr).textContent = (good ? "Correct: " : "Answer: " + r.answer + ". ") + r.note;
-    });
-    const n = $$("#q-card .mx tr.right").length;
-    results[q.id] = ok; store.set(C.key + ".results", results);
-    $("#fb").innerHTML = `<p class="verdict ${ok ? "ok" : "no"}">${ok ? "All correct" : `${n} of ${rows.length} correct`}</p><p class="explain">${esc(q.explanation)}</p>${q.reference ? `<a class="ref" href="${esc(q.reference)}" target="_blank" rel="noopener">${esc(q.reference)}</a>` : ""}`;
-    $("#check").hidden = true; $("#skip").hidden = true; $("#next").hidden = false; $("#next").focus({ preventScroll: true });
-    renderLedger();
-  };
-  $("#flag").onclick = () => {
-    flags = flags.includes(q.id) ? flags.filter(i => i !== q.id) : [...flags, q.id];
-    store.set(C.key + ".flags", flags);
-    $("#flag").textContent = flags.includes(q.id) ? "Flagged" : "Flag as wrong";
-    renderLedger();
-  };
-  $("#skip").onclick = () => { pos++; renderQ(); };
-  $("#next").onclick = () => { pos++; renderQ(); };
+function bankName(s) { return { amey: "Amey-Thakur", breeganzo: "Breeganzo", nirav: "NiravRVaghasiya", fresh: "Fresh", original: "Prep kit", matrix: "Assess each" }[s] || s; }
+// Per-question state for the current deck, so Back shows what you answered.
+let states = [];
+const st = () => states[pos] || (states[pos] = newState(deck[pos]));
+function newState(q) {
+  if (q.type === "matrix") return { rows: shuffle(q.rows.map((_, i) => i)), values: {}, submitted: false };
+  const order = shuffle(q.options.map(o => o.key));
+  return { order, label: Object.fromEntries(order.map((k, i) => [k, "ABCDEFGH"[i]])), picked: [], submitted: false };
 }
-function renderQ() {
-  picked = new Set(); answered = false;
-  const card = $("#q-card");
-  if (!deck.length) {
-    card.innerHTML = `<p class="question">No questions in this set.</p><p class="scenario">Pick another domain or bank, or switch to “All questions”.</p>`;
-    $("#q-progress").textContent = ""; return;
-  }
-  if (pos >= deck.length) {
-    const got = deck.filter(q => results[q.id] === true).length;
-    card.innerHTML = `<p class="verdict ${got / deck.length >= .72 ? "ok" : "no"}">Set done: ${got} of ${deck.length} correct</p><p class="scenario">Your scores are in the panel. Switch to “Ones I got wrong” to go over the misses again.</p><div class="actions"><button class="btn primary" id="again">Shuffle and restart</button></div>`;
-    $("#again").onclick = buildDeck; $("#q-progress").textContent = `${deck.length} / ${deck.length}`; return;
-  }
-  const q = deck[pos], multi = q.selectCount > 1;
-  if (q.type === "matrix") return renderMatrix(q);
-  const opts = shuffle([...q.options]);
-  label = Object.fromEntries(opts.map((o, i) => [o.key, "ABCDEFGH"[i]]));
-  $("#q-progress").textContent = `${pos + 1} / ${deck.length}`;
-  card.innerHTML = `
-    <div class="qmeta"><span class="chip plain">#${esc(q.id)}</span>${C.banks.length > 2 || !$("#q-set").value ? `<span class="chip plain">${esc(bankName(q.set))}</span>` : ""}<span class="chip">${esc(q.domain)}</span>${q.difficulty ? `<span class="chip plain">${esc(q.difficulty)}</span>` : ""}${multi ? `<span class="chip sel">Select ${["", "", "TWO", "THREE", "FOUR"][q.selectCount] || q.selectCount}</span>` : ""}${q.unverified ? `<span class="chip warn">source marks it needs review</span>` : ""}</div>
-    ${q.scenario ? `<p class="scenario">${esc(q.scenario)}</p>` : ""}
-    <p class="question">${esc(q.question)}</p>
-    <div class="opts">${opts.map(o => `<button class="opt" data-k="${o.key}" data-label="${label[o.key]}" type="button"><span class="key">${label[o.key]}</span><span>${esc(o.text)}</span></button>`).join("")}</div>
-    <div id="fb"></div>
-    <div class="actions"><button class="btn" id="skip" type="button">Skip</button><button class="btn primary" id="next" type="button" hidden>Next question</button><button class="btn" id="flag" type="button" aria-pressed="${flags.includes(q.id)}">${flags.includes(q.id) ? "Flagged" : "Flag as wrong"}</button>${reportLink(q)}</div>`;
-  $$("#q-card .opt").forEach(b => b.onclick = () => pick(q, b));
+function ready(q, s) {
+  return q.type === "matrix" ? q.rows.every((_, i) => s.values[i]) : s.picked.length === q.selectCount;
+}
+function navHtml(q, s) {
+  const last = pos === deck.length - 1;
+  return `<div class="actions">
+    <button class="btn" id="back" type="button" ${pos === 0 ? "disabled" : ""}>← Back</button>
+    ${s.submitted
+      ? `<button class="btn primary" id="next" type="button">${last ? "Finish" : "Next →"}</button>`
+      : `<button class="btn primary" id="submit" type="button" ${ready(q, s) ? "" : "disabled"}>Submit</button><button class="btn" id="skip" type="button">Skip →</button>`}
+    <span class="spacer"></span>
+    <button class="btn" id="flag" type="button" aria-pressed="${flags.includes(q.id)}">${flags.includes(q.id) ? "Flagged" : "Flag as wrong"}</button>${reportLink(q)}
+  </div>`;
+}
+function wireNav(q, s) {
+  const go = d => { pos += d; renderQ(); };
+  $("#back").onclick = () => go(-1);
+  if ($("#next")) $("#next").onclick = () => go(1);
+  if ($("#skip")) $("#skip").onclick = () => go(1);
+  if ($("#submit")) $("#submit").onclick = () => submit(q, s);
   $("#flag").onclick = () => {
     flags = flags.includes(q.id) ? flags.filter(i => i !== q.id) : [...flags, q.id];
     store.set(C.key + ".flags", flags);
@@ -513,39 +494,88 @@ function renderQ() {
     $("#flag").setAttribute("aria-pressed", flags.includes(q.id));
     renderLedger();
   };
-  $("#skip").onclick = () => { pos++; renderQ(); };
-  $("#next").onclick = () => { pos++; renderQ(); };
 }
-function pick(q, btn) {
-  if (answered) return;
-  const k = btn.dataset.k;
+function submit(q, s) {
+  if (s.submitted || !ready(q, s)) return;
+  s.submitted = true;
+  if (q.type === "matrix") s.ok = q.rows.every((r, i) => s.values[i] === r.answer);
+  else { const c = new Set(q.correct); s.ok = s.picked.length === c.size && s.picked.every(k => c.has(k)); }
+  results[q.id] = s.ok; store.set(C.key + ".results", results);
+  renderQ(); renderLedger();
+  const n = $("#next"); n && n.focus({ preventScroll: true });
+}
+function metaHtml(q, extra) {
+  return `<div class="qmeta"><span class="chip plain">#${esc(q.id)}</span>${C.banks.length > 2 || !$("#q-set").value ? `<span class="chip plain">${esc(bankName(q.set))}</span>` : ""}<span class="chip">${esc(q.domain)}</span>${q.difficulty ? `<span class="chip plain">${esc(q.difficulty)}</span>` : ""}${extra}${q.unverified ? `<span class="chip warn">source marks it needs review</span>` : ""}</div>`;
+}
+function refHtml(q) { return q.reference ? `<a class="ref" href="${esc(q.reference)}" target="_blank" rel="noopener">${esc(q.reference)}</a>` : ""; }
+function renderMatrix(q, s) {
+  const card = $("#q-card");
+  card.innerHTML = `${metaHtml(q, `<span class="chip sel">Assess ${q.rows.length} statements</span>`)}
+    ${q.scenario ? `<p class="scenario">${esc(q.scenario)}</p>` : ""}
+    <p class="question">${esc(q.question)}</p>
+    <table class="mx"><tbody>${s.rows.map(i => {
+      const r = q.rows[i], v = s.values[i] || "", good = v === r.answer;
+      const cls = s.submitted ? (good ? "right" : "wrong") : "";
+      return `<tr data-i="${i}" class="${cls}"><td class="stmt">${esc(r.text)}${s.submitted ? `<span class="ans">${good ? "Correct: " : "Answer: " + esc(r.answer) + ". "}${esc(r.note)}</span>` : ""}</td><td><select aria-label="Your assessment" ${s.submitted ? "disabled" : ""}><option value="">Choose…</option>${q.choices.map(c => `<option ${c === v ? "selected" : ""}>${esc(c)}</option>`).join("")}</select></td></tr>`;
+    }).join("")}</tbody></table>
+    <div id="fb">${s.submitted
+      ? `<p class="verdict ${s.ok ? "ok" : "no"}">${s.ok ? "All correct" : `${q.rows.filter((r, i) => s.values[i] === r.answer).length} of ${q.rows.length} correct`}</p><p class="explain">${esc(q.explanation)}</p>${refHtml(q)}`
+      : (ready(q, s) ? "" : `<p class="hint">${q.rows.filter((_, i) => !s.values[i]).length} more to assess.</p>`)}</div>
+    ${navHtml(q, s)}`;
+  $$("#q-card .mx tr").forEach(tr => $("select", tr).onchange = e => {
+    s.values[+tr.dataset.i] = e.target.value;
+    $("#submit").disabled = !ready(q, s);
+    const left = q.rows.filter((_, i) => !s.values[i]).length;
+    $("#fb").innerHTML = left ? `<p class="hint">${left} more to assess.</p>` : "";
+  });
+  wireNav(q, s);
+}
+function renderQ() {
+  const card = $("#q-card");
+  if (!deck.length) {
+    card.innerHTML = `<p class="question">No questions in this set.</p><p class="scenario">Pick another domain or bank, or switch to “All questions”.</p>`;
+    $("#q-progress").textContent = ""; return;
+  }
+  if (pos >= deck.length) {
+    const done = states.filter(x => x && x.submitted), got = done.filter(x => x.ok).length;
+    card.innerHTML = `<p class="verdict ${done.length && got / done.length >= .72 ? "ok" : "no"}">Set done: ${got} of ${done.length} answered correctly${done.length < deck.length ? ` (${deck.length - done.length} skipped)` : ""}</p><p class="scenario">Your scores are in the panel. Go back to review, or switch to “Ones I got wrong” to retry the misses.</p><div class="actions"><button class="btn" id="back" type="button">← Back</button><button class="btn primary" id="again" type="button">Shuffle and restart</button></div>`;
+    $("#back").onclick = () => { pos = deck.length - 1; renderQ(); };
+    $("#again").onclick = buildDeck; $("#q-progress").textContent = `${deck.length} / ${deck.length}`; return;
+  }
+  const q = deck[pos], s = st();
+  $("#q-progress").textContent = `${pos + 1} / ${deck.length}`;
+  if (q.type === "matrix") return renderMatrix(q, s);
+  label = s.label;
+  const correct = new Set(q.correct), multi = q.selectCount > 1;
+  const optHtml = s.order.map(k => {
+    const o = q.options.find(o => o.key === k), sel = s.picked.includes(k);
+    let cls = sel ? "picked" : "";
+    if (s.submitted) cls = correct.has(k) ? "right" : (sel ? "wrong" : "");
+    const note = s.submitted && q.distractorNotes && q.distractorNotes[k] && (sel || !correct.has(k)) ? `<span class="note">${esc(q.distractorNotes[k])}</span>` : "";
+    return `<button class="opt ${cls}" data-k="${k}" data-label="${s.label[k]}" type="button" aria-pressed="${sel}" ${s.submitted ? "disabled" : ""}><span class="key">${s.label[k]}</span><span>${esc(o.text)}</span>${note}</button>`;
+  }).join("");
+  card.innerHTML = `${metaHtml(q, multi ? `<span class="chip sel">Select ${["", "", "TWO", "THREE", "FOUR"][q.selectCount] || q.selectCount}</span>` : "")}
+    ${q.scenario ? `<p class="scenario">${esc(q.scenario)}</p>` : ""}
+    <p class="question">${esc(q.question)}</p>
+    <div class="opts">${optHtml}</div>
+    <div id="fb">${s.submitted
+      ? `<p class="verdict ${s.ok ? "ok" : "no"}">${s.ok ? "Correct" : "Not quite. Answer: " + q.correct.map(k => s.label[k]).sort().join(", ")}</p><p class="explain">${esc(relabel(q.explanation))}</p>${refHtml(q)}`
+      : (multi && s.picked.length < q.selectCount ? `<p class="hint">Select ${q.selectCount - s.picked.length} more.</p>` : "")}</div>
+    ${navHtml(q, s)}`;
+  $$("#q-card .opt").forEach(b => b.onclick = () => pick(q, s, b.dataset.k));
+  wireNav(q, s);
+}
+function pick(q, s, k) {
+  if (s.submitted) return;
   if (q.selectCount > 1) {
-    picked.has(k) ? picked.delete(k) : picked.add(k);
-    btn.classList.toggle("picked", picked.has(k));
-    if (picked.size < q.selectCount) { $("#fb").innerHTML = `<p class="hint">${q.selectCount - picked.size} more to select.</p>`; return; }
-  } else picked.add(k);
-  reveal(q);
+    if (s.picked.includes(k)) s.picked = s.picked.filter(x => x !== k);
+    else if (s.picked.length < q.selectCount) s.picked = [...s.picked, k];
+    else s.picked = [...s.picked.slice(1), k];   // already full: replace the oldest choice
+  } else s.picked = s.picked[0] === k ? [] : [k];
+  renderQ();
 }
 // Explanations that cite options as "(B)" or "(A, C)" use the stored keys; map them to the letters shown on screen.
 const relabel = s => String(s).replace(/\(([A-H](?:\s*(?:,|and|or)\s*[A-H])*)\)/g, (m, inner) => "(" + inner.replace(/\b[A-H]\b/g, k => label[k] || k) + ")");
-function reveal(q) {
-  answered = true;
-  const correct = new Set(q.correct);
-  const ok = picked.size === correct.size && [...picked].every(k => correct.has(k));
-  results[q.id] = ok; store.set(C.key + ".results", results);
-  $$("#q-card .opt").forEach(b => {
-    const k = b.dataset.k; b.disabled = true; b.classList.remove("picked");
-    if (correct.has(k)) b.classList.add("right");
-    else if (picked.has(k)) b.classList.add("wrong");
-    const note = q.distractorNotes && q.distractorNotes[k];
-    if (note && (picked.has(k) || !correct.has(k))) b.insertAdjacentHTML("beforeend", `<span class="note">${esc(note)}</span>`);
-  });
-  $("#fb").innerHTML = `<p class="verdict ${ok ? "ok" : "no"}">${ok ? "Correct" : "Not quite. Answer: " + q.correct.map(k => label[k]).sort().join(", ")}</p>
-    <p class="explain">${esc(relabel(q.explanation))}</p>
-    ${q.reference ? `<a class="ref" href="${esc(q.reference)}" target="_blank" rel="noopener">${esc(q.reference)}</a>` : ""}`;
-  $("#skip").hidden = true; $("#next").hidden = false; $("#next").focus({ preventScroll: true });
-  renderLedger();
-}
 function renderLedger() {
   const ids = Q.filter(q => inSet(q) && q.id in results).map(q => q.id), right = ids.filter(i => results[i]).length;
   let rows = "", weighted = 0, wsum = 0;
@@ -571,12 +601,18 @@ $("#q-domain").onchange = buildDeck;
 $("#q-pool").onchange = buildDeck;
 $("#q-set").onchange = () => { store.set(C.key + ".set", $("#q-set").value); buildDeck(); renderLedger(); };
 document.addEventListener("keydown", e => {
-  if ($("#view-quiz").hidden || e.target.matches("input, select, button")) return;
+  if ($("#view-quiz").hidden || e.target.matches("input, select, textarea") || e.metaKey || e.ctrlKey || e.altKey) return;
+  const click = id => { const b = $(id); if (b && !b.disabled) { e.preventDefault(); b.click(); } };
+  if (e.key === "Enter") return $("#submit") ? click("#submit") : click("#next");
+  if (e.key === "ArrowLeft") return click("#back");
+  if (e.key === "ArrowRight") return $("#next") ? click("#next") : click("#skip");
+  if (e.target.matches("button") && e.key === " ") return;
   const b = $$("#q-card .opt").find(b => b.dataset.label === e.key.toUpperCase());
   if (b && !b.disabled) b.click();
-  else if (e.key === "Enter" && answered) $("#next").click();
 });
 
 const startCert = ["ccarp", "ccdvf"].includes(location.hash.slice(1)) ? location.hash.slice(1) : store.get("drill.cert", "ccdvf");
 setCert(DATA.certs[startCert] ? startCert : "ccdvf");
 </script>
+</body>
+</html>

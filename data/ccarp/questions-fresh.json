@@ -1198,5 +1198,343 @@
   "selectCount": 2,
   "set": "fresh",
   "verified": true
+ },
+ {
+  "id": "MX-A1",
+  "set": "fresh",
+  "type": "matrix",
+  "domain": "Governance, Safety & Risk Management",
+  "scenario": "",
+  "question": "A design review for a customer-support agent that can read tickets, issue refunds and email customers lists these decisions. Assess each one.",
+  "choices": [
+   "Good practice",
+   "Not recommended"
+  ],
+  "rows": [
+   {
+    "text": "Remove the account-deletion tool, which support staff never need, instead of guarding it with a confirmation step.",
+    "answer": "Good practice",
+    "note": "Least privilege: a capability the agent does not hold cannot be misused."
+   },
+   {
+    "text": "Rely on a system-prompt line telling the agent to ignore instructions found inside customer emails as the main injection defence.",
+    "answer": "Not recommended",
+    "note": "Prompt instructions are one layer, not a control. Limit what a manipulated agent can do."
+   },
+   {
+    "text": "Require human approval before any refund above a set amount is executed.",
+    "answer": "Good practice",
+    "note": "Irreversible, high-impact actions get a gate before they happen, not an audit after."
+   },
+   {
+    "text": "Log only the final reply to save storage, since intermediate tool calls rarely matter.",
+    "answer": "Not recommended",
+    "note": "Multi-step failures happen at intermediate steps; trace every step under one request ID."
+   },
+   {
+    "text": "Treat text returned by tools and retrieved documents as untrusted data rather than instructions.",
+    "answer": "Good practice",
+    "note": "Untrusted content belongs in tool results and must not be able to trigger sensitive actions on its own."
+   },
+   {
+    "text": "Give the agent one shared admin account so it can always reach every customer record.",
+    "answer": "Not recommended",
+    "note": "Act with the user's scoped identity; a shared admin account lets any user reach anything through the agent."
+   }
+  ],
+  "explanation": "The pattern across all six: put controls in architecture (tool scope, gates, identity, tracing) rather than in prompt wording.",
+  "reference": "https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/mitigate-jailbreaks",
+  "difficulty": "",
+  "options": [],
+  "correct": [],
+  "selectCount": 1,
+  "verified": true
+ },
+ {
+  "id": "MX-A2",
+  "set": "fresh",
+  "type": "matrix",
+  "domain": "Integration",
+  "scenario": "",
+  "question": "Match each query pattern to the retrieval approach that fits it best.",
+  "choices": [
+   "Hybrid lexical + semantic search",
+   "Structured query tool (SQL or API)",
+   "Whole corpus in the prompt with caching",
+   "Agentic multi-step retrieval"
+  ],
+  "rows": [
+   {
+    "text": "Support questions that often contain exact error codes such as E-4021 and product SKUs.",
+    "answer": "Hybrid lexical + semantic search",
+    "note": "Embeddings miss exact identifiers; BM25 catches them. Combine both."
+   },
+   {
+    "text": "\"What was the total refund amount by region last quarter?\"",
+    "answer": "Structured query tool (SQL or API)",
+    "note": "Aggregations over structured data need a query, not semantic search over rows."
+   },
+   {
+    "text": "Q&A over a 70,000-token policy handbook that changes once a quarter.",
+    "answer": "Whole corpus in the prompt with caching",
+    "note": "Under roughly 200k tokens Anthropic suggests skipping RAG and caching the whole corpus."
+   },
+   {
+    "text": "Questions that need facts from several documents in a large repository that changes daily.",
+    "answer": "Agentic multi-step retrieval",
+    "note": "Let the agent search, read and iterate just in time instead of one lookup."
+   },
+   {
+    "text": "A mix of conceptual questions and questions naming specific internal product names.",
+    "answer": "Hybrid lexical + semantic search",
+    "note": "Semantic search handles the concepts, lexical search the exact names."
+   }
+  ],
+  "explanation": "Match the retrieval method to the data shape and the query pattern; no single method fits every case.",
+  "reference": "https://www.anthropic.com/news/contextual-retrieval",
+  "difficulty": "",
+  "options": [],
+  "correct": [],
+  "selectCount": 1,
+  "verified": true
+ },
+ {
+  "id": "MX-A3",
+  "set": "fresh",
+  "type": "matrix",
+  "domain": "Governance, Safety & Risk Management",
+  "scenario": "",
+  "question": "A client has a zero data retention (ZDR) arrangement with Anthropic. For each Claude API feature, is it ZDR-eligible?",
+  "choices": [
+   "ZDR-eligible",
+   "Not ZDR-eligible"
+  ],
+  "rows": [
+   {
+    "text": "Prompt caching",
+    "answer": "ZDR-eligible",
+    "note": "Prompts and outputs are not stored; only KV cache representations and hashes, briefly."
+   },
+   {
+    "text": "Message Batches API",
+    "answer": "Not ZDR-eligible",
+    "note": "Results are retained for 29 days for asynchronous retrieval."
+   },
+   {
+    "text": "Files API",
+    "answer": "Not ZDR-eligible",
+    "note": "Files are kept until deleted or until they expire."
+   },
+   {
+    "text": "Code execution tool",
+    "answer": "Not ZDR-eligible",
+    "note": "Container data is retained for up to 30 days."
+   },
+   {
+    "text": "Web search tool",
+    "answer": "ZDR-eligible",
+    "note": "Results are returned in the API response."
+   },
+   {
+    "text": "Agent Skills",
+    "answer": "Not ZDR-eligible",
+    "note": "Skill data follows the standard retention policy."
+   }
+  ],
+  "explanation": "Stateful features that store jobs, files or containers cannot be zero-retention. Using one is a choice to step outside ZDR for that data.",
+  "reference": "https://platform.claude.com/docs/en/manage-claude/api-and-data-retention",
+  "difficulty": "",
+  "options": [],
+  "correct": [],
+  "selectCount": 1,
+  "verified": true
+ },
+ {
+  "id": "MX-A4",
+  "set": "fresh",
+  "type": "matrix",
+  "domain": "Solution Design & Architecture",
+  "scenario": "",
+  "question": "Choose the pattern that best fits each requirement.",
+  "choices": [
+   "Routing",
+   "Evaluator-optimizer",
+   "Parallel sectioning",
+   "Orchestrator-workers"
+  ],
+  "rows": [
+   {
+    "text": "Inbound requests fall into four known, distinct categories that each need different handling.",
+    "answer": "Routing",
+    "note": "Classify first, then send each category to a specialised prompt or model."
+   },
+   {
+    "text": "Marketing translations must follow a precise glossary and tone guide, and first drafts keep missing terms.",
+    "answer": "Evaluator-optimizer",
+    "note": "There is a clear rubric, and a check-and-revise loop measurably helps."
+   },
+   {
+    "text": "A long report has fixed, independent sections that can be drafted at the same time to cut latency.",
+    "answer": "Parallel sectioning",
+    "note": "Fixed subtasks decided in code, run concurrently."
+   },
+   {
+    "text": "A research task whose subtasks depend on what the input turns out to contain.",
+    "answer": "Orchestrator-workers",
+    "note": "A lead model decides the split at run time and delegates it."
+   },
+   {
+    "text": "Insurance claims of three labelled types, each with its own set of checks.",
+    "answer": "Routing",
+    "note": "Known categories with labelled history make routing cheap and accurate."
+   }
+  ],
+  "explanation": "Pick by what is known at design time: categories (routing), a rubric (evaluator-optimizer), fixed independent parts (sectioning), or input-dependent subtasks (orchestrator-workers).",
+  "reference": "https://www.anthropic.com/engineering/building-effective-agents",
+  "difficulty": "",
+  "options": [],
+  "correct": [],
+  "selectCount": 1,
+  "verified": true
+ },
+ {
+  "id": "MX-A5",
+  "set": "fresh",
+  "type": "matrix",
+  "domain": "Developer Productivity & Operational Enablement",
+  "scenario": "",
+  "question": "A platform team is rolling Claude Code out to 200 developers. Choose the mechanism for each requirement.",
+  "choices": [
+   "Managed settings deny rule",
+   "Hook",
+   "CLAUDE.md",
+   "Skill"
+  ],
+  "rows": [
+   {
+    "text": "No developer may let Claude read .env files, and nobody can override it locally.",
+    "answer": "Managed settings deny rule",
+    "note": "Managed settings sit at the top of precedence, and a deny there cannot be allowed elsewhere."
+   },
+   {
+    "text": "Run the formatter automatically after every file edit.",
+    "answer": "Hook",
+    "note": "A PostToolUse hook runs deterministically every time."
+   },
+   {
+    "text": "Describe the project's coding conventions and test commands for Claude to follow.",
+    "answer": "CLAUDE.md",
+    "note": "Guidance the model weighs, shared through the repository."
+   },
+   {
+    "text": "A multi-step release procedure that is needed only a few times a month.",
+    "answer": "Skill",
+    "note": "Progressive disclosure: only the description loads until the skill is used."
+   },
+   {
+    "text": "Inspect each shell command's arguments with custom logic and block risky ones before they run.",
+    "answer": "Hook",
+    "note": "A PreToolUse hook can deny the call with custom logic before it executes."
+   }
+  ],
+  "explanation": "Enforcement goes in settings or hooks, guidance in CLAUDE.md, and occasional procedures in Skills.",
+  "reference": "https://code.claude.com/docs/en/settings",
+  "difficulty": "",
+  "options": [],
+  "correct": [],
+  "selectCount": 1,
+  "verified": true
+ },
+ {
+  "id": "MX-A6",
+  "set": "fresh",
+  "type": "matrix",
+  "domain": "Integration",
+  "scenario": "",
+  "question": "For a remote MCP server protected with OAuth, mark each statement true or false according to the MCP authorization specification.",
+  "choices": [
+   "True",
+   "False"
+  ],
+  "rows": [
+   {
+    "text": "The server must verify that each access token was issued for this server as its audience.",
+    "answer": "True",
+    "note": "Audience validation per RFC 8707 is a MUST."
+   },
+   {
+    "text": "The server may forward the client's access token to a downstream API to save a token exchange.",
+    "answer": "False",
+    "note": "Servers must not accept or transit tokens not issued for them; pass-through enables confused-deputy attacks."
+   },
+   {
+    "text": "Clients may put the access token in the URL query string if the Authorization header is inconvenient.",
+    "answer": "False",
+    "note": "Tokens must not be sent in the query string."
+   },
+   {
+    "text": "A local server using the stdio transport should take credentials from the environment rather than run the OAuth flow.",
+    "answer": "True",
+    "note": "The spec says stdio implementations should not follow the HTTP authorization flow."
+   },
+   {
+    "text": "Clients must send the resource parameter identifying the MCP server in authorization and token requests.",
+    "answer": "True",
+    "note": "Resource indicators are required in both requests."
+   }
+  ],
+  "explanation": "The spec's core protections are audience-bound tokens, no token pass-through, and tokens only in the Authorization header.",
+  "reference": "https://modelcontextprotocol.io/specification/latest/basic/authorization",
+  "difficulty": "",
+  "options": [],
+  "correct": [],
+  "selectCount": 1,
+  "verified": true
+ },
+ {
+  "id": "MX-A7",
+  "set": "fresh",
+  "type": "matrix",
+  "domain": "Governance, Safety & Risk Management",
+  "scenario": "",
+  "question": "For each use, decide whether a qualified human must review the output before it reaches or affects the person, under GDPR Article 22 or Anthropic's high-risk use requirements.",
+  "choices": [
+   "Human review required",
+   "Automation acceptable with monitoring"
+  ],
+  "rows": [
+   {
+    "text": "Declining an EU consumer's loan application.",
+    "answer": "Human review required",
+    "note": "A solely automated decision with legal or similarly significant effect needs human intervention and a way to contest."
+   },
+   {
+    "text": "Tagging inbound support tickets by product area.",
+    "answer": "Automation acceptable with monitoring",
+    "note": "Low-impact internal routing; monitor quality."
+   },
+   {
+    "text": "Giving an individual a recommendation about their legal situation.",
+    "answer": "Human review required",
+    "note": "Legal is a high-risk area: a qualified person reviews, and the person is told AI was used."
+   },
+   {
+    "text": "Summarising internal meeting notes for the attendees.",
+    "answer": "Automation acceptable with monitoring",
+    "note": "No decision about an individual."
+   },
+   {
+    "text": "Recommending whether to approve a job applicant.",
+    "answer": "Human review required",
+    "note": "Employment is a high-risk area, and the decision significantly affects the person."
+   }
+  ],
+  "explanation": "Human review attaches to decisions that significantly affect a person or fall in a high-risk domain, not to every automated step.",
+  "reference": "https://www.anthropic.com/legal/aup",
+  "difficulty": "",
+  "options": [],
+  "correct": [],
+  "selectCount": 1,
+  "verified": true
  }
 ]
