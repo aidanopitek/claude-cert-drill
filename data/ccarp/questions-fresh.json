@@ -1613,7 +1613,7 @@
    "C": "Technical detail suits engineers, not a budget decision.",
    "D": "Hiding the accuracy drop undermines trust when it surfaces later; state it and its impact."
   },
-  "reference": "https://platform.claude.com/docs/en/about-claude/models/choosing-a-model",
+  "reference": "",
   "id": 132,
   "type": "single",
   "selectCount": 1,
@@ -1652,7 +1652,7 @@
    "C": "A one-page summary drops exactly the clause-level detail the questions need.",
    "D": "Sampling temperature does not make the model read more of the input, and newer models reject non-default values."
   },
-  "reference": "https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/reduce-hallucinations",
+  "reference": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices",
   "id": 133,
   "type": "single",
   "selectCount": 1,
@@ -1689,7 +1689,7 @@
   "distractorNotes": {
    "A": "A stronger model can still be systematically wrong; agreement with humans has to be measured.",
    "B": "Wide free-form scales make grades noisy and hard to calibrate.",
-   "D": "Self-grading without a rubric or human calibration tends to rate its own output generously."
+   "D": "Self-grading without a rubric or human calibration tends to rate its own output generously; Anthropic's eval guidance suggests a different model as grader than the one that generated the output."
   },
   "reference": "https://platform.claude.com/docs/en/test-and-evaluate/develop-tests",
   "id": 134,
