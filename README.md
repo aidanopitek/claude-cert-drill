@@ -4,7 +4,7 @@ Free, unofficial study site for two Anthropic certification exams:
 
 - **Claude Certified Architect – Professional (CCAR-P)**: scenario guide by official objective, quick-recall notes,
   and 117 practice questions, including assess-each-statement items.
-- **Claude Certified Developer – Foundations (CCDV-F)**: cheat sheets and study notes, and 426 practice questions.
+- **Claude Certified Developer – Foundations (CCDV-F)**: cheat sheets and study notes, and 456 practice questions.
 
 Every question shows its answer, an explanation and a link to the relevant Anthropic documentation the moment you
 answer. Answer options are shuffled each time, and option lengths are balanced in every bank so the longest option

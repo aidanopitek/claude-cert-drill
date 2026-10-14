@@ -1,0 +1,1539 @@
+[
+ {
+  "id": "DV-101",
+  "set": "fresh",
+  "domain": "Agents and Workflows",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "medium",
+  "scenario": "Every night a job takes each new support document through the same four steps: extract fields, classify it, check it against policy, and route it to a queue.",
+  "question": "Which design fits best?",
+  "options": [
+   {
+    "key": "A",
+    "text": "An autonomous agent that picks which of the four steps to run for each document."
+   },
+   {
+    "key": "B",
+    "text": "A fixed workflow that runs the steps in code, with a model call where judgement is needed."
+   },
+   {
+    "key": "C",
+    "text": "A multi-agent system with one agent per step and a lead agent to coordinate them."
+   },
+   {
+    "key": "D",
+    "text": "One long prompt that performs all four steps at once and returns the result."
+   }
+  ],
+  "correct": [
+   "B"
+  ],
+  "explanation": "The steps are known in advance, so predefined code paths are cheaper, more predictable and easier to debug than an agent. Anthropic's guidance is to use the simplest pattern that works and reserve agents for tasks whose steps cannot be predicted.",
+  "distractorNotes": {
+   "A": "Autonomy adds cost and variance when the path never changes.",
+   "C": "Multi-agent coordination multiplies token use and suits independent, breadth-first work, not a fixed sequence.",
+   "D": "One prompt for every step is hard to test step by step and fails as a whole when one step goes wrong."
+  },
+  "reference": "https://www.anthropic.com/engineering/building-effective-agents",
+  "verified": true
+ },
+ {
+  "id": "DV-102",
+  "set": "fresh",
+  "domain": "Agents and Workflows",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "medium",
+  "scenario": "",
+  "question": "When is delegating to a subagent most useful?",
+  "options": [
+   {
+    "key": "A",
+    "text": "When the main agent needs every intermediate search result kept in its own context for later reasoning."
+   },
+   {
+    "key": "B",
+    "text": "When exploring produces lots of intermediate output and only a short summary is needed back."
+   },
+   {
+    "key": "C",
+    "text": "When two steps must edit the same file and see each other's changes as they happen."
+   },
+   {
+    "key": "D",
+    "text": "When you want the cheapest possible run, since subagents always use fewer tokens."
+   }
+  ],
+  "correct": [
+   "B"
+  ],
+  "explanation": "A subagent works in its own clean context and returns a condensed result, so verbose exploration does not fill the parent's context. That isolation is the main reason to delegate.",
+  "distractorNotes": {
+   "A": "That is the opposite of isolation; keeping everything in one context is what subagents avoid.",
+   "C": "Subagents do not share live state, so tightly coupled edits are a poor fit.",
+   "D": "Subagents add calls and tokens overall; their benefit is context isolation, not cost."
+  },
+  "reference": "https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents",
+  "verified": true
+ },
+ {
+  "id": "DV-103",
+  "set": "fresh",
+  "domain": "Agents and Workflows",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "medium",
+  "scenario": "A team wants an internal agent that reads a repository, runs shell commands and edits files, with permission prompts and lifecycle hooks, much like Claude Code.",
+  "question": "Which option gets them there with the least code?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Write a custom agent loop from scratch around the Messages API, including tools, permissions and hooks."
+   },
+   {
+    "key": "B",
+    "text": "Use the Claude Agent SDK, which supplies the loop, tools and permissions."
+   },
+   {
+    "key": "C",
+    "text": "Use the Message Batches API so the agent's steps run asynchronously at lower cost."
+   },
+   {
+    "key": "D",
+    "text": "Run several separate Claude Code sessions and copy their outputs between them by hand."
+   }
+  ],
+  "correct": [
+   "B"
+  ],
+  "explanation": "The Claude Agent SDK packages the same agent harness that powers Claude Code: the loop, built-in tools, permission handling, hooks and subagents. A hand-written loop is possible but means rebuilding all of that.",
+  "distractorNotes": {
+   "A": "A custom loop gives full control but is the most code, the opposite of the requirement.",
+   "C": "Batch requests run independently and cannot run an interactive agent loop.",
+   "D": "Manual copying is not an application and does not scale."
+  },
+  "reference": "https://code.claude.com/docs/en/agent-sdk/overview",
+  "verified": true
+ },
+ {
+  "id": "DV-104",
+  "set": "fresh",
+  "domain": "Agents and Workflows",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "medium",
+  "scenario": "A coding agent must run the unit tests after every file edit, without exception.",
+  "question": "How should they enforce it?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Tell the agent in its system prompt to always run the test suite after it edits any file, without exception."
+   },
+   {
+    "key": "B",
+    "text": "Add a hook that runs the tests after every file-edit tool call, so it happens every time."
+   },
+   {
+    "key": "C",
+    "text": "Ask the agent at the end of each task whether it ran the tests, and rerun them only if it says it did not."
+   },
+   {
+    "key": "D",
+    "text": "Raise the effort level so the agent reasons more about when tests are needed."
+   }
+  ],
+  "correct": [
+   "B"
+  ],
+  "explanation": "Hooks run code at fixed points in the agent loop, so the action happens every time regardless of what the model decides. Instructions can be forgotten or skipped; a hook cannot.",
+  "distractorNotes": {
+   "A": "An instruction is probabilistic; the requirement is that it always happens.",
+   "C": "Self-reports are unreliable and the check comes too late.",
+   "D": "More reasoning does not turn a guideline into a guarantee."
+  },
+  "reference": "https://code.claude.com/docs/en/hooks",
+  "verified": true
+ },
+ {
+  "id": "DV-105",
+  "set": "fresh",
+  "domain": "Agents and Workflows",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "medium",
+  "scenario": "A code-change tool must update an unknown number of files, and which files need changing only becomes clear after it reads the request and the repository.",
+  "question": "Which pattern fits?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Prompt chaining: a fixed sequence of calls, each one consuming the output of the one before."
+   },
+   {
+    "key": "B",
+    "text": "Parallel sectioning: independent subtasks defined in code before the input arrives, run at once."
+   },
+   {
+    "key": "C",
+    "text": "Orchestrator-workers: a lead model splits the input into subtasks and delegates."
+   },
+   {
+    "key": "D",
+    "text": "Routing: classify the request once, then send it to a single specialised prompt for that category."
+   }
+  ],
+  "correct": [
+   "C"
+  ],
+  "explanation": "Orchestrator-workers fits when the subtasks cannot be predicted in advance and depend on the input. The lead model breaks the task down at run time and combines the workers' results.",
+  "distractorNotes": {
+   "A": "Chaining needs a fixed, known sequence of steps.",
+   "B": "Sectioning assumes the subtasks are known when you write the code.",
+   "D": "Routing picks one path; it does not decompose a task into several pieces."
+  },
+  "reference": "https://www.anthropic.com/engineering/building-effective-agents",
+  "verified": true
+ },
+ {
+  "id": "DV-106",
+  "set": "fresh",
+  "domain": "Agents and Workflows",
+  "type": "multi",
+  "selectCount": 2,
+  "difficulty": "hard",
+  "scenario": "",
+  "question": "Which TWO statements about a multi-agent research system are correct? (Select TWO)",
+  "options": [
+   {
+    "key": "A",
+    "text": "Subagents explore in their own context windows and return condensed findings to the lead agent."
+   },
+   {
+    "key": "B",
+    "text": "It uses far more tokens than a single chat, so the value of the task must justify the extra cost of running it."
+   },
+   {
+    "key": "C",
+    "text": "All agents should share one context window so they can see each other's notes."
+   },
+   {
+    "key": "D",
+    "text": "It is cheaper than a single agent because each subagent runs on little context."
+   },
+   {
+    "key": "E",
+    "text": "It suits coding well because most code changes split into independent parallel parts."
+   }
+  ],
+  "correct": [
+   "A",
+   "B"
+  ],
+  "explanation": "Anthropic's research system runs subagents in parallel, each in its own context, returning distilled results. Multi-agent runs used about 15 times the tokens of a chat, so they pay off only for high-value, breadth-first tasks.",
+  "distractorNotes": {
+   "C": "Separate context windows are the point; sharing one would recreate the bloat the design avoids.",
+   "D": "Total token use goes up sharply, not down.",
+   "E": "Anthropic notes most coding tasks have fewer parallelisable parts than research."
+  },
+  "reference": "https://www.anthropic.com/engineering/multi-agent-research-system",
+  "verified": true
+ },
+ {
+  "id": "DV-107",
+  "set": "fresh",
+  "domain": "Applications and Integration",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "medium",
+  "scenario": "A chat feature calls the Messages API with only the user's latest message each time. Users complain that Claude forgets what they said one turn earlier.",
+  "question": "What is the cause?",
+  "options": [
+   {
+    "key": "A",
+    "text": "The API keeps no conversation state, so the app must resend the full message history on every call."
+   },
+   {
+    "key": "B",
+    "text": "The model's context window is too small to remember more than one previous turn."
+   },
+   {
+    "key": "C",
+    "text": "The session ID header is missing, so the API cannot find the earlier turns it stored."
+   },
+   {
+    "key": "D",
+    "text": "Prompt caching expired after five minutes and took the earlier turns with it."
+   }
+  ],
+  "correct": [
+   "A"
+  ],
+  "explanation": "The Messages API is stateless: each request must contain the system prompt and every earlier turn the model should see. The application owns the conversation history.",
+  "distractorNotes": {
+   "B": "Current context windows hold far more than one turn; nothing was sent to fill it.",
+   "C": "There is no server-side session to look up; history travels in the request.",
+   "D": "Caching only reuses a prefix you send; it never stores conversation content for you."
+  },
+  "reference": "https://platform.claude.com/docs/en/build-with-claude/working-with-messages",
+  "verified": true
+ },
+ {
+  "id": "DV-108",
+  "set": "fresh",
+  "domain": "Applications and Integration",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "medium",
+  "scenario": "A request using the web search tool comes back with stop_reason set to pause_turn.",
+  "question": "What should the application do?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Treat the turn as finished and show the partial response to the user as the final answer."
+   },
+   {
+    "key": "B",
+    "text": "Run the server tool itself on your own backend and send back a tool_result block for it."
+   },
+   {
+    "key": "C",
+    "text": "Send the assistant's content back as-is so the server-side loop continues."
+   },
+   {
+    "key": "D",
+    "text": "Retry the whole request with a higher max_tokens value."
+   }
+  ],
+  "correct": [
+   "C"
+  ],
+  "explanation": "pause_turn means a server-tool loop, such as web search, hit its iteration limit. You continue by sending the assistant content back as-is, with a cap on how many times you continue.",
+  "distractorNotes": {
+   "A": "The work is not finished; stopping here loses the rest of the answer.",
+   "B": "Server tools run on Anthropic's side; tool_result is for your client tools.",
+   "D": "pause_turn is not a max_tokens truncation, and restarting wastes the work already done."
+  },
+  "reference": "https://platform.claude.com/docs/en/build-with-claude/handling-stop-reasons",
+  "verified": true
+ },
+ {
+  "id": "DV-109",
+  "set": "fresh",
+  "domain": "Applications and Integration",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "medium",
+  "scenario": "",
+  "question": "Which streaming event carries the final stop_reason and the output token usage?",
+  "options": [
+   {
+    "key": "A",
+    "text": "message_start, which describes the message before any content is generated and carries initial usage."
+   },
+   {
+    "key": "B",
+    "text": "content_block_stop, sent when a content block ends."
+   },
+   {
+    "key": "C",
+    "text": "message_delta, sent near the end with the final stop_reason and usage."
+   },
+   {
+    "key": "D",
+    "text": "ping, sent periodically to keep the connection alive."
+   }
+  ],
+  "correct": [
+   "C"
+  ],
+  "explanation": "In a streamed response stop_reason is null in message_start; the final value arrives in the message_delta event, together with the usage counts, just before message_stop.",
+  "distractorNotes": {
+   "A": "message_start has stop_reason set to null because generation has not finished.",
+   "B": "content_block_stop marks the end of one block, not of the message.",
+   "D": "ping events carry no message data."
+  },
+  "reference": "https://platform.claude.com/docs/en/build-with-claude/streaming",
+  "verified": true
+ },
+ {
+  "id": "DV-110",
+  "set": "fresh",
+  "domain": "Applications and Integration",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "medium",
+  "scenario": "A nightly job submits 20,000 summarisation requests through the Message Batches API.",
+  "question": "How should the job match each result to its source record?",
+  "options": [
+   {
+    "key": "A",
+    "text": "By position: results come back in the same order the requests were submitted in the batch."
+   },
+   {
+    "key": "B",
+    "text": "By the custom_id set on each request, since results may come back in any order."
+   },
+   {
+    "key": "C",
+    "text": "By comparing each result's text with the input document it summarises."
+   },
+   {
+    "key": "D",
+    "text": "By timestamp, since requests are processed in the order received."
+   }
+  ],
+  "correct": [
+   "B"
+  ],
+  "explanation": "Batch requests are processed independently and results are not guaranteed to come back in order. Each request carries a custom_id you choose, and the matching result carries the same ID.",
+  "distractorNotes": {
+   "A": "Result order is not guaranteed to match submission order.",
+   "C": "Text matching is fragile and unnecessary when an ID is available.",
+   "D": "Processing order is not guaranteed either."
+  },
+  "reference": "https://platform.claude.com/docs/en/build-with-claude/batch-processing",
+  "verified": true
+ },
+ {
+  "id": "DV-111",
+  "set": "fresh",
+  "domain": "Applications and Integration",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "medium",
+  "scenario": "During a traffic spike an integration starts receiving HTTP 429 responses from the Claude API.",
+  "question": "What is the best way to handle these errors?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Retry immediately in a tight loop until the request succeeds, since 429s clear within a second or so."
+   },
+   {
+    "key": "B",
+    "text": "Honor the retry-after header, back off exponentially and cap the retries."
+   },
+   {
+    "key": "C",
+    "text": "Switch every request to the largest model, which has its own separate rate limits and quota."
+   },
+   {
+    "key": "D",
+    "text": "Treat 429 as permanent and show the user an error."
+   }
+  ],
+  "correct": [
+   "B"
+  ],
+  "explanation": "A 429 means a rate limit was hit. The documented handling is to wait as long as retry-after says, back off exponentially on repeats and bound the retries; the official SDKs already retry this way by default.",
+  "distractorNotes": {
+   "A": "Tight retries make the overload worse and burn the limit again.",
+   "C": "Changing model does not address the cause, and limits are per organisation and model tier.",
+   "D": "Most 429s are transient; failing at once gives up on requests that would succeed shortly."
+  },
+  "reference": "https://platform.claude.com/docs/en/api/errors",
+  "verified": true
+ },
+ {
+  "id": "DV-112",
+  "set": "fresh",
+  "domain": "Applications and Integration",
+  "type": "multi",
+  "selectCount": 2,
+  "difficulty": "medium",
+  "scenario": "",
+  "question": "Which TWO practices keep prompt and model changes safe in production? (Select TWO)",
+  "options": [
+   {
+    "key": "A",
+    "text": "Keep prompts in version control with the code, and pin the exact model ID in configuration."
+   },
+   {
+    "key": "B",
+    "text": "Run the eval suite on every prompt or model change before deploying it, so regressions are caught before users see them."
+   },
+   {
+    "key": "C",
+    "text": "Edit prompts directly in the production database so fixes go live with no release."
+   },
+   {
+    "key": "D",
+    "text": "Point production at the newest model alias so improvements arrive automatically."
+   },
+   {
+    "key": "E",
+    "text": "Keep each prompt only in a shared document that the product team edits."
+   }
+  ],
+  "correct": [
+   "A",
+   "B"
+  ],
+  "explanation": "Prompts and model IDs are configuration that changes behaviour, so they belong in version control with reviewable history, and every change should pass the eval suite before release. Current model IDs are pinned snapshots, which keeps behaviour stable until you choose to upgrade.",
+  "distractorNotes": {
+   "C": "Unreviewed live edits skip testing and leave no trail when quality drops.",
+   "D": "An alias that moves is an unreviewed deploy whenever a new model ships.",
+   "E": "A shared document has no tie to the code version and no test gate."
+  },
+  "reference": "https://platform.claude.com/docs/en/models/overview",
+  "verified": true
+ },
+ {
+  "id": "DV-113",
+  "set": "fresh",
+  "domain": "Applications and Integration",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "medium",
+  "scenario": "A support app lets users attach a screenshot of an error dialog and ask what it means.",
+  "question": "How should the app send the screenshot so Claude can see it?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Paste the image URL into the prompt text and ask Claude to open it."
+   },
+   {
+    "key": "B",
+    "text": "Run OCR on the screenshot first, because the API accepts text input only."
+   },
+   {
+    "key": "C",
+    "text": "Send an image content block, using base64, a URL source or a file ID, beside the text block."
+   },
+   {
+    "key": "D",
+    "text": "Put the image in the system prompt so it applies to every turn."
+   }
+  ],
+  "correct": [
+   "C"
+  ],
+  "explanation": "Images are sent as image content blocks in a message, alongside text blocks. The source can be base64 data, a URL or a Files API file ID; a URL written in the text is not fetched.",
+  "distractorNotes": {
+   "A": "A URL in plain text is just text; the model does not download it.",
+   "B": "Claude accepts images directly, and OCR would lose layout and visual detail.",
+   "D": "Images belong in message content blocks, not the system parameter."
+  },
+  "reference": "https://platform.claude.com/docs/en/build-with-claude/vision",
+  "verified": true
+ },
+ {
+  "id": "DV-114",
+  "set": "fresh",
+  "domain": "Applications and Integration",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "medium",
+  "scenario": "A team uses a coding agent to open pull requests for small refactors across its services.",
+  "question": "What should the team do with the pull requests the agent opens?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Merge them automatically once they compile, since the agent wrote and checked the code itself."
+   },
+   {
+    "key": "B",
+    "text": "Apply the same review, tests and CI checks that human-written changes must pass."
+   },
+   {
+    "key": "C",
+    "text": "Ask the agent to review its own pull request and merge it if it approves the change, to save reviewer time."
+   },
+   {
+    "key": "D",
+    "text": "Only review the pull requests that change more than a few hundred lines of code, and merge the rest on green CI."
+   }
+  ],
+  "correct": [
+   "B"
+  ],
+  "explanation": "AI-generated changes go through the normal software lifecycle: review, automated tests and CI gates. Generated code can be wrong in ways that compile cleanly, so the controls stay the same.",
+  "distractorNotes": {
+   "A": "Compiling says nothing about correctness or security.",
+   "C": "Self-review shares the author's blind spots.",
+   "D": "Small changes can still introduce serious bugs."
+  },
+  "reference": "https://code.claude.com/docs/en/best-practices",
+  "verified": true
+ },
+ {
+  "id": "DV-115",
+  "set": "fresh",
+  "domain": "Applications and Integration",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "medium",
+  "scenario": "Users of an internal assistant keep one chat open all day across unrelated tasks. Later answers get slower, cost more and mix in details from earlier tasks.",
+  "question": "What is the best fix?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Start a fresh conversation or compact the history when the user switches to an unrelated task."
+   },
+   {
+    "key": "B",
+    "text": "Raise max_tokens so the model has more room to reconsider older parts of the chat."
+   },
+   {
+    "key": "C",
+    "text": "Move to a model with a larger context window so the whole day's chat always fits."
+   },
+   {
+    "key": "D",
+    "text": "Tell the model in the system prompt to focus on the most recent messages."
+   }
+  ],
+  "correct": [
+   "A"
+  ],
+  "explanation": "Session hygiene matters: unrelated history dilutes attention and raises cost on every turn. Starting a new conversation, or compacting when continuity is needed, keeps the context focused on the current task.",
+  "distractorNotes": {
+   "B": "max_tokens limits output length; it does not change how the input is used.",
+   "C": "A bigger window delays the problem and costs more per turn.",
+   "D": "An instruction does not remove the irrelevant context that causes the drift."
+  },
+  "reference": "https://platform.claude.com/docs/en/build-with-claude/context-windows",
+  "verified": true
+ },
+ {
+  "id": "DV-116",
+  "set": "fresh",
+  "domain": "Applications and Integration",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "medium",
+  "scenario": "A team is moving an application that uses tool search from the Claude API to Amazon Bedrock and plans to call it through Bedrock's Converse API.",
+  "question": "What should they check first?",
+  "options": [
+   {
+    "key": "A",
+    "text": "That the platform supports each feature via the API they call."
+   },
+   {
+    "key": "B",
+    "text": "Nothing; every Claude feature behaves identically on every cloud platform and every API."
+   },
+   {
+    "key": "C",
+    "text": "Only the price per token, since feature support is the same everywhere."
+   },
+   {
+    "key": "D",
+    "text": "Whether the model is smarter on the cloud platform than on the Claude API, since they differ."
+   }
+  ],
+  "correct": [
+   "A"
+  ],
+  "explanation": "Feature availability can differ between the Claude API and cloud platforms, and even between a platform's APIs. For example, on Amazon Bedrock server-side tool search works only through the InvokeModel API, not the Converse API.",
+  "distractorNotes": {
+   "B": "Platforms add or lag features independently; check the docs for each one.",
+   "C": "Price matters, but a missing feature can break the integration outright.",
+   "D": "The models are the same; what differs is feature support and configuration."
+  },
+  "reference": "https://platform.claude.com/docs/en/agents-and-tools/tool-use/tool-search-tool",
+  "verified": true
+ },
+ {
+  "id": "DV-117",
+  "set": "fresh",
+  "domain": "Eval, Testing, and Debugging",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "medium",
+  "scenario": "An agent tells users that no orders exist for customers who clearly have orders. Traces show the order-lookup tool returning an empty list because it sends the customer name where the API expects a customer ID.",
+  "question": "Where is the fault most likely to be?",
+  "options": [
+   {
+    "key": "A",
+    "text": "In the model, which is ignoring the tool result and inventing an answer instead of reporting it."
+   },
+   {
+    "key": "B",
+    "text": "In the tool implementation, which sends a wrong query and returns nothing."
+   },
+   {
+    "key": "C",
+    "text": "In the system prompt, which needs firmer wording."
+   },
+   {
+    "key": "D",
+    "text": "In the API, which is dropping tool results between turns of the conversation history."
+   }
+  ],
+  "correct": [
+   "B"
+  ],
+  "explanation": "The trace shows the tool returning nothing because of a bad query parameter, so the model is answering from an empty result. Isolate the layer first: this is an integration bug in the tool, not a model or prompt problem.",
+  "distractorNotes": {
+   "A": "The model reports what the tool returned; the empty result is the cause.",
+   "C": "Prompt changes cannot fix a tool that returns no data.",
+   "D": "The trace shows the result arriving; it is simply empty."
+  },
+  "reference": "",
+  "verified": true
+ },
+ {
+  "id": "DV-118",
+  "set": "fresh",
+  "domain": "Model Selection and Optimization",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "medium",
+  "scenario": "A team moves requests that set thinking to enabled with budget_tokens 8000 from an older model to Claude Sonnet 5.5.",
+  "question": "What happens, and what should they use instead?",
+  "options": [
+   {
+    "key": "A",
+    "text": "It works as before, because every model that can think supports budget_tokens."
+   },
+   {
+    "key": "B",
+    "text": "The request fails with a 400 error; use adaptive thinking and set an effort level instead."
+   },
+   {
+    "key": "C",
+    "text": "The budget is ignored silently and the model always thinks with the maximum budget, however easy the task is."
+   },
+   {
+    "key": "D",
+    "text": "It works, but thinking tokens are free on newer models, so cost estimates change."
+   }
+  ],
+  "correct": [
+   "B"
+  ],
+  "explanation": "Manual extended thinking with budget_tokens is rejected with a 400 on Claude 4.7 and later models. The migration is to set thinking to adaptive and control depth with output_config effort.",
+  "distractorNotes": {
+   "A": "Manual mode is deprecated on 4.6 and rejected from 4.7 on.",
+   "C": "The API rejects the request rather than ignoring the parameter.",
+   "D": "Thinking tokens are still billed as output tokens."
+  },
+  "reference": "https://platform.claude.com/docs/en/build-with-claude/extended-thinking",
+  "verified": true
+ },
+ {
+  "id": "DV-119",
+  "set": "fresh",
+  "domain": "Model Selection and Optimization",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "hard",
+  "scenario": "An app sends the same 10,000-token system prompt to Claude Sonnet 5.5 hundreds of times an hour with prompt caching enabled.",
+  "question": "Roughly what does the cached 10,000-token prefix cost per request once it is cached?",
+  "options": [
+   {
+    "key": "A",
+    "text": "About $0.001: a cache hit costs $0.10 per million tokens."
+   },
+   {
+    "key": "B",
+    "text": "About $0.020, the same as reading it as normal input at $2 per million tokens."
+   },
+   {
+    "key": "C",
+    "text": "About $0.025, because each cache read is billed at 1.25 times the base input price."
+   },
+   {
+    "key": "D",
+    "text": "Nothing at all, because cached tokens are not billed after the first request."
+   }
+  ],
+  "correct": [
+   "A"
+  ],
+  "explanation": "On Claude Sonnet 5.5 base input is $2 per million tokens and a cache hit is $0.10 per million (0.05 times base), so 10,000 cached tokens cost about $0.001 per request. The 1.25 multiplier applies to 5-minute cache writes, not reads.",
+  "distractorNotes": {
+   "B": "That is the uncached price; reads are much cheaper.",
+   "C": "1.25 times base is the 5-minute cache write price.",
+   "D": "Cache reads are cheap but not free."
+  },
+  "reference": "https://platform.claude.com/docs/en/about-claude/pricing",
+  "verified": true
+ },
+ {
+  "id": "DV-120",
+  "set": "fresh",
+  "domain": "Model Selection and Optimization",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "medium",
+  "scenario": "A team plans to summarise thousands of 150,000-token contracts a day with Claude Haiku 5.5.",
+  "question": "What must the cost model account for?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Nothing special; Haiku 5.5 has one flat price per token whatever the prompt length is."
+   },
+   {
+    "key": "B",
+    "text": "That Haiku 5.5 rejects any prompt over 100,000 tokens, so the documents must be split before sending."
+   },
+   {
+    "key": "C",
+    "text": "That prompts over 100,000 tokens are billed at higher rates on Haiku 5.5."
+   },
+   {
+    "key": "D",
+    "text": "That long prompts cost nothing to read; only output is billed."
+   }
+  ],
+  "correct": [
+   "C"
+  ],
+  "explanation": "Haiku 5.5 is priced in two tiers: $0.10 and $0.50 per million input and output tokens for prompts up to 100,000 tokens, and $0.50 and $2.50 above that. A workload of 150,000-token documents pays the higher tier.",
+  "distractorNotes": {
+   "A": "Haiku 5.5 has a separate rate for prompts over 100,000 tokens.",
+   "B": "The prompts are accepted; they are priced differently.",
+   "D": "Input tokens are always billed."
+  },
+  "reference": "https://platform.claude.com/docs/en/about-claude/pricing",
+  "verified": true
+ },
+ {
+  "id": "DV-121",
+  "set": "fresh",
+  "domain": "Model Selection and Optimization",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "medium",
+  "scenario": "A team building on Claude Opus 5.5 wants test runs to be reproducible.",
+  "question": "What is the right expectation and approach?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Set temperature to 0 on Opus 5.5 so every run gives identical output."
+   },
+   {
+    "key": "B",
+    "text": "Expect some variation; pin the model ID, keep prompts fixed and judge with evals."
+   },
+   {
+    "key": "C",
+    "text": "Set top_p very low, which guarantees identical output on all models."
+   },
+   {
+    "key": "D",
+    "text": "Call the model three times and keep the most common answer, which makes output deterministic."
+   }
+  ],
+  "correct": [
+   "B"
+  ],
+  "explanation": "Model output is not fully deterministic, and Opus 4.7 and later reject non-default temperature and top_p values. Reproducibility comes from pinning the model ID, versioning prompts and measuring quality across an eval set rather than expecting identical text.",
+  "distractorNotes": {
+   "A": "Opus 5.5 rejects a non-default temperature with a 400, and temperature 0 never guaranteed identical output.",
+   "C": "Newer models reject non-default top_p as well, and it would not guarantee identical output.",
+   "D": "Voting can raise confidence but does not make generation deterministic, and it triples cost."
+  },
+  "reference": "https://platform.claude.com/docs/en/build-with-claude/working-with-messages",
+  "verified": true
+ },
+ {
+  "id": "DV-122",
+  "set": "fresh",
+  "domain": "Prompt and Context Engineering",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "medium",
+  "scenario": "A support assistant has a fixed persona and refund rules, and each request includes one customer's order details and question.",
+  "question": "Where should each part go?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Put everything in the system prompt, including the user's question."
+   },
+   {
+    "key": "B",
+    "text": "Put the persona and rules in the system prompt, and the order details and question in the user turn, so the stable prefix stays identical."
+   },
+   {
+    "key": "C",
+    "text": "Put everything in the user turn, because the system prompt is ignored when tools are used."
+   },
+   {
+    "key": "D",
+    "text": "Put the rules in the user turn of every request and leave the system prompt empty."
+   }
+  ],
+  "correct": [
+   "B"
+  ],
+  "explanation": "Durable instructions such as role, tone and policies belong in the system prompt; per-request data and the task go in the user turn. This keeps the stable part reusable and cacheable.",
+  "distractorNotes": {
+   "A": "Per-request data in the system prompt changes the prefix every call and mixes rules with data.",
+   "C": "The system prompt applies with tools; the API builds the tool prompt around it.",
+   "D": "Repeating rules in every user turn wastes tokens and weakens their role as standing instructions."
+  },
+  "reference": "https://platform.claude.com/docs/en/build-with-claude/prompt-caching",
+  "verified": true
+ },
+ {
+  "id": "DV-123",
+  "set": "fresh",
+  "domain": "Prompt and Context Engineering",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "medium",
+  "scenario": "A release-notes generator follows its formatting instructions only some of the time: headings and bullet styles vary from run to run.",
+  "question": "What is the most effective fix?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Add a few varied examples of the exact output format, wrapped in tags, to the prompt."
+   },
+   {
+    "key": "B",
+    "text": "Repeat the formatting rules in capital letters at the start and end of the prompt, with strong emphasis."
+   },
+   {
+    "key": "C",
+    "text": "Lower the temperature to zero so the model follows the format more strictly."
+   },
+   {
+    "key": "D",
+    "text": "Ask the model to apologise and reformat when the output looks inconsistent."
+   }
+  ],
+  "correct": [
+   "A"
+  ],
+  "explanation": "Few-shot examples are one of the most reliable ways to steer format and style. Anthropic recommends a few diverse, relevant examples wrapped in tags so Claude can tell them apart from instructions.",
+  "distractorNotes": {
+   "B": "Emphasis helps less than showing the format, and shouting rules can backfire.",
+   "C": "Sampling changes do not teach a format, and newer models reject non-default temperature.",
+   "D": "Fixing after the fact doubles calls and still allows inconsistent output."
+  },
+  "reference": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices",
+  "verified": true
+ },
+ {
+  "id": "DV-124",
+  "set": "fresh",
+  "domain": "Prompt and Context Engineering",
+  "type": "multi",
+  "selectCount": 2,
+  "difficulty": "medium",
+  "scenario": "A research agent's context fills with large search results after about twenty tool calls, and its answers get worse as the run goes on.",
+  "question": "Which TWO changes best control the context growth? (Select TWO)",
+  "options": [
+   {
+    "key": "A",
+    "text": "Clear or summarise old tool results that the agent no longer needs, so they stop taking up context window space."
+   },
+   {
+    "key": "B",
+    "text": "Return only the fields the agent uses."
+   },
+   {
+    "key": "C",
+    "text": "Move to a model with a larger context window so the whole run always fits."
+   },
+   {
+    "key": "D",
+    "text": "Raise max_tokens so the model has more room to work with the long context."
+   },
+   {
+    "key": "E",
+    "text": "Add a system-prompt instruction asking the agent to ignore older tool results."
+   }
+  ],
+  "correct": [
+   "A",
+   "B"
+  ],
+  "explanation": "Context rot sets in as the window fills, so manage what goes in: prune or compact stale tool results and design tools to return compact, high-signal output. Both cut tokens and keep attention on what matters.",
+  "distractorNotes": {
+   "C": "A bigger window postpones the problem and raises cost per turn.",
+   "D": "max_tokens limits output; it does nothing for input growth.",
+   "E": "The ignored results are still in the context, costing tokens and attention."
+  },
+  "reference": "https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents",
+  "verified": true
+ },
+ {
+  "id": "DV-125",
+  "set": "fresh",
+  "domain": "Prompt and Context Engineering",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "medium",
+  "scenario": "An invoice extractor uses structured outputs with a JSON schema for vendor, date and total.",
+  "question": "With structured outputs enabled, what does the application still need to check?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Nothing; structured outputs guarantee the values are correct as well as well-formed, so no validation is needed."
+   },
+   {
+    "key": "B",
+    "text": "Whether the values are right, and whether stop_reason shows a cut-off or refusal."
+   },
+   {
+    "key": "C",
+    "text": "Only that the JSON parses, because the schema rules out every other kind of failure in the response."
+   },
+   {
+    "key": "D",
+    "text": "That a code fence wraps the JSON and must be stripped first."
+   }
+  ],
+  "correct": [
+   "B"
+  ],
+  "explanation": "Structured outputs constrain the response to your schema, but they guarantee shape, not truth: values still need business validation. A max_tokens or refusal stop reason can also leave output that does not conform, so check stop_reason before trusting it.",
+  "distractorNotes": {
+   "A": "A schema-valid object can still contain wrong values.",
+   "C": "Truncation or a refusal can produce non-conforming output despite the schema.",
+   "D": "Structured outputs return the JSON directly; there is no code fence to strip."
+  },
+  "reference": "https://platform.claude.com/docs/en/build-with-claude/structured-outputs",
+  "verified": true
+ },
+ {
+  "id": "DV-126",
+  "set": "fresh",
+  "domain": "Security and Safety",
+  "type": "multi",
+  "selectCount": 2,
+  "difficulty": "medium",
+  "scenario": "A security review finds that a single-page web app calls the Claude API directly from the browser with the company's API key embedded in the JavaScript.",
+  "question": "Which TWO actions are needed? (Select TWO)",
+  "options": [
+   {
+    "key": "A",
+    "text": "Revoke and replace the exposed key, then check usage for misuse."
+   },
+   {
+    "key": "B",
+    "text": "Move the Claude calls to a backend that reads the key from a secrets store."
+   },
+   {
+    "key": "C",
+    "text": "Obfuscate the key in the JavaScript bundle so it is harder for users to find it there."
+   },
+   {
+    "key": "D",
+    "text": "Store the key in the browser's local storage instead of the bundle, where it is safer."
+   },
+   {
+    "key": "E",
+    "text": "Ask users in the terms of service not to copy the key."
+   }
+  ],
+  "correct": [
+   "A",
+   "B"
+  ],
+  "explanation": "A key shipped to browsers is public. It must be rotated, and the calls must move behind a server that holds the secret in a managed store, so the key never reaches the client again.",
+  "distractorNotes": {
+   "C": "Obfuscation only slows discovery; anyone can still extract it from the browser.",
+   "D": "Local storage is just as readable by the user and by any script on the page.",
+   "E": "Terms of service are not a security control."
+  },
+  "reference": "https://platform.claude.com/docs/en/get-api-key",
+  "verified": true
+ },
+ {
+  "id": "DV-127",
+  "set": "fresh",
+  "domain": "Security and Safety",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "medium",
+  "scenario": "A summariser receives raw call-centre transcripts in which customers sometimes read out their full card numbers.",
+  "question": "What should happen before the transcripts reach the model?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Nothing; data sent to the API is never stored, so personal data can be included freely."
+   },
+   {
+    "key": "B",
+    "text": "Redact card numbers and other personal data the summary does not need before sending anything to the API."
+   },
+   {
+    "key": "C",
+    "text": "Ask the model in the prompt not to repeat any card numbers it notices in the transcript."
+   },
+   {
+    "key": "D",
+    "text": "Encrypt the transcripts, send them encrypted and let the model decrypt them in its reply."
+   }
+  ],
+  "correct": [
+   "B"
+  ],
+  "explanation": "Data minimisation is the control: remove personal data the task does not need before it leaves your system. A prompt instruction does not stop the data being sent, logged or exposed.",
+  "distractorNotes": {
+   "A": "Retention depends on the features and arrangement you use, and minimising data is good practice regardless.",
+   "C": "The data has already been sent by the time the instruction applies.",
+   "D": "The model cannot work on ciphertext, and handing it a key defeats the encryption."
+  },
+  "reference": "https://platform.claude.com/docs/en/manage-claude/api-and-data-retention",
+  "verified": true
+ },
+ {
+  "id": "DV-128",
+  "set": "fresh",
+  "domain": "Tools and MCPs",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "medium",
+  "scenario": "An agent with search_orders and search_customers tools keeps calling the wrong one. Each tool's description is a single short phrase.",
+  "question": "What is the most effective fix?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Rename both tools to single words so the model can tell them apart faster by name alone."
+   },
+   {
+    "key": "B",
+    "text": "Write detailed descriptions of when to use each tool and when not to."
+   },
+   {
+    "key": "C",
+    "text": "Merge both tools into one generic search tool with a free-text query and no other fields, so there is only one choice."
+   },
+   {
+    "key": "D",
+    "text": "Set temperature to zero so the model always picks the same tool for the same request, which removes the wrong calls."
+   }
+  ],
+  "correct": [
+   "B"
+  ],
+  "explanation": "Tool descriptions are the main signal the model uses to choose a tool. Anthropic's guidance calls detailed descriptions the most important factor: what the tool does, when to use it and when not to, what each parameter means, aiming for at least three or four sentences.",
+  "distractorNotes": {
+   "A": "Shorter names carry less meaning, which makes selection harder, not easier.",
+   "C": "A vague catch-all tool pushes the ambiguity into the query instead of fixing it.",
+   "D": "Sampling does not fix unclear tool boundaries, and newer models reject non-default temperature."
+  },
+  "reference": "https://platform.claude.com/docs/en/agents-and-tools/tool-use/define-tools",
+  "verified": true
+ },
+ {
+  "id": "DV-129",
+  "set": "fresh",
+  "domain": "Tools and MCPs",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "medium",
+  "scenario": "After enabling tool search for an agent with 80 tools, every request fails with a 400 invalid_request_error.",
+  "question": "What is the most likely cause?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Tool search only works with the Message Batches API, not real-time requests."
+   },
+   {
+    "key": "B",
+    "text": "defer_loading was set on every tool, including the tool search tool, so nothing loads."
+   },
+   {
+    "key": "C",
+    "text": "Deferred tools must not be in the tools array; sending them causes the 400."
+   },
+   {
+    "key": "D",
+    "text": "Tool search requires the tools to be served by an MCP server rather than defined inline in the request."
+   }
+  ],
+  "correct": [
+   "B"
+  ],
+  "explanation": "At least one tool must stay non-deferred, normally the tool search tool itself; deferring everything returns a 400. Deferred tools are still sent in the tools array so the API can search and expand them.",
+  "distractorNotes": {
+   "A": "Tool search works in normal requests and is also allowed in batches.",
+   "C": "Deferred tool definitions must still be included in the request.",
+   "D": "Inline tool definitions work; MCP toolsets are one option, not a requirement."
+  },
+  "reference": "https://platform.claude.com/docs/en/agents-and-tools/tool-use/tool-search-tool",
+  "verified": true
+ },
+ {
+  "id": "DV-130",
+  "set": "fresh",
+  "domain": "Tools and MCPs",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "medium",
+  "scenario": "An MCP server must expose a read-only product catalogue that the host application attaches to conversations as reference material.",
+  "question": "Which MCP primitive fits each need best?",
+  "options": [
+   {
+    "key": "A",
+    "text": "A tool, because anything the model might read should be exposed as a callable action."
+   },
+   {
+    "key": "B",
+    "text": "A prompt, because reference data is a template that the user picks from a menu."
+   },
+   {
+    "key": "C",
+    "text": "A resource, because it is context data that the host application decides to attach to the conversation, not to call."
+   },
+   {
+    "key": "D",
+    "text": "A sampling request, because the server should ask the client's model for the data."
+   }
+  ],
+  "correct": [
+   "C"
+  ],
+  "explanation": "In MCP, tools are actions the model decides to call, resources are context data the application controls and attaches, and prompts are user-selected templates. A read-only catalogue the host attaches as context is a resource.",
+  "distractorNotes": {
+   "A": "Tools are for model-invoked actions; wrapping passive reference data as a tool adds calls for no benefit.",
+   "B": "Prompts are reusable, user-invoked message templates, not data.",
+   "D": "Sampling lets a server request completions from the client; it is not a way to publish data."
+  },
+  "reference": "https://modelcontextprotocol.io/docs/2026-07-28/learn/server-concepts",
+  "verified": true
+ },
+ {
+  "id": "MX-D1",
+  "set": "fresh",
+  "type": "matrix",
+  "domain": "Applications and Integration",
+  "scenario": "",
+  "question": "Your application receives each of these stop_reason values from the Messages API. Choose the correct handling for each.",
+  "choices": [
+   "Use the response",
+   "Run the tools and send tool_result blocks",
+   "Send the assistant content back to continue",
+   "Treat the output as truncated",
+   "Check stop_details; retry on a fallback model"
+  ],
+  "rows": [
+   {
+    "text": "end_turn",
+    "answer": "Use the response",
+    "note": "Claude finished naturally."
+   },
+   {
+    "text": "tool_use",
+    "answer": "Run the tools and send tool_result blocks",
+    "note": "Your code executes client tools and returns the results."
+   },
+   {
+    "text": "pause_turn",
+    "answer": "Send the assistant content back to continue",
+    "note": "A server-tool loop hit its iteration limit; resend the assistant content as-is."
+   },
+   {
+    "text": "max_tokens",
+    "answer": "Treat the output as truncated",
+    "note": "Raise max_tokens or continue the response."
+   },
+   {
+    "text": "model_context_window_exceeded",
+    "answer": "Treat the output as truncated",
+    "note": "The response filled the context window; the content is valid but cut off."
+   },
+   {
+    "text": "refusal",
+    "answer": "Check stop_details; retry on a fallback model",
+    "note": "Returned as HTTP 200; stop_details names the policy category."
+   }
+  ],
+  "explanation": "stop_reason drives the loop; only tool_use needs your tool results, and pause_turn comes from server tools.",
+  "reference": "https://platform.claude.com/docs/en/build-with-claude/handling-stop-reasons",
+  "difficulty": "",
+  "options": [],
+  "correct": [],
+  "selectCount": 1,
+  "verified": true
+ },
+ {
+  "id": "MX-D2",
+  "set": "fresh",
+  "type": "matrix",
+  "domain": "Applications and Integration",
+  "scenario": "",
+  "question": "Choose the API for each workload.",
+  "choices": [
+   "Message Batches API",
+   "Messages API (real time)"
+  ],
+  "rows": [
+   {
+    "text": "Summarise 10,000 documents overnight for a report read the next morning.",
+    "answer": "Message Batches API",
+    "note": "Latency-tolerant volume at 50% of the cost, within 24 hours."
+   },
+   {
+    "text": "A chat assistant inside the product that users wait on.",
+    "answer": "Messages API (real time)",
+    "note": "Someone is waiting for each answer."
+   },
+   {
+    "text": "Run a 5,000-prompt regression eval after each prompt change.",
+    "answer": "Message Batches API",
+    "note": "Evals are a standard batch workload."
+   },
+   {
+    "text": "An agent that calls your client-side tools and needs each result before its next step.",
+    "answer": "Messages API (real time)",
+    "note": "Batch requests run independently, so your tool loop cannot run inside one."
+   },
+   {
+    "text": "A healthcare customer under zero data retention needs cheaper nightly summaries.",
+    "answer": "Messages API (real time)",
+    "note": "The Batch API is not ZDR-eligible; use the Messages API with prompt caching."
+   }
+  ],
+  "explanation": "Ask first whether anyone is waiting and whether the work needs a live tool loop; then check data-retention constraints.",
+  "reference": "https://platform.claude.com/docs/en/build-with-claude/batch-processing",
+  "difficulty": "",
+  "options": [],
+  "correct": [],
+  "selectCount": 1,
+  "verified": true
+ },
+ {
+  "id": "MX-D3",
+  "set": "fresh",
+  "type": "matrix",
+  "domain": "Model Selection and Optimization",
+  "scenario": "",
+  "question": "You are migrating requests to Claude Opus 5.5. For each request setting, will it work or be rejected?",
+  "choices": [
+   "Works",
+   "Returns a 400 error"
+  ],
+  "rows": [
+   {
+    "text": "tool_choice: {\"type\": \"tool\", \"name\": \"extract\"}",
+    "answer": "Returns a 400 error",
+    "note": "Opus 5.5 rejects forced tool use; use auto with strict tools or structured outputs."
+   },
+   {
+    "text": "A prefilled assistant turn that starts the JSON with {",
+    "answer": "Returns a 400 error",
+    "note": "Prefill is rejected on Claude 4.6 and later."
+   },
+   {
+    "text": "thinking: {\"type\": \"enabled\", \"budget_tokens\": 8000}",
+    "answer": "Returns a 400 error",
+    "note": "Manual extended thinking is rejected on 4.7 and later; use adaptive thinking with effort."
+   },
+   {
+    "text": "temperature: 0.2",
+    "answer": "Returns a 400 error",
+    "note": "Opus 4.7 and later reject non-default sampling values."
+   },
+   {
+    "text": "output_config with a JSON schema format (structured outputs)",
+    "answer": "Works",
+    "note": "Structured outputs are the documented way to get a fixed JSON shape."
+   },
+   {
+    "text": "thinking: {\"type\": \"adaptive\"} with output_config effort set to high",
+    "answer": "Works",
+    "note": "Adaptive thinking with an effort level replaces budget_tokens."
+   }
+  ],
+  "explanation": "Several older controls are rejected on current models; read the migration guide before switching model IDs.",
+  "reference": "https://platform.claude.com/docs/en/agents-and-tools/tool-use/define-tools#forcing-tool-use",
+  "difficulty": "",
+  "options": [],
+  "correct": [],
+  "selectCount": 1,
+  "verified": true
+ },
+ {
+  "id": "MX-D4",
+  "set": "fresh",
+  "type": "matrix",
+  "domain": "Tools and MCPs",
+  "scenario": "",
+  "question": "Choose the best way to give Claude each capability.",
+  "choices": [
+   "Built-in tool",
+   "Custom tool",
+   "MCP server",
+   "Skill"
+  ],
+  "rows": [
+   {
+    "text": "Several Claude applications need the same internal inventory service, maintained by one team.",
+    "answer": "MCP server",
+    "note": "One reusable server, many clients."
+   },
+   {
+    "text": "A single app needs Claude to call one internal pricing function in its own codebase.",
+    "answer": "Custom tool",
+    "note": "A tool definition with a clear schema, executed by your app."
+   },
+   {
+    "text": "A documented, multi-step procedure for preparing a release, with templates.",
+    "answer": "Skill",
+    "note": "Instructions and resources that load only when needed."
+   },
+   {
+    "text": "Searching the public web for current information.",
+    "answer": "Built-in tool",
+    "note": "Web search is an Anthropic-provided server tool."
+   },
+   {
+    "text": "Editing files and running shell commands in a coding agent.",
+    "answer": "Built-in tool",
+    "note": "Bash and text-editor tools are Anthropic-defined."
+   }
+  ],
+  "explanation": "Built-ins for standard capabilities, custom tools for one app's functions, MCP for reuse across apps, Skills for instructions.",
+  "reference": "https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview",
+  "difficulty": "",
+  "options": [],
+  "correct": [],
+  "selectCount": 1,
+  "verified": true
+ },
+ {
+  "id": "MX-D5",
+  "set": "fresh",
+  "type": "matrix",
+  "domain": "Model Selection and Optimization",
+  "scenario": "",
+  "question": "Mark each statement about prompt caching true or false.",
+  "choices": [
+   "True",
+   "False"
+  ],
+  "rows": [
+   {
+    "text": "The cache prefix is built in the order tools, then system, then messages.",
+    "answer": "True",
+    "note": "Each level builds on the previous ones."
+   },
+   {
+    "text": "Changing a tool definition invalidates the cached system prompt and messages too.",
+    "answer": "True",
+    "note": "Tool changes invalidate every level after them."
+   },
+   {
+    "text": "Putting the current timestamp at the start of the system prompt does not affect cache hits.",
+    "answer": "False",
+    "note": "Any change before the breakpoint breaks the exact-prefix match."
+   },
+   {
+    "text": "The default cache lifetime is 5 minutes and is refreshed each time the cache is read.",
+    "answer": "True",
+    "note": "A 1-hour TTL is available at a higher write price."
+   },
+   {
+    "text": "A request can have at most 4 explicit cache breakpoints.",
+    "answer": "True",
+    "note": "Automatic caching uses one of the four slots."
+   },
+   {
+    "text": "Cache reads cost more than base input tokens because the cache must be looked up.",
+    "answer": "False",
+    "note": "Reads cost a fraction of base input (0.1× on most models, less on some newer ones); writes cost more."
+   }
+  ],
+  "explanation": "Static content first, volatile content after the breakpoint, and keep tool definitions stable.",
+  "reference": "https://platform.claude.com/docs/en/build-with-claude/prompt-caching",
+  "difficulty": "",
+  "options": [],
+  "correct": [],
+  "selectCount": 1,
+  "verified": true
+ },
+ {
+  "id": "MX-D6",
+  "set": "fresh",
+  "type": "matrix",
+  "domain": "Security and Safety",
+  "scenario": "",
+  "question": "In Claude Code, can a hook on each of these events prevent or block the action?",
+  "choices": [
+   "Can block",
+   "Cannot block"
+  ],
+  "rows": [
+   {
+    "text": "PreToolUse",
+    "answer": "Can block",
+    "note": "Exit code 2 or permissionDecision deny blocks the tool call."
+   },
+   {
+    "text": "PostToolUse",
+    "answer": "Cannot block",
+    "note": "The tool has already run; feedback only."
+   },
+   {
+    "text": "UserPromptSubmit",
+    "answer": "Can block",
+    "note": "The prompt never reaches Claude."
+   },
+   {
+    "text": "Stop",
+    "answer": "Can block",
+    "note": "It can keep Claude working instead of stopping."
+   },
+   {
+    "text": "SessionStart",
+    "answer": "Cannot block",
+    "note": "It can only add context."
+   },
+   {
+    "text": "Notification",
+    "answer": "Cannot block",
+    "note": "Used for side effects; exit codes are ignored."
+   }
+  ],
+  "explanation": "To stop a dangerous action, hook it before it happens with PreToolUse; PostToolUse is for reacting afterwards.",
+  "reference": "https://code.claude.com/docs/en/hooks",
+  "difficulty": "",
+  "options": [],
+  "correct": [],
+  "selectCount": 1,
+  "verified": true
+ },
+ {
+  "id": "MX-D7",
+  "set": "fresh",
+  "type": "matrix",
+  "domain": "Claude Code",
+  "scenario": "",
+  "question": "Is each Claude Code file shared with the team through the repository, or personal to one developer?",
+  "choices": [
+   "Shared with the team",
+   "Personal"
+  ],
+  "rows": [
+   {
+    "text": ".claude/settings.json",
+    "answer": "Shared with the team",
+    "note": "Shared project settings, committed to git."
+   },
+   {
+    "text": ".claude/settings.local.json",
+    "answer": "Personal",
+    "note": "Project-local settings, added to git excludes automatically."
+   },
+   {
+    "text": "~/.claude/settings.json",
+    "answer": "Personal",
+    "note": "User settings for every project on that machine."
+   },
+   {
+    "text": "CLAUDE.md at the repository root",
+    "answer": "Shared with the team",
+    "note": "Project memory committed with the code."
+   },
+   {
+    "text": ".mcp.json at the repository root",
+    "answer": "Shared with the team",
+    "note": "Project-scoped MCP servers shared through version control."
+   }
+  ],
+  "explanation": "Team standards live in committed files; personal overrides live in local or user files, which sit at different precedence levels.",
+  "reference": "https://code.claude.com/docs/en/settings",
+  "difficulty": "",
+  "options": [],
+  "correct": [],
+  "selectCount": 1,
+  "verified": true
+ }
+]

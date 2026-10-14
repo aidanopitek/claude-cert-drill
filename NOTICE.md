@@ -10,7 +10,7 @@ the projects below, used under their licences. Their licence texts are in [`LICE
 | [Breeganzo/CCDV-F-Preparation](https://github.com/Breeganzo/CCDV-F-Preparation) | MIT | CCDV-F study guide and 180 questions | Re-checked; option wording rebalanced; corrections; 2 questions removed |
 | [NiravRVaghasiya/Claude-Developer-Foundations](https://github.com/NiravRVaghasiya/Claude-Developer-Foundations) | MIT | CCDV-F topic cheat sheets, exam-traps page and 163 questions | Re-checked; option wording rebalanced; corrections; 1 question removed |
 
-Original to this project: the CCAR-P scenario guide, the 30 exam-weighted CCAR-P questions, and the
-"assess each statement" questions for both exams.
+Original to this project: the CCAR-P scenario guide, the exam-weighted "Fresh" question banks for both exams
+(including the "assess each statement" questions).
 
 This is unofficial study material. It is not produced or endorsed by Anthropic and contains no exam content.
