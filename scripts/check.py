@@ -12,7 +12,7 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 SITE = json.loads((ROOT / "site.json").read_text())
 errors, report = [], []
 ALLOWED_REF = re.compile(r"^https://(platform\.claude\.com/docs|code\.claude\.com/docs|www\.anthropic\.com/|trust\.anthropic\.com|"
-                         r"privacy\.claude\.com|modelcontextprotocol\.io|gdpr-info\.eu|eur-lex\.europa\.eu|digital-strategy\.ec\.europa\.eu)")
+                         r"privacy\.claude\.com|support\.claude\.com|claude\.com/|modelcontextprotocol\.io|gdpr-info\.eu|eur-lex\.europa\.eu|digital-strategy\.ec\.europa\.eu)")
 
 for exam in SITE["exams"]:
     d = ROOT / "data" / exam

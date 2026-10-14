@@ -193,10 +193,7 @@ footer { margin-top: 48px; font-size: 12.5px; color: var(--ink-soft); border-top
 <body>
 
 <div class="wrap">
-  <div class="certbar" role="group" aria-label="Certification">
-    <button class="cert" type="button" data-cert="ccarp" aria-pressed="false"><small>CCAR-P</small>Architect · Professional</button>
-    <button class="cert" type="button" data-cert="ccdvf" aria-pressed="false"><small>CCDV-F</small>Developer · Foundations</button>
-  </div>
+  <div class="certbar" id="certbar" role="group" aria-label="Certification"></div>
 
   <header class="top">
     <div class="eyebrow" id="h-eyebrow"></div>
@@ -292,6 +289,7 @@ function setCert(id) {
   $("#f-repo").innerHTML = DATA.repo ? `Source, corrections and question reports: <a href="https://github.com/${DATA.repo}" target="_blank" rel="noopener">github.com/${DATA.repo}</a>` : "";
   $("#tabs").innerHTML = C.tabs.map(([v, label]) => `<button class="tab" role="tab" id="tab-${v}" aria-controls="view-${v}" data-view="${v}">${esc(label)}</button>`).join("");
   $$("#tabs .tab").forEach(b => b.onclick = () => showTab(b.dataset.view));
+  fillDocs();
   initQuiz();
   const want = location.hash.slice(1);
   const tabs = C.tabs.map(t => t[0]);
@@ -306,6 +304,7 @@ function showTab(name) {
   store.set(C.key + ".tab", name);
   if (name === "docs") showDoc($("#doc-pick").value);
 }
+$("#certbar").innerHTML = Object.values(DATA.certs).map(c => `<button class="cert" type="button" data-cert="${c.id}" aria-pressed="false"><small>${esc(c.code)}</small>${esc(c.short)}</button>`).join("");
 $$(".cert").forEach(b => b.onclick = () => setCert(b.dataset.cert));
 
 /* CCAR-P scenario guide */
@@ -375,10 +374,15 @@ $("#cheat-toggle").onclick = e => {
 renderCheat();
 
 /* CCDV-F reading documents */
-const DOCS = DATA.certs.ccdvf.docs;
-$("#doc-pick").innerHTML = DOCS.map(d => `<option value="${d.id}">${esc(d.label)}</option>`).join("");
-$("#doc-pick").value = store.get("ccdvf.doc", DOCS[0].id);
-if (!$("#doc-pick").value) $("#doc-pick").value = DOCS[0].id;
+// Each exam with reading material lists its own documents in the picker.
+function fillDocs() {
+  const docs = C.docs || [];
+  $("#doc-pick").innerHTML = docs.map(d => `<option value="${d.id}">${esc(d.label)}</option>`).join("");
+  $("#doc-pick").hidden = docs.length < 2;
+  if (!docs.length) return;
+  const saved = store.get(C.key + ".doc", docs[0].id);
+  $("#doc-pick").value = docs.some(d => d.id === saved) ? saved : docs[0].id;
+}
 let mermaidLoad = null;
 function drawDiagrams(art) {
   const nodes = $$("pre.mdiag:not([data-done])", art);
@@ -392,7 +396,7 @@ function drawDiagrams(art) {
   mermaidLoad.then(m => { nodes.forEach(n => n.dataset.done = "1"); return m.run({ nodes }); }).catch(() => {});
 }
 function showDoc(id) {
-  store.set("ccdvf.doc", id);
+  store.set(C.key + ".doc", id);
   $$("#docs .doc").forEach(a => a.hidden = a.dataset.doc !== id);
   const art = $(`#docs .doc[data-doc="${id}"]`);
   filterDoc($("#doc-search").value);
@@ -613,8 +617,8 @@ document.addEventListener("keydown", e => {
   if (b && !b.disabled) b.click();
 });
 
-const startCert = ["ccarp", "ccdvf"].includes(location.hash.slice(1)) ? location.hash.slice(1) : store.get("drill.cert", "ccdvf");
-setCert(DATA.certs[startCert] ? startCert : "ccdvf");
+const startCert = DATA.certs[location.hash.slice(1)] ? location.hash.slice(1) : store.get("drill.cert", "ccdvf");
+setCert(DATA.certs[startCert] ? startCert : Object.keys(DATA.certs)[0]);
 </script>
 </body>
 </html>

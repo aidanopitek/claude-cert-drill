@@ -1,0 +1,1187 @@
+[
+ {
+  "id": "AO-101",
+  "set": "fresh",
+  "domain": "Prompting and Task Execution",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "medium",
+  "scenario": "A marketing coordinator needs an email announcing a new export feature to existing enterprise customers.",
+  "question": "Which prompt is most likely to get a usable first draft?",
+  "options": [
+   {
+    "key": "A",
+    "text": "\"Write a product update email.\""
+   },
+   {
+    "key": "B",
+    "text": "\"Write an email for existing enterprise customers about the new export feature, under 150 words, friendly but professional.\""
+   },
+   {
+    "key": "C",
+    "text": "\"You are the best copywriter in the world. Write an amazing email.\""
+   },
+   {
+    "key": "D",
+    "text": "\"Write ten different product update emails in varied tones and lengths so I can pick the best one and then edit it myself before sending.\""
+   }
+  ],
+  "correct": [
+   "B"
+  ],
+  "explanation": "Clear, specific prompts work best: say who the audience is, what the content is about, the length, the tone and what good looks like. Claude cannot guess context you have not given it.",
+  "distractorNotes": {
+   "A": "Leaves audience, content, length and tone to guesswork.",
+   "C": "Flattery adds nothing Claude can act on.",
+   "D": "Ten vague drafts are more to review, and none is aimed at the right audience."
+  },
+  "reference": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices",
+  "verified": true
+ },
+ {
+  "id": "AO-102",
+  "set": "fresh",
+  "domain": "Prompting and Task Execution",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "medium",
+  "scenario": "An analyst must turn five long departmental reports into a ten-page quarterly board pack.",
+  "question": "What is the best way to approach it in Claude?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Ask for the whole board pack in one message, then fix whatever comes back by editing it by hand."
+   },
+   {
+    "key": "B",
+    "text": "Split it up: summarise each source, draft each section, then review the pack."
+   },
+   {
+    "key": "C",
+    "text": "Ask Claude to decide on its own what the board wants to see, without giving it the sources."
+   },
+   {
+    "key": "D",
+    "text": "Write the pack yourself and use Claude only to correct the spelling once everything is finished."
+   }
+  ],
+  "correct": [
+   "B"
+  ],
+  "explanation": "Decomposing a complex request into smaller steps gives Claude focused tasks, lets you check each stage, and makes problems easier to fix than in one large output.",
+  "distractorNotes": {
+   "A": "One huge request is hard to check and hard to correct.",
+   "C": "Without the sources Claude can only invent content.",
+   "D": "That gives up most of the value Claude could add."
+  },
+  "reference": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices#chain-complex-prompts",
+  "verified": true
+ },
+ {
+  "id": "AO-103",
+  "set": "fresh",
+  "domain": "Prompting and Task Execution",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "medium",
+  "scenario": "An engineer asked Claude to explain a system outage to the sales team. The draft is full of jargon.",
+  "question": "Claude's draft is too technical for the audience. What is the best next step?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Start a brand-new chat and paste in exactly the same request, hoping the fresh start gives a plainer result this time."
+   },
+   {
+    "key": "B",
+    "text": "Tell Claude who the readers are and what was wrong, and show a short example of the tone you want."
+   },
+   {
+    "key": "C",
+    "text": "Accept the draft, because Claude's first answer is usually its best one and further edits rarely help much."
+   },
+   {
+    "key": "D",
+    "text": "Switch to a different model, because the tone problem means this one cannot write simply."
+   }
+  ],
+  "correct": [
+   "B"
+  ],
+  "explanation": "Iterating on a prompt means giving specific feedback: the audience, what to change, and an example of the target style. A rerun of the same request, or a model switch, does not supply the missing information.",
+  "distractorNotes": {
+   "A": "The same request will give a similar result.",
+   "C": "First drafts can always be refined.",
+   "D": "The model can write plainly; it was not told to."
+  },
+  "reference": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices",
+  "verified": true
+ },
+ {
+  "id": "AO-104",
+  "set": "fresh",
+  "domain": "Prompting and Task Execution",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "medium",
+  "scenario": "A team lead wants ideas for a new onboarding programme for remote hires.",
+  "question": "Which approach suits a brainstorming task best?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Ask for one final answer only, so Claude commits to the single best idea."
+   },
+   {
+    "key": "B",
+    "text": "Ask for a wide range of options with a line on the pros and cons of each, then narrow down."
+   },
+   {
+    "key": "C",
+    "text": "Ask Claude to fact-check each idea against the web before suggesting it."
+   },
+   {
+    "key": "D",
+    "text": "Provide a fixed template and require every idea to follow it word for word."
+   }
+  ],
+  "correct": [
+   "B"
+  ],
+  "explanation": "Different tasks need different prompting. Brainstorming benefits from asking for breadth first and evaluating later, whereas analysis or drafting tasks benefit from tighter constraints.",
+  "distractorNotes": {
+   "A": "Asking for one answer cuts off exploration, which is the point of brainstorming.",
+   "C": "Fact-checking matters for factual claims, not for generating ideas.",
+   "D": "Rigid templates suppress variety."
+  },
+  "reference": "",
+  "verified": true
+ },
+ {
+  "id": "AO-105",
+  "set": "fresh",
+  "domain": "Output Evaluation and Validation",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "medium",
+  "scenario": "A paralegal asks Claude to summarise a supplier contract. The summary says clause 12.4 requires 90 days' notice to terminate. She will send it to the legal team.",
+  "question": "What should she do before sending it?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Send it, because the summary names a specific clause, which shows it was read carefully and is accurate."
+   },
+   {
+    "key": "B",
+    "text": "Check the clause number and the obligation against the contract itself first."
+   },
+   {
+    "key": "C",
+    "text": "Ask Claude whether it is confident, and send the summary if it says it is sure about the clause."
+   },
+   {
+    "key": "D",
+    "text": "Reword the summary more formally so it reads like legal advice."
+   }
+  ],
+  "correct": [
+   "B"
+  ],
+  "explanation": "Specific-looking details such as clause numbers can be wrong. For anything going to a legal or compliance audience, verify the claim against the source document; Claude's self-reported confidence is not evidence.",
+  "distractorNotes": {
+   "A": "Specificity is not accuracy.",
+   "C": "Self-assessment does not verify the content.",
+   "D": "Rewording does not fix an error."
+  },
+  "reference": "https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/reduce-hallucinations",
+  "verified": true
+ },
+ {
+  "id": "AO-106",
+  "set": "fresh",
+  "domain": "Output Evaluation and Validation",
+  "type": "multi",
+  "selectCount": 2,
+  "difficulty": "medium",
+  "scenario": "A finance associate used Claude to analyse a sales spreadsheet and draft findings with recommendations.",
+  "question": "Which TWO checks matter most before the analysis goes to the leadership team? (Select TWO)",
+  "options": [
+   {
+    "key": "A",
+    "text": "Recalculate a sample of the key figures by hand against the original spreadsheet data."
+   },
+   {
+    "key": "B",
+    "text": "Check the conclusions follow from the data, with nothing missing."
+   },
+   {
+    "key": "C",
+    "text": "Ask Claude to add more charts so the analysis looks more thorough to readers."
+   },
+   {
+    "key": "D",
+    "text": "Run the same request again and keep whichever version sounds more convincing."
+   },
+   {
+    "key": "E",
+    "text": "Make the wording more confident so that leadership trusts the findings more."
+   }
+  ],
+  "correct": [
+   "A",
+   "B"
+  ],
+  "explanation": "Validating output means checking accuracy (numbers against the source) and completeness and reasoning (do the conclusions follow, is anything missing). Presentation and confidence do not make an analysis correct.",
+  "distractorNotes": {
+   "C": "More charts do not make the numbers right.",
+   "D": "Picking the more convincing version rewards persuasion, not accuracy.",
+   "E": "Overstating confidence hides uncertainty from decision-makers."
+  },
+  "reference": "https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/reduce-hallucinations",
+  "verified": true
+ },
+ {
+  "id": "AO-107",
+  "set": "fresh",
+  "domain": "Output Evaluation and Validation",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "medium",
+  "scenario": "A researcher uploads a 120-page report and asks Claude for quotes that support a policy recommendation.",
+  "question": "What is the best way to reduce the risk of quotes that are not in the report?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Have Claude extract relevant passages word for word first, then answer from them."
+   },
+   {
+    "key": "B",
+    "text": "Ask Claude to answer from memory so it does not get distracted by the long document and its many details."
+   },
+   {
+    "key": "C",
+    "text": "Tell Claude never to make mistakes and to be extremely careful when it quotes anything from the report."
+   },
+   {
+    "key": "D",
+    "text": "Ask for a longer answer so there is more room to include accurate details and supporting context."
+   }
+  ],
+  "correct": [
+   "A"
+  ],
+  "explanation": "Anthropic's guidance for long documents is to have Claude extract word-for-word quotes first and base the answer on them. It also helps to let Claude say it does not know and to ask for a source for each claim.",
+  "distractorNotes": {
+   "B": "Answering without the document invites invented details.",
+   "C": "Instructions to be careful do not ground the answer in the source.",
+   "D": "Length does not improve accuracy."
+  },
+  "reference": "https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/reduce-hallucinations",
+  "verified": true
+ },
+ {
+  "id": "AO-108",
+  "set": "fresh",
+  "domain": "Output Evaluation and Validation",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "medium",
+  "scenario": "A team is deciding where its review effort should go.",
+  "question": "Which output needs human review before it is used, rather than a quick read?",
+  "options": [
+   {
+    "key": "A",
+    "text": "A first draft of an internal team newsletter about upcoming social events and office news."
+   },
+   {
+    "key": "B",
+    "text": "A list of ten possible names for an internal project, to discuss soon."
+   },
+   {
+    "key": "C",
+    "text": "A recommendation on which job applicants to reject, sent to the hiring manager."
+   },
+   {
+    "key": "D",
+    "text": "A summary of a public blog post the user wants to read later."
+   }
+  ],
+  "correct": [
+   "C"
+  ],
+  "explanation": "Decisions that significantly affect people, such as hiring, need a qualified human to review and own them. Low-stakes internal drafts and summaries can be checked quickly by the person using them.",
+  "distractorNotes": {
+   "A": "Low stakes; the author reviews it as part of normal editing.",
+   "B": "Brainstormed names are discussed by people anyway.",
+   "D": "A personal reading aid carries little risk."
+  },
+  "reference": "",
+  "verified": true
+ },
+ {
+  "id": "AO-109",
+  "set": "fresh",
+  "domain": "Output Evaluation and Validation",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "medium",
+  "scenario": "A manager asks Claude to turn meeting notes into a one-page guide for regional teams.",
+  "question": "Which format fits best?",
+  "options": [
+   {
+    "key": "A",
+    "text": "A long reply in the chat, which they can copy."
+   },
+   {
+    "key": "B",
+    "text": "An artifact: a self-contained document opened beside the chat that can be edited and shared."
+   },
+   {
+    "key": "C",
+    "text": "A spreadsheet of key points."
+   },
+   {
+    "key": "D",
+    "text": "A bulleted summary of no more than three lines."
+   }
+  ],
+  "correct": [
+   "B"
+  ],
+  "explanation": "Artifacts are for substantial, self-contained content that will be edited, reused or put in front of other people. Inline replies suit quick answers; structured data suits data that will be analysed.",
+  "distractorNotes": {
+   "A": "Copying a chat reply loses structure and is hard to keep up to date.",
+   "C": "Tables suit data, not every document.",
+   "D": "Too short for a reusable guide."
+  },
+  "reference": "https://support.claude.com/en/articles/17153992-what-are-artifacts-and-how-do-i-use-them",
+  "verified": true
+ },
+ {
+  "id": "AO-110",
+  "set": "fresh",
+  "domain": "Output Evaluation and Validation",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "medium",
+  "scenario": "A recruiter asks Claude to rank candidate profiles. She notices candidates from some universities are consistently ranked higher, though experience is similar.",
+  "question": "What is the most likely problem, and what should she do?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Nothing is wrong: Claude has no opinions of its own, so its rankings cannot be biased at all in practice."
+   },
+   {
+    "key": "B",
+    "text": "The output may reflect bias; review the criteria, compare rankings and decide herself."
+   },
+   {
+    "key": "C",
+    "text": "Claude's context window is too small to read all the profiles fairly."
+   },
+   {
+    "key": "D",
+    "text": "Ask Claude to rank them again until the order looks more balanced to her."
+   }
+  ],
+  "correct": [
+   "B"
+  ],
+  "explanation": "Language model output can reflect biases. When output ranks or describes people, check the criteria used, look for patterns, and keep the decision with a person.",
+  "distractorNotes": {
+   "A": "Models can reproduce biases present in their training data.",
+   "C": "The pattern points to bias, not to missing context.",
+   "D": "Rerunning until it looks right is not a review and can hide the issue."
+  },
+  "reference": "",
+  "verified": true
+ },
+ {
+  "id": "AO-111",
+  "set": "fresh",
+  "domain": "Product and Model Selection",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "medium",
+  "scenario": "A strategy analyst needs a sourced overview of how five competitors have priced their products over the past year.",
+  "question": "Which feature fits best?",
+  "options": [
+   {
+    "key": "A",
+    "text": "A normal chat with web search, which runs one or two quick searches to answer."
+   },
+   {
+    "key": "B",
+    "text": "Research, which runs many linked searches and returns a cited report."
+   },
+   {
+    "key": "C",
+    "text": "Extended thinking alone, which reasons more deeply but does not look anything up online."
+   },
+   {
+    "key": "D",
+    "text": "An artifact, which formats content nicely but does not gather information from any source."
+   }
+  ],
+  "correct": [
+   "B"
+  ],
+  "explanation": "Research is for in-depth questions that need many sources: it runs multiple searches over a few minutes and answers with citations. Web search suits simple facts; extended thinking suits hard reasoning without new information.",
+  "distractorNotes": {
+   "A": "One or two searches will not cover a market across many sources.",
+   "C": "Thinking does not fetch current information.",
+   "D": "Artifacts present content; they do not research it."
+  },
+  "reference": "https://support.claude.com/en/articles/11095361-when-should-i-use-web-search-extended-thinking-and-research",
+  "verified": true
+ },
+ {
+  "id": "AO-112",
+  "set": "fresh",
+  "domain": "Product and Model Selection",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "medium",
+  "scenario": "A support team tags hundreds of short tickets a day, and occasionally needs a careful written reply to a complex complaint.",
+  "question": "Which model choice fits?",
+  "options": [
+   {
+    "key": "A",
+    "text": "The most capable model for every message, because quality matters most."
+   },
+   {
+    "key": "B",
+    "text": "A fast, lower-cost model for the routine tags, with a capable model for the hard cases."
+   },
+   {
+    "key": "C",
+    "text": "Whichever model is listed first in the model picker, to keep things simple."
+   },
+   {
+    "key": "D",
+    "text": "A different model each day, so the team can see which one it likes best."
+   }
+  ],
+  "correct": [
+   "B"
+  ],
+  "explanation": "Match the model to the task: fast, low-cost models such as Haiku for simple high-volume work, and more capable models for complex reasoning. Using the top model for everything wastes cost and speed.",
+  "distractorNotes": {
+   "A": "Overpays in cost and time for simple work.",
+   "C": "Ignores the task requirements.",
+   "D": "Inconsistent and not tied to the task."
+  },
+  "reference": "",
+  "verified": true
+ },
+ {
+  "id": "AO-113",
+  "set": "fresh",
+  "domain": "Product and Model Selection",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "medium",
+  "scenario": "A product manager has used one chat all week for several unrelated topics. Replies are slower and mix up details from different topics.",
+  "question": "What should he do?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Keep going in the same chat; Claude will eventually get back on track by itself once enough time passes."
+   },
+   {
+    "key": "B",
+    "text": "Start a new chat with a short summary of the decisions so far, or move the work into a Project."
+   },
+   {
+    "key": "C",
+    "text": "Switch to the smallest model so the long chat costs less for the rest of the day and replies come back faster."
+   },
+   {
+    "key": "D",
+    "text": "Paste the entire previous conversation into a new chat so nothing at all is lost."
+   }
+  ],
+  "correct": [
+   "B"
+  ],
+  "explanation": "Long chats use more of the usage limit and can drift. Starting fresh with a concise summary, or moving recurring work into a Project with its own knowledge and instructions, keeps context focused.",
+  "distractorNotes": {
+   "A": "Long, drifting chats get slower and use more of the limit.",
+   "C": "A smaller model does not fix drifting context.",
+   "D": "Pasting everything carries the same bloat into the new chat."
+  },
+  "reference": "https://support.claude.com/en/articles/11647753-how-do-usage-and-length-limits-work",
+  "verified": true
+ },
+ {
+  "id": "AO-114",
+  "set": "fresh",
+  "domain": "Product and Model Selection",
+  "type": "multi",
+  "selectCount": 2,
+  "difficulty": "medium",
+  "scenario": "",
+  "question": "Which TWO are true about switching models and effort in the Claude apps? (Select TWO)",
+  "options": [
+   {
+    "key": "A",
+    "text": "You can change the model mid-chat, and it applies from the next response."
+   },
+   {
+    "key": "B",
+    "text": "Effort and thinking are separate controls; raise them for hard analysis or planning, not everyday chat."
+   },
+   {
+    "key": "C",
+    "text": "Changing the model deletes the conversation so far and starts a fresh chat with no history."
+   },
+   {
+    "key": "D",
+    "text": "Higher effort costs nothing extra and makes every reply faster."
+   },
+   {
+    "key": "E",
+    "text": "Every model must run at maximum effort to be correct."
+   }
+  ],
+  "correct": [
+   "A",
+   "B"
+  ],
+  "explanation": "In the apps you can switch models mid-chat, and the change applies to the next reply. Effort and thinking are separate settings: defaults suit everyday tasks, and you raise them for maths, hard coding, planning or detailed analysis.",
+  "distractorNotes": {
+   "C": "The conversation stays; only the next reply uses the new model.",
+   "D": "More effort means more work per reply, which takes longer.",
+   "E": "Defaults suit everyday tasks; maximum effort is for the hardest problems."
+  },
+  "reference": "https://support.claude.com/en/articles/8664678-change-the-model-effort-and-thinking-settings",
+  "verified": true
+ },
+ {
+  "id": "AO-115",
+  "set": "fresh",
+  "domain": "Workflow Integration and Solution Design",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "medium",
+  "scenario": "Analysts spend two hours a day writing summaries of industry reports for clients, then review them with a senior colleague.",
+  "question": "Where can Claude add the most value in this workflow?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Replacing the analysts' final decision with Claude's recommendation, so each client gets a single consistent view."
+   },
+   {
+    "key": "B",
+    "text": "Drafting the first summary of each report so analysts can review and edit it."
+   },
+   {
+    "key": "C",
+    "text": "Sending the summaries to clients without anyone reading them."
+   },
+   {
+    "key": "D",
+    "text": "Nowhere; summarising reports cannot be improved by an AI assistant."
+   }
+  ],
+  "correct": [
+   "B"
+  ],
+  "explanation": "A good use of Claude augments the existing workflow: it takes the first-draft work, and people keep review and judgement. Removing human review from client-facing output adds risk.",
+  "distractorNotes": {
+   "A": "Final judgement on client advice stays with the analyst.",
+   "C": "Client-facing output needs review.",
+   "D": "First-draft summarisation is a strong fit for Claude."
+  },
+  "reference": "",
+  "verified": true
+ },
+ {
+  "id": "AO-116",
+  "set": "fresh",
+  "domain": "Workflow Integration and Solution Design",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "medium",
+  "scenario": "An operations lead must choose between three ticketing tools and has their feature lists and the team's requirements.",
+  "question": "How should he use Claude for this planning task?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Ask Claude to pick a vendor for him without any information about the team's needs."
+   },
+   {
+    "key": "B",
+    "text": "Give Claude the requirements and vendor material, ask for a comparison, then check it and decide."
+   },
+   {
+    "key": "C",
+    "text": "Avoid using Claude at all, since vendor selection is a decision for people only."
+   },
+   {
+    "key": "D",
+    "text": "Ask Claude which vendor is the most popular overall and simply choose that one."
+   }
+  ],
+  "correct": [
+   "B"
+  ],
+  "explanation": "Claude is effective at analysing requirements, comparing options and structuring a decision when it is given the relevant material. The person still checks the analysis and owns the decision.",
+  "distractorNotes": {
+   "A": "Without the requirements the recommendation is a guess.",
+   "C": "Claude can support the analysis while people decide.",
+   "D": "Popularity is not the same as fit to the team's needs."
+  },
+  "reference": "",
+  "verified": true
+ },
+ {
+  "id": "AO-117",
+  "set": "fresh",
+  "domain": "Workflow Integration and Solution Design",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "medium",
+  "scenario": "A support manager is proposing a Claude-assisted reply process for customer emails.",
+  "question": "How should she explain Claude's role to the leadership team?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Promise that Claude will answer every customer question correctly from launch day onwards, with no exceptions."
+   },
+   {
+    "key": "B",
+    "text": "Explain what it does well, where it can be wrong, and how answers will be checked."
+   },
+   {
+    "key": "C",
+    "text": "Avoid mentioning limitations so leadership approves the project quickly and without long debate."
+   },
+   {
+    "key": "D",
+    "text": "Say Claude will fully replace the support team within three months of launch, cutting costs."
+   }
+  ],
+  "correct": [
+   "B"
+  ],
+  "explanation": "Communicating value and limitations honestly builds the right expectations: describe the benefits, the known failure modes, and the review process that catches errors.",
+  "distractorNotes": {
+   "A": "No AI system is correct every time; overpromising damages trust.",
+   "C": "Hiding limitations sets the project up to fail later.",
+   "D": "Overstated and not supported by a pilot."
+  },
+  "reference": "",
+  "verified": true
+ },
+ {
+  "id": "AO-118",
+  "set": "fresh",
+  "domain": "Workflow Integration and Solution Design",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "medium",
+  "scenario": "A content team of eight wants Claude to follow the same style guide and product glossary in all its writing.",
+  "question": "What is the best way to set this up for the whole team?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Ask each person to paste the style guide into every new chat they start."
+   },
+   {
+    "key": "B",
+    "text": "Create a shared Project with the style guide as knowledge plus usage instructions."
+   },
+   {
+    "key": "C",
+    "text": "Email the style guide to Claude's support team and ask them to load it for everyone on the team."
+   },
+   {
+    "key": "D",
+    "text": "Rely on Claude's memory to pick up the house style over time from each person's own chats."
+   }
+  ],
+  "correct": [
+   "B"
+  ],
+  "explanation": "A Project holds shared knowledge and instructions, and on Team and Enterprise plans it can be shared with colleagues, so everyone works from the same material without pasting it each time.",
+  "distractorNotes": {
+   "A": "Repetitive and inconsistent across people.",
+   "C": "There is no such service; teams configure their own Projects.",
+   "D": "Memory is per person and not a way to enforce a shared standard."
+  },
+  "reference": "https://support.claude.com/en/articles/9517075-what-are-projects",
+  "verified": true
+ },
+ {
+  "id": "AO-119",
+  "set": "fresh",
+  "domain": "Workflow Integration and Solution Design",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "medium",
+  "scenario": "An executive assistant spends hours each week replying to meeting requests and finding free slots.",
+  "question": "Which approach fits this workflow best?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Connect Gmail and Calendar so Claude drafts replies and proposes times, and approve each action."
+   },
+   {
+    "key": "B",
+    "text": "Give Claude full permission to send and schedule anything automatically, with no approvals at all and no review."
+   },
+   {
+    "key": "C",
+    "text": "Copy each email into a chat by hand and copy Claude's reply back into Gmail every time."
+   },
+   {
+    "key": "D",
+    "text": "Avoid connectors entirely, because Claude cannot read email or calendars in any plan."
+   }
+  ],
+  "correct": [
+   "A"
+  ],
+  "explanation": "Connectors let Claude read your email and calendar and, with your approval, draft, send or schedule. By default Claude asks before each action, which keeps a person in control of outgoing messages.",
+  "distractorNotes": {
+   "B": "Removing approvals for outgoing actions removes the human check.",
+   "C": "Works, but wastes the time connectors save.",
+   "D": "Gmail and Calendar connectors exist."
+  },
+  "reference": "https://support.claude.com/en/articles/10166901-use-google-workspace-connectors",
+  "verified": true
+ },
+ {
+  "id": "AO-120",
+  "set": "fresh",
+  "domain": "Configuration and Knowledge Management",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "medium",
+  "scenario": "A Project's answers about the travel policy are sometimes based on last year's rules. Someone uploaded the new policy last month.",
+  "question": "What is the most likely cause?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Claude cannot read PDF files that are uploaded to a Project's knowledge, only plain text."
+   },
+   {
+    "key": "B",
+    "text": "Both policy versions are in the knowledge, so Claude sometimes uses the old one."
+   },
+   {
+    "key": "C",
+    "text": "Project instructions override knowledge, so Claude ignores the uploaded files in its answers."
+   },
+   {
+    "key": "D",
+    "text": "The Project has too few files for Claude to find the right answer reliably every time it is asked."
+   }
+  ],
+  "correct": [
+   "B"
+  ],
+  "explanation": "Project knowledge is what Claude draws on. If outdated versions stay alongside current ones, answers can mix them. Replace or remove superseded files when policies change.",
+  "distractorNotes": {
+   "A": "PDFs can be added to project knowledge.",
+   "C": "Instructions and knowledge work together; instructions do not hide files.",
+   "D": "The number of files is not the issue; the conflicting versions are."
+  },
+  "reference": "",
+  "verified": true
+ },
+ {
+  "id": "AO-121",
+  "set": "fresh",
+  "domain": "Configuration and Knowledge Management",
+  "type": "multi",
+  "selectCount": 2,
+  "difficulty": "medium",
+  "scenario": "An HR team is setting up a Project to answer employee questions about the handbook.",
+  "question": "Which TWO belong in the Project instructions rather than the knowledge files? (Select TWO)",
+  "options": [
+   {
+    "key": "A",
+    "text": "\"Answer as an HR adviser in a friendly, plain-English tone, and keep replies short.\""
+   },
+   {
+    "key": "B",
+    "text": "\"If the handbook is silent, say so and point to HR.\""
+   },
+   {
+    "key": "C",
+    "text": "The full 80-page employee handbook as a PDF file, which employees can search and quote from directly."
+   },
+   {
+    "key": "D",
+    "text": "The current list of public holidays as a spreadsheet, updated yearly."
+   },
+   {
+    "key": "E",
+    "text": "Last year's benefits brochure, kept in case of questions from staff."
+   }
+  ],
+  "correct": [
+   "A",
+   "B"
+  ],
+  "explanation": "Instructions shape how Claude responds: role, tone and what to do in edge cases. Knowledge is the reference material it draws on, such as handbooks and lists. Outdated documents should not be kept as knowledge at all.",
+  "distractorNotes": {
+   "C": "Reference material belongs in knowledge.",
+   "D": "A data file is knowledge, not an instruction.",
+   "E": "Outdated material risks wrong answers; remove it."
+  },
+  "reference": "https://support.claude.com/en/articles/9517075-what-are-projects",
+  "verified": true
+ },
+ {
+  "id": "AO-122",
+  "set": "fresh",
+  "domain": "Configuration and Knowledge Management",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "medium",
+  "scenario": "A Team-plan organisation wants staff to use Claude with their Google Drive files.",
+  "question": "Who can make the Google Drive connector available to the team?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Any member, who can turn it on for the whole organisation from their own settings."
+   },
+   {
+    "key": "B",
+    "text": "An Owner or Primary Owner enables it for the organisation; then each member connects their own account."
+   },
+   {
+    "key": "C",
+    "text": "Only Anthropic support, after the organisation sends a written request to enable it."
+   },
+   {
+    "key": "D",
+    "text": "Nobody, because connectors are available only on individual plans, not on Team."
+   }
+  ],
+  "correct": [
+   "B"
+  ],
+  "explanation": "On Team and Enterprise plans, an Owner or Primary Owner enables connectors for the organisation, and each person then authenticates with their own account. Claude acts with that person's permissions.",
+  "distractorNotes": {
+   "A": "Members connect their own account, but organisation-wide enabling is an owner task.",
+   "C": "Owners manage this in the organisation settings.",
+   "D": "Connectors are available on Team and Enterprise."
+  },
+  "reference": "https://support.claude.com/en/articles/11176164-use-connectors-to-extend-claude-s-capabilities",
+  "verified": true
+ },
+ {
+  "id": "AO-123",
+  "set": "fresh",
+  "domain": "Configuration and Knowledge Management",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "medium",
+  "scenario": "A consultant notices Claude keeps using an outdated detail about her role that it remembered from an old chat.",
+  "question": "What should she do so the memory no longer influences her chats?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Delete the old chat it came from, which removes the memory too."
+   },
+   {
+    "key": "B",
+    "text": "Edit or delete the memory in the memory settings, or ask Claude to forget it."
+   },
+   {
+    "key": "C",
+    "text": "Switch to a different model, because memories belong to each model separately and are not shared."
+   },
+   {
+    "key": "D",
+    "text": "Nothing can be done; memories cannot be changed once Claude has saved them, only left alone."
+   }
+  ],
+  "correct": [
+   "B"
+  ],
+  "explanation": "Memories can be viewed, edited and deleted in the memory settings, and you can ask Claude in chat to update them. Deleting a conversation does not remove memories already created from it.",
+  "distractorNotes": {
+   "A": "Deleting the chat leaves memories created from it in place.",
+   "C": "Memory is tied to the account, not to the model.",
+   "D": "Memories can be edited, paused or reset."
+  },
+  "reference": "https://support.claude.com/en/articles/11817273-use-claude-s-chat-search-and-memory-to-build-on-previous-context",
+  "verified": true
+ },
+ {
+  "id": "AO-124",
+  "set": "fresh",
+  "domain": "Governance, Risk, and Responsible Use",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "medium",
+  "scenario": "An analyst wants Claude to find trends in a spreadsheet of customer complaints that includes names, phone numbers and account numbers. Company policy restricts sharing personal data with external tools.",
+  "question": "What is the most appropriate action?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Upload the file as it is; the analysis is for internal use only."
+   },
+   {
+    "key": "B",
+    "text": "Remove or anonymise the identifiers before uploading, as the policy requires."
+   },
+   {
+    "key": "C",
+    "text": "Upload it and ask Claude in the chat not to keep any personal data."
+   },
+   {
+    "key": "D",
+    "text": "Give up on the analysis, since data with personal information can never be used with Claude at all."
+   }
+  ],
+  "correct": [
+   "B"
+  ],
+  "explanation": "Data-sensitivity rules are applied before data leaves your hands: anonymise or redact regulated identifiers so the analysis can go ahead within policy. An instruction to the model is not a control.",
+  "distractorNotes": {
+   "A": "Internal use does not override data policy.",
+   "C": "The data has already been shared by then.",
+   "D": "Anonymising lets the work proceed safely."
+  },
+  "reference": "",
+  "verified": true
+ },
+ {
+  "id": "AO-125",
+  "set": "fresh",
+  "domain": "Governance, Risk, and Responsible Use",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "medium",
+  "scenario": "A team lead on an Enterprise plan is asked by staff whether their chats are used to train Claude.",
+  "question": "Which statement about training on chats is correct?",
+  "options": [
+   {
+    "key": "A",
+    "text": "All Claude chats are always used to train models, whatever the plan or settings may be."
+   },
+   {
+    "key": "B",
+    "text": "On Team and Enterprise plans, chats are not used for training by default."
+   },
+   {
+    "key": "C",
+    "text": "Chats are never stored at all, so there is nothing that could ever be used for training."
+   },
+   {
+    "key": "D",
+    "text": "Only incognito chats are used for training, because they are anonymous and carry no personal data."
+   }
+  ],
+  "correct": [
+   "B"
+  ],
+  "explanation": "On commercial plans (Team, Enterprise and the API) inputs and outputs are not used for training by default; the exception is feedback such as thumbs up or down, or another explicit opt-in. On consumer plans it depends on the model-improvement setting.",
+  "distractorNotes": {
+   "A": "It depends on the plan and settings.",
+   "C": "Chats are stored according to retention settings.",
+   "D": "Training depends on the plan and settings, not on whether a chat is anonymous."
+  },
+  "reference": "https://privacy.claude.com/en/articles/7996868-is-my-data-used-for-model-training",
+  "verified": true
+ },
+ {
+  "id": "AO-126",
+  "set": "fresh",
+  "domain": "Governance, Risk, and Responsible Use",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "medium",
+  "scenario": "A clinic is reviewing how staff use Claude.",
+  "question": "Which use is inappropriate without additional safeguards?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Drafting an internal FAQ about the new expense tool for staff to review before release."
+   },
+   {
+    "key": "B",
+    "text": "Summarising a public industry report for a team meeting next week, for the team to read."
+   },
+   {
+    "key": "C",
+    "text": "Sending Claude's medical advice to patients with no clinician review."
+   },
+   {
+    "key": "D",
+    "text": "Brainstorming names for an internal hackathon next month."
+   }
+  ],
+  "correct": [
+   "C"
+  ],
+  "explanation": "Advice in high-risk areas such as medicine, law or finance needs qualified human review before it reaches the person affected, and people should know AI was involved. The other uses are low-risk internal tasks.",
+  "distractorNotes": {
+   "A": "Internal and reviewed before use.",
+   "B": "Low risk and checked by the reader.",
+   "D": "Low stakes."
+  },
+  "reference": "",
+  "verified": true
+ },
+ {
+  "id": "AO-127",
+  "set": "fresh",
+  "domain": "Governance, Risk, and Responsible Use",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "medium",
+  "scenario": "An employee finds a connector for an unapproved third-party tool that would let Claude read the team's project data.",
+  "question": "What should he do first?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Use the connector anyway, since it would save the team a lot of time."
+   },
+   {
+    "key": "B",
+    "text": "Check the organisation's AI policy and ask the admin whether the connector is approved, before connecting anything to the workspace."
+   },
+   {
+    "key": "C",
+    "text": "Set it up on his personal account so it does not affect the company workspace."
+   },
+   {
+    "key": "D",
+    "text": "Ask Claude whether connecting the tool would be allowed."
+   }
+  ],
+  "correct": [
+   "B"
+  ],
+  "explanation": "Following organisational AI policy means using approved tools and data flows. Connector access on Team and Enterprise is controlled by owners, and the policy decides which systems may be connected.",
+  "distractorNotes": {
+   "A": "Convenience does not override policy.",
+   "C": "Moving company data to a personal account can breach policy.",
+   "D": "Claude cannot know or approve your organisation's internal policy."
+  },
+  "reference": "https://support.claude.com/en/articles/11176164-use-connectors-to-extend-claude-s-capabilities",
+  "verified": true
+ },
+ {
+  "id": "AO-128",
+  "set": "fresh",
+  "domain": "Troubleshooting and Optimization",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "medium",
+  "scenario": "Claude's weekly status tables come out with different columns each time.",
+  "question": "What is the most likely fix?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Switch to a different model, because this one cannot produce tables reliably at all."
+   },
+   {
+    "key": "B",
+    "text": "Give an example of the exact format and say which columns are required."
+   },
+   {
+    "key": "C",
+    "text": "Ask the same question again and again until the format happens to come out right."
+   },
+   {
+    "key": "D",
+    "text": "Lower expectations and fix every table by hand after each response arrives each week."
+   }
+  ],
+  "correct": [
+   "B"
+  ],
+  "explanation": "Inconsistent output usually comes from an underspecified prompt. Showing an example of the format and stating the required columns is the most reliable way to get a consistent result.",
+  "distractorNotes": {
+   "A": "The model can produce tables; it needs a clearer spec.",
+   "C": "Repeating an unclear request gives inconsistent results.",
+   "D": "Fixing by hand forever wastes the benefit."
+  },
+  "reference": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices#use-examples-effectively",
+  "verified": true
+ },
+ {
+  "id": "AO-129",
+  "set": "fresh",
+  "domain": "Troubleshooting and Optimization",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "medium",
+  "scenario": "Claude's product descriptions contain wrong specifications. The prompt gives only product names.",
+  "question": "What is the best way to improve the result?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Give Claude the actual product data, or connect the catalogue, and ask it to use only that data, citing the source for each specification."
+   },
+   {
+    "key": "B",
+    "text": "Tell Claude to be more accurate and not to make anything up in future."
+   },
+   {
+    "key": "C",
+    "text": "Use a longer prompt with more adjectives."
+   },
+   {
+    "key": "D",
+    "text": "Switch off thinking so Claude answers more directly."
+   }
+  ],
+  "correct": [
+   "A"
+  ],
+  "explanation": "Wrong product details usually mean Claude lacked the source. Providing the data, through upload, a Project or a connector, and asking it to rely on that material grounds the answer.",
+  "distractorNotes": {
+   "B": "An instruction does not provide the missing facts.",
+   "C": "Adjectives are not product data.",
+   "D": "Thinking settings do not supply missing information."
+  },
+  "reference": "https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/reduce-hallucinations",
+  "verified": true
+ },
+ {
+  "id": "AO-130",
+  "set": "fresh",
+  "domain": "Troubleshooting and Optimization",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "medium",
+  "scenario": "A user keeps hitting her usage limit by midday. She works in one very long chat with many uploaded files and several connectors enabled.",
+  "question": "What should she change first?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Nothing; long chats always use the same amount of the usage limit as short ones."
+   },
+   {
+    "key": "B",
+    "text": "Start new chats per task, remove unneeded files and connectors, use a Project for recurring work."
+   },
+   {
+    "key": "C",
+    "text": "Upgrade to the highest effort level on every message, so each reply gets more done and fewer replies are needed."
+   },
+   {
+    "key": "D",
+    "text": "Paste every earlier chat into each new one so Claude always has full context."
+   }
+  ],
+  "correct": [
+   "B"
+  ],
+  "explanation": "Long chats and unused files or connectors consume more of the usage limit. Starting fresh for new tasks, trimming what is attached, and using Projects for recurring context use the limit more efficiently.",
+  "distractorNotes": {
+   "A": "Longer chats use more of the limit.",
+   "C": "Higher effort uses more, not less.",
+   "D": "Carrying all earlier context makes every message heavier."
+  },
+  "reference": "https://support.claude.com/en/articles/11647753-how-do-usage-and-length-limits-work",
+  "verified": true
+ }
+]

@@ -1,0 +1,3 @@
+[
+ {"id": "ao-cheat", "label": "CCAO-F cheat sheet", "src": "https://support.claude.com/", "files": ["cheatsheet.md"], "split": "h2", "base": "https://support.claude.com/"}
+]

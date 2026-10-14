@@ -1,0 +1,2802 @@
+[
+ {
+  "id": "AT-p-1",
+  "set": "amey",
+  "domain": "Output Evaluation and Validation",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "",
+  "scenario": "",
+  "question": "Claude summarizes a vendor contract for you and states that the termination clause requires 60 days' notice, citing section 14.2. You are about to send the summary to your legal team. What should you do first?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Verify the 60-day period in section 14.2"
+   },
+   {
+    "key": "B",
+    "text": "Send it as is, since Claude cited a specific section of the contract"
+   },
+   {
+    "key": "C",
+    "text": "Ask Claude how confident it is and send if the confidence is high"
+   },
+   {
+    "key": "D",
+    "text": "Rephrase the summary in more formal language, then send"
+   }
+  ],
+  "correct": [
+   "A"
+  ],
+  "explanation": "Specific-looking citations can be fabricated, and material bound for legal review requires verification against the source document. A specific citation is not evidence of accuracy (B), self-reported confidence is not a reliability signal (C), and rewording does nothing about correctness (D).",
+  "distractorNotes": {},
+  "reference": "https://support.claude.com/en/articles/8525154-claude-is-providing-incorrect-or-misleading-responses-what-s-going-on",
+  "verified": true
+ },
+ {
+  "id": "AT-p-2",
+  "set": "amey",
+  "domain": "Output Evaluation and Validation",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "",
+  "scenario": "",
+  "question": "You ask Claude to draft a competitive analysis, and the output presents market share figures for three competitors without sources. The figures look plausible. What is the appropriate handling?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Include the figures as drafted, since plausible numbers are sufficient for an internal document that nobody outside the team will see"
+   },
+   {
+    "key": "B",
+    "text": "Verify each figure against a market research source and keep only what checks out"
+   },
+   {
+    "key": "C",
+    "text": "Delete the figures and note that no market data was available"
+   },
+   {
+    "key": "D",
+    "text": "Ask Claude to regenerate until the numbers stabilize across runs"
+   }
+  ],
+  "correct": [
+   "B"
+  ],
+  "explanation": "Unsourced quantitative claims are a classic hallucination surface; the professional move is verification against an authoritative source, keeping what survives. Plausibility is not accuracy (A), deleting everything discards genuinely verifiable material (C), and consistency across regenerations does not establish truth (D).",
+  "distractorNotes": {},
+  "reference": "https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/reduce-hallucinations",
+  "verified": true
+ },
+ {
+  "id": "AT-p-3",
+  "set": "amey",
+  "domain": "Prompting and Task Execution",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "",
+  "scenario": "",
+  "question": "You need Claude to produce a quarterly report from meeting notes, a spreadsheet summary, and last quarter's report. The first attempt misses the required structure and tone. What is the most effective next step?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Retry the identical prompt, since outputs vary between runs"
+   },
+   {
+    "key": "B",
+    "text": "Switch to the most capable model and resend the same prompt"
+   },
+   {
+    "key": "C",
+    "text": "Rewrite the prompt to state the role, the required sections in order, the tone, and attach last quarter's report as a format example"
+   },
+   {
+    "key": "D",
+    "text": "Break the work into forty single-sentence prompts"
+   }
+  ],
+  "correct": [
+   "C"
+  ],
+  "explanation": "Structure, explicit constraints, and an example of the target format are the most effective fixes for a formatting and tone miss. Re-rolling (A) leaves the deficiency in place, a larger model does not learn unstated requirements (B), and over-fragmentation destroys coherence (D).",
+  "distractorNotes": {},
+  "reference": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices",
+  "verified": true
+ },
+ {
+  "id": "AT-p-4",
+  "set": "amey",
+  "domain": "Prompting and Task Execution",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "",
+  "scenario": "",
+  "question": "A colleague's prompt asks Claude to \"analyze our customer feedback and fix the problems.\" The output is generic. Which revision best applies task decomposition?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Add \"be specific and detailed\" to the prompt so the model gives thorough, concrete findings and fixes"
+   },
+   {
+    "key": "B",
+    "text": "Ask the same question three times and merge the answers into one combined, more complete response"
+   },
+   {
+    "key": "C",
+    "text": "Paste more feedback into the same prompt"
+   },
+   {
+    "key": "D",
+    "text": "List the complaint themes with counts, rank the top three, then propose an action each"
+   }
+  ],
+  "correct": [
+   "D"
+  ],
+  "explanation": "Decomposition turns a vague compound request into a sequence of verifiable steps, each with a concrete output. Vague intensifiers (A) do not add structure, repetition (B) multiplies the vagueness, and more input without more structure (C) usually worsens focus.",
+  "distractorNotes": {},
+  "reference": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices",
+  "verified": true
+ },
+ {
+  "id": "AT-p-5",
+  "set": "amey",
+  "domain": "Product and Model Selection",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "",
+  "scenario": "",
+  "question": "Your team drafts hundreds of short, routine customer replies daily, and cost and speed matter more than nuance. Occasionally a complex escalation needs careful reasoning. What is the sound model strategy?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Use the most capable model for every reply, to maximize quality regardless of cost or latency on routine work"
+   },
+   {
+    "key": "B",
+    "text": "Use a fast, low-cost model for routine replies and a more capable one for complex escalations"
+   },
+   {
+    "key": "C",
+    "text": "Use the fastest model for everything, including escalations"
+   },
+   {
+    "key": "D",
+    "text": "Alternate models randomly to balance the load"
+   }
+  ],
+  "correct": [
+   "B"
+  ],
+  "explanation": "**A** wastes cost and latency budget on routine work; **C** underserves exactly the cases that need depth; **D** matches nothing to anything. **B** aligns model choice with task requirements in both directions, which is the tested judgment.",
+  "distractorNotes": {},
+  "reference": "",
+  "verified": true
+ },
+ {
+  "id": "AT-p-6",
+  "set": "amey",
+  "domain": "Workflow Integration and Solution Design",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "",
+  "scenario": "",
+  "question": "Your monthly close process involves collecting figures, drafting a variance commentary, and formatting a board pack. You want Claude to help durably, not just once. What is the strongest approach?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Set up a Project with the commentary conventions and prior packs, and run closes in it"
+   },
+   {
+    "key": "B",
+    "text": "Paste the figures and last month's pack into a fresh chat each month and ask for the new pack, rebuilding the context every time"
+   },
+   {
+    "key": "C",
+    "text": "Ask Claude to run the whole close autonomously, including pulling the figures, and publish the pack without a review step"
+   },
+   {
+    "key": "D",
+    "text": "Use Claude only for spellchecking and grammar fixes on the final pack once everyone else has finished the work"
+   }
+  ],
+  "correct": [
+   "A"
+  ],
+  "explanation": "Durable, repeated workflows belong in a Project where instructions and knowledge persist and improve. Re-pasting monthly (B) rebuilds context by hand every time, full autonomy over financial figures without review (C) ignores appropriate-use judgment, and spellchecking (D) forfeits the actual value.",
+  "distractorNotes": {},
+  "reference": "https://support.claude.com/en/articles/9517075-what-are-projects",
+  "verified": true
+ },
+ {
+  "id": "AT-p-7",
+  "set": "amey",
+  "domain": "Workflow Integration and Solution Design",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "",
+  "scenario": "",
+  "question": "A department head asks you whether Claude could \"handle our customer onboarding.\" What is the right first move?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Say yes and start building immediately, since Claude handles written customer communication and routine lookups well"
+   },
+   {
+    "key": "B",
+    "text": "Map the steps: which Claude can draft or summarize, and which need human judgment or system access"
+   },
+   {
+    "key": "C",
+    "text": "Say no, since onboarding involves customer data and a model should not be used for it at all, in any form or for any step"
+   },
+   {
+    "key": "D",
+    "text": "Forward the question to Anthropic support"
+   }
+  ],
+  "correct": [
+   "B"
+  ],
+  "explanation": "The Associate's core skill is translating a business ask into a realistic division of labor: where Claude adds value, where humans stay, and what the limits are. Unqualified yes (A) and unqualified no (C) both skip the analysis, and support (D) does not know your process.",
+  "distractorNotes": {},
+  "reference": "",
+  "verified": true
+ },
+ {
+  "id": "AT-p-8",
+  "set": "amey",
+  "domain": "Configuration and Knowledge Management",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "",
+  "scenario": "",
+  "question": "Your team's Project answers policy questions from an uploaded handbook. HR publishes a new handbook version. What must happen for the Project to stay trustworthy?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Nothing; Claude will find the new version on its own"
+   },
+   {
+    "key": "B",
+    "text": "Add the new handbook alongside the old one so both are available"
+   },
+   {
+    "key": "C",
+    "text": "Replace the outdated handbook in the Project knowledge and spot-check answers against the new version"
+   },
+   {
+    "key": "D",
+    "text": "Tell users to mention the new version in every prompt"
+   }
+  ],
+  "correct": [
+   "C"
+  ],
+  "explanation": "Project knowledge is maintained, not self-updating; stale sources are a quality defect the configurer owns. Claude does not fetch your internal documents on its own (A), keeping both versions invites contradictory answers (B), and pushing the burden onto every user (D) is not maintenance.",
+  "distractorNotes": {},
+  "reference": "https://support.claude.com/en/articles/9517075-what-are-projects",
+  "verified": true
+ },
+ {
+  "id": "AT-p-9",
+  "set": "amey",
+  "domain": "Governance, Risk, and Responsible Use",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "",
+  "scenario": "",
+  "question": "You want Claude to analyze churn patterns in an export that includes customer names, emails, and account numbers. Company policy forbids sharing personal data with external tools. What is the correct action?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Upload the file as is, since churn analysis is an internal purpose and the data stays within the company"
+   },
+   {
+    "key": "B",
+    "text": "Upload it but instruct Claude to ignore the personal columns and not use them in any finding"
+   },
+   {
+    "key": "C",
+    "text": "Abandon the analysis"
+   },
+   {
+    "key": "D",
+    "text": "Remove or pseudonymize the identifying columns first, then upload and analyze"
+   }
+  ],
+  "correct": [
+   "D"
+  ],
+  "explanation": "Make the task compliant, then do it: the identifiers are not needed for pattern analysis. Purpose does not override policy (A), an instruction to ignore data is not a control because the data still left the boundary (B), and abandoning the work (C) is unnecessary when anonymization enables it.",
+  "distractorNotes": {},
+  "reference": "",
+  "verified": true
+ },
+ {
+  "id": "AT-p-10",
+  "set": "amey",
+  "domain": "Troubleshooting and Optimization",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "",
+  "scenario": "",
+  "question": "A prompt that worked well for weeks now produces off-target answers after your team added many new documents to the Project. What is the best first diagnostic?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Check whether the new documents dilute or contradict the sources the answers need"
+   },
+   {
+    "key": "B",
+    "text": "Rewrite the prompt from scratch, adding more detailed instructions and extra examples for each type of question asked"
+   },
+   {
+    "key": "C",
+    "text": "Switch to a larger model"
+   },
+   {
+    "key": "D",
+    "text": "Delete the Project and start over"
+   }
+  ],
+  "correct": [
+   "A"
+  ],
+  "explanation": "The change that coincided with the regression is the first suspect: new knowledge can crowd out or conflict with the relevant sources. Rewriting the prompt (B), upgrading the model (C), or rebuilding everything (D) all treat symptoms before diagnosing the actual change.",
+  "distractorNotes": {},
+  "reference": "https://support.claude.com/en/articles/9517075-what-are-projects",
+  "verified": true
+ },
+ {
+  "id": "AT-p-11",
+  "set": "amey",
+  "domain": "Output Evaluation and Validation",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "",
+  "scenario": "",
+  "question": "Claude produces a competitor comparison table where one row is marked “data unavailable” and the rest are filled in. A colleague asks you to delete the empty row so the table looks complete. What is the right response?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Delete the row"
+   },
+   {
+    "key": "B",
+    "text": "Keep the row and its label, because the gap is itself a finding the reader needs"
+   },
+   {
+    "key": "C",
+    "text": "Fill it with an estimate"
+   },
+   {
+    "key": "D",
+    "text": "Ask Claude to search again"
+   }
+  ],
+  "correct": [
+   "B"
+  ],
+  "explanation": "A declared gap is information: it tells the reader where the analysis is thin. Deleting it (A) hides a limitation, an unmarked estimate (C) manufactures data, and pressing the model to fill the cell (D) invites fabrication rather than retrieval.",
+  "distractorNotes": {},
+  "reference": "https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/reduce-hallucinations",
+  "verified": true
+ },
+ {
+  "id": "AT-p-12",
+  "set": "amey",
+  "domain": "Output Evaluation and Validation",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "",
+  "scenario": "",
+  "question": "Two runs of the same prompt give different figures for the same metric. Which conclusion is supported?",
+  "options": [
+   {
+    "key": "A",
+    "text": "The higher figure is more likely correct because the model found more evidence"
+   },
+   {
+    "key": "B",
+    "text": "Average the figures, since the mean of repeated runs reduces random variance"
+   },
+   {
+    "key": "C",
+    "text": "Neither figure is established; verify at the source"
+   },
+   {
+    "key": "D",
+    "text": "The prompt is fine and the model needs a longer context window"
+   }
+  ],
+  "correct": [
+   "C"
+  ],
+  "explanation": "Disagreement between runs shows the figure is not grounded in a reliable source, so neither is established. Preferring the larger number (A) is arbitrary, averaging (B) treats two unverified numbers as measurements, and context length (D) is unrelated to whether the figure is true.",
+  "distractorNotes": {},
+  "reference": "https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/reduce-hallucinations",
+  "verified": true
+ },
+ {
+  "id": "AT-p-13",
+  "set": "amey",
+  "domain": "Output Evaluation and Validation",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "",
+  "scenario": "",
+  "question": "You ask Claude to extract every payment term from a 40-page contract. The output lists four terms, cleanly formatted. What is the first check?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Confirm the formatting is consistent across entries"
+   },
+   {
+    "key": "B",
+    "text": "Ask Claude whether it found all of them"
+   },
+   {
+    "key": "C",
+    "text": "Run it again at a higher temperature so that the model surfaces more of the missing terms"
+   },
+   {
+    "key": "D",
+    "text": "Read the contract's payment sections to confirm no term was omitted"
+   }
+  ],
+  "correct": [
+   "D"
+  ],
+  "explanation": "Extraction fails by omission more often than by error, and a tidy output gives no signal about completeness. Formatting (A) is cosmetic, self-report (B) is not evidence, and temperature (C) changes phrasing rather than recall.",
+  "distractorNotes": {},
+  "reference": "https://support.claude.com/en/articles/8525154-claude-is-providing-incorrect-or-misleading-responses-what-s-going-on",
+  "verified": true
+ },
+ {
+  "id": "AT-p-14",
+  "set": "amey",
+  "domain": "Output Evaluation and Validation",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "",
+  "scenario": "",
+  "question": "A summary you commissioned states a conclusion that contradicts your own reading of the source. What should you do?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Find the passage the conclusion rests on and compare both readings"
+   },
+   {
+    "key": "B",
+    "text": "Defer to the summary, since the model read the whole document and you may have missed a detail"
+   },
+   {
+    "key": "C",
+    "text": "Defer to your reading and treat the summary as wrong"
+   },
+   {
+    "key": "D",
+    "text": "Ask a colleague which of the two sounds more plausible and go with their view"
+   }
+  ],
+  "correct": [
+   "A"
+  ],
+  "explanation": "The disagreement is resolvable by returning to the passage in question, which settles it on evidence. Deferring either way (B, C) decides without checking, and canvassing opinion (D) substitutes plausibility for the source.",
+  "distractorNotes": {},
+  "reference": "https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/reduce-hallucinations",
+  "verified": true
+ },
+ {
+  "id": "AT-p-15",
+  "set": "amey",
+  "domain": "Output Evaluation and Validation",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "",
+  "scenario": "",
+  "question": "Claude produces a well-argued recommendation with no citations, on a topic where you have no expertise. What is the appropriate use of it?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Adopt it, since the reasoning is internally consistent"
+   },
+   {
+    "key": "B",
+    "text": "Treat it as a hypothesis and test it against independent sources before acting"
+   },
+   {
+    "key": "C",
+    "text": "Discard it, because unsourced output has no value"
+   },
+   {
+    "key": "D",
+    "text": "Ask for citations and adopt whatever comes back"
+   }
+  ],
+  "correct": [
+   "B"
+  ],
+  "explanation": "Unsourced reasoning is a starting point, useful for structuring an enquiry but not for deciding. Internal consistency is not accuracy (A), the reasoning may still be useful (C), and citations produced on demand need the same verification as the claim (D).",
+  "distractorNotes": {},
+  "reference": "https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/reduce-hallucinations",
+  "verified": true
+ },
+ {
+  "id": "AT-p-16",
+  "set": "amey",
+  "domain": "Workflow Integration and Solution Design",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "",
+  "scenario": "",
+  "question": "A team wants Claude to draft weekly customer health summaries from support tickets, CRM notes, and usage data. Which design detail matters most for the output to stay useful over months?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Choosing the largest available model, since it can handle the most data sources"
+   },
+   {
+    "key": "B",
+    "text": "Running the summary daily instead of weekly, so changes in account health are caught sooner"
+   },
+   {
+    "key": "C",
+    "text": "Defining the summary's required content in one team-maintained place"
+   },
+   {
+    "key": "D",
+    "text": "Letting each team member write their own prompt, so each tailors it to their accounts"
+   }
+  ],
+  "correct": [
+   "C"
+  ],
+  "explanation": "A stable, maintained definition of the deliverable is what keeps output consistent as people and inputs change. Model size (A) does not fix an undefined task, higher frequency (B) multiplies an unclear output, and per-person prompts (D) guarantee drift.",
+  "distractorNotes": {},
+  "reference": "",
+  "verified": true
+ },
+ {
+  "id": "AT-p-17",
+  "set": "amey",
+  "domain": "Workflow Integration and Solution Design",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "",
+  "scenario": "",
+  "question": "Which task in a monthly reporting process is the weakest candidate for delegation to Claude?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Drafting the narrative summary from the agreed monthly figures"
+   },
+   {
+    "key": "B",
+    "text": "Reformatting last month's report into the new company template"
+   },
+   {
+    "key": "C",
+    "text": "Extracting the top five variances from a spreadsheet export"
+   },
+   {
+    "key": "D",
+    "text": "Choosing which account to escalate to executives"
+   }
+  ],
+  "correct": [
+   "D"
+  ],
+  "explanation": "The escalation decision carries accountability and depends on relationships and context the model does not hold. Drafting (A), reformatting (B), and extraction (C) are all bounded tasks with checkable output.",
+  "distractorNotes": {},
+  "reference": "",
+  "verified": true
+ },
+ {
+  "id": "AT-p-18",
+  "set": "amey",
+  "domain": "Workflow Integration and Solution Design",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "",
+  "scenario": "",
+  "question": "A process works well for one analyst and poorly for three others using the same prompt. What is the most likely cause?",
+  "options": [
+   {
+    "key": "A",
+    "text": "The prompt relies on context the first analyst supplies without noticing"
+   },
+   {
+    "key": "B",
+    "text": "The other three need a more capable model"
+   },
+   {
+    "key": "C",
+    "text": "The task is unsuitable for Claude"
+   },
+   {
+    "key": "D",
+    "text": "The other three are using shorter inputs"
+   }
+  ],
+  "correct": [
+   "A"
+  ],
+  "explanation": "One person succeeding with the same prompt usually means they are contributing unstated context, such as knowing which file to attach or what good looks like. A model change (B) does not supply missing context, the task clearly works (C), and input length (D) is a symptom rather than a cause.",
+  "distractorNotes": {},
+  "reference": "",
+  "verified": true
+ },
+ {
+  "id": "AT-p-19",
+  "set": "amey",
+  "domain": "Workflow Integration and Solution Design",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "",
+  "scenario": "",
+  "question": "When is it appropriate to keep a human approval step in an otherwise automated Claude workflow?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Always, since automation is inherently risky and every step needs sign-off"
+   },
+   {
+    "key": "B",
+    "text": "When the action is hard to reverse or has external effects"
+   },
+   {
+    "key": "C",
+    "text": "Only while the workflow is new, then remove it once it has run without errors"
+   },
+   {
+    "key": "D",
+    "text": "Never, because approval steps slow automation"
+   }
+  ],
+  "correct": [
+   "B"
+  ],
+  "explanation": "Approval earns its cost where a mistake is expensive or hard to undo. Blanket approval (A) and blanket removal (D) both ignore the specific risk, and a time-based rule (C) removes the check regardless of what the action does.",
+  "distractorNotes": {},
+  "reference": "",
+  "verified": true
+ },
+ {
+  "id": "AT-p-20",
+  "set": "amey",
+  "domain": "Governance, Risk, and Responsible Use",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "",
+  "scenario": "",
+  "question": "A colleague proposes pasting a customer list into a prompt to draft personalised outreach. What is the correct handling?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Proceed, since the prompt is not stored anywhere permanent and is only seen by Claude"
+   },
+   {
+    "key": "B",
+    "text": "Ask Claude to keep the names confidential"
+   },
+   {
+    "key": "C",
+    "text": "Replace identifying details before drafting, then reattach them afterwards"
+   },
+   {
+    "key": "D",
+    "text": "Proceed but delete the conversation afterwards"
+   }
+  ],
+  "correct": [
+   "C"
+  ],
+  "explanation": "Working on anonymised data and reattaching identifiers afterwards achieves the task without exposing the personal data. Assumptions about storage (A) are not a control, an instruction to the model (B) is not a safeguard, and deleting afterwards (D) does not undo the disclosure.",
+  "distractorNotes": {},
+  "reference": "https://support.claude.com/en/articles/8325621-i-would-like-to-input-sensitive-data-into-claude-ai-who-can-view-my-data",
+  "verified": true
+ },
+ {
+  "id": "AT-p-21",
+  "set": "amey",
+  "domain": "Governance, Risk, and Responsible Use",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "",
+  "scenario": "",
+  "question": "Which statement about instructing a model not to do something is accurate?",
+  "options": [
+   {
+    "key": "A",
+    "text": "An instruction in the prompt is an enforceable control"
+   },
+   {
+    "key": "B",
+    "text": "Instructions are enforceable if placed in a system prompt, because the model always obeys system-level rules"
+   },
+   {
+    "key": "C",
+    "text": "Instructions are enforceable if repeated several times, because repetition makes the model comply every time"
+   },
+   {
+    "key": "D",
+    "text": "Instructions steer behavior but guarantee nothing, so enforce controls outside the prompt"
+   }
+  ],
+  "correct": [
+   "D"
+  ],
+  "explanation": "Prompt instructions influence behavior and are not guarantees, so anything that must hold is enforced in the surrounding system. Placement (B) and repetition (C) change the strength of the steer, not its nature, and treating it as enforcement (A) is the error the question tests.",
+  "distractorNotes": {},
+  "reference": "",
+  "verified": true
+ },
+ {
+  "id": "AT-p-22",
+  "set": "amey",
+  "domain": "Governance, Risk, and Responsible Use",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "",
+  "scenario": "",
+  "question": "A regulated report drafted with Claude is about to be filed. What is the reviewer accountable for?",
+  "options": [
+   {
+    "key": "A",
+    "text": "The accuracy and compliance of the filed document, regardless of how it was drafted"
+   },
+   {
+    "key": "B",
+    "text": "Confirming that Claude was used according to policy"
+   },
+   {
+    "key": "C",
+    "text": "Confirming the prompt included the relevant regulations"
+   },
+   {
+    "key": "D",
+    "text": "Recording which model version produced the draft"
+   }
+  ],
+  "correct": [
+   "A"
+  ],
+  "explanation": "Accountability sits with the person who files, and the tool used does not transfer it. Policy compliance (B), prompt content (C), and version records (D) are all reasonable practices that do not replace responsibility for the document.",
+  "distractorNotes": {},
+  "reference": "",
+  "verified": true
+ },
+ {
+  "id": "AT-p-23",
+  "set": "amey",
+  "domain": "Governance, Risk, and Responsible Use",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "",
+  "scenario": "",
+  "question": "When is disclosing that AI assisted a piece of work most clearly warranted?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Whenever any AI tool touched the work at any stage of drafting, editing, or review"
+   },
+   {
+    "key": "B",
+    "text": "When the audience's judgment of the work depends on how it was made"
+   },
+   {
+    "key": "C",
+    "text": "Only when the output is published externally"
+   },
+   {
+    "key": "D",
+    "text": "Only when a written policy requires it"
+   }
+  ],
+  "correct": [
+   "B"
+  ],
+  "explanation": "Disclosure matters where provenance would change how a reader weighs the work. A universal rule (A) makes the signal meaningless, and confining it to external publication (C) or written policy (D) misses internal cases where it genuinely matters.",
+  "distractorNotes": {},
+  "reference": "",
+  "verified": true
+ },
+ {
+  "id": "AT-p-24",
+  "set": "amey",
+  "domain": "Prompting and Task Execution",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "",
+  "scenario": "",
+  "question": "A prompt produces output that is accurate but consistently too long. What is the most reliable fix?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Add “be concise” to the prompt and place it at the very end of the instructions"
+   },
+   {
+    "key": "B",
+    "text": "Ask for a summary of the output afterwards in a follow-up call"
+   },
+   {
+    "key": "C",
+    "text": "Set a concrete limit, such as a word or bullet count"
+   },
+   {
+    "key": "D",
+    "text": "Use a smaller model, which tends to produce shorter responses"
+   }
+  ],
+  "correct": [
+   "C"
+  ],
+  "explanation": "Concrete limits are checkable and reproducible in a way that adjectives are not. “Be concise” (A) is interpreted differently each run, summarising afterwards (B) adds a step and a second failure point, and a smaller model (D) trades accuracy for brevity.",
+  "distractorNotes": {},
+  "reference": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices",
+  "verified": true
+ },
+ {
+  "id": "AT-p-25",
+  "set": "amey",
+  "domain": "Prompting and Task Execution",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "",
+  "scenario": "",
+  "question": "You need output in a specific structure every time so it can be pasted into a template. What is the most effective technique?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Describing the structure in prose at the end"
+   },
+   {
+    "key": "B",
+    "text": "Asking for the output to be well organized"
+   },
+   {
+    "key": "C",
+    "text": "Requesting it twice and taking the better one"
+   },
+   {
+    "key": "D",
+    "text": "Providing a filled example of the exact structure you want"
+   }
+  ],
+  "correct": [
+   "D"
+  ],
+  "explanation": "An example specifies the target unambiguously and is the strongest available signal for format. Prose description (A) leaves room for interpretation, a vague request (B) leaves more, and generating twice (C) does not define the target at all.",
+  "distractorNotes": {},
+  "reference": "",
+  "verified": true
+ },
+ {
+  "id": "AT-p-26",
+  "set": "amey",
+  "domain": "Prompting and Task Execution",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "",
+  "scenario": "",
+  "question": "A long prompt with many rules produces output that follows some rules and ignores others. What should you try first?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Splitting the task into checked stages"
+   },
+   {
+    "key": "B",
+    "text": "Repeating the ignored rules in capitals at the end of the prompt"
+   },
+   {
+    "key": "C",
+    "text": "Moving all the rules to the very top of the prompt, above the task"
+   },
+   {
+    "key": "D",
+    "text": "Adding a rule that says all rules must be followed"
+   }
+  ],
+  "correct": [
+   "A"
+  ],
+  "explanation": "Splitting the work reduces how much must hold at once and gives a checkpoint between stages. Emphasis (B), ordering (C), and a meta-rule (D) all leave the same load in a single step.",
+  "distractorNotes": {},
+  "reference": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices",
+  "verified": true
+ },
+ {
+  "id": "AT-p-27",
+  "set": "amey",
+  "domain": "Prompting and Task Execution",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "",
+  "scenario": "",
+  "question": "Which detail most improves a prompt asking Claude to review a document?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Stating that the review should be thorough and should cover the whole document"
+   },
+   {
+    "key": "B",
+    "text": "Stating what the review is for and what counts as a problem"
+   },
+   {
+    "key": "C",
+    "text": "Attaching several similar documents for comparison and for pattern matching"
+   },
+   {
+    "key": "D",
+    "text": "Asking for the review as a numbered list"
+   }
+  ],
+  "correct": [
+   "B"
+  ],
+  "explanation": "Purpose and criteria tell the model what to look for, which is what a review depends on. Thoroughness (A) is unmeasurable, extra documents (C) add noise without criteria, and formatting (D) shapes presentation rather than substance.",
+  "distractorNotes": {},
+  "reference": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices",
+  "verified": true
+ },
+ {
+  "id": "AT-p-28",
+  "set": "amey",
+  "domain": "Product and Model Selection",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "",
+  "scenario": "",
+  "question": "A task involves reading a 200-page report once and answering a single question. Which consideration should lead the choice?",
+  "options": [
+   {
+    "key": "A",
+    "text": "The cheapest model available, since the task runs only once and cost dominates"
+   },
+   {
+    "key": "B",
+    "text": "Whether the model supports the fastest response time"
+   },
+   {
+    "key": "C",
+    "text": "Whether the model can hold and reason over the whole document reliably"
+   },
+   {
+    "key": "D",
+    "text": "Whether the task can be split across several small models"
+   }
+  ],
+  "correct": [
+   "C"
+  ],
+  "explanation": "The binding constraint is reliable comprehension across a long document, which is what the choice must satisfy. Cost (A) and speed (B) matter only among models that can do the task, and splitting (D) risks losing the cross-document reasoning the question needs.",
+  "distractorNotes": {},
+  "reference": "https://platform.claude.com/docs/en/about-claude/models/choosing-a-model",
+  "verified": true
+ },
+ {
+  "id": "AT-p-29",
+  "set": "amey",
+  "domain": "Product and Model Selection",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "",
+  "scenario": "",
+  "question": "When does working in a Claude project make more sense than an API integration?",
+  "options": [
+   {
+    "key": "A",
+    "text": "When the volume is high and predictable across many records"
+   },
+   {
+    "key": "B",
+    "text": "When the output must be inserted into another system automatically"
+   },
+   {
+    "key": "C",
+    "text": "When the task must run on a fixed schedule without anyone present"
+   },
+   {
+    "key": "D",
+    "text": "When the work is exploratory and done by people"
+   }
+  ],
+  "correct": [
+   "D"
+  ],
+  "explanation": "Projects suit human, iterative work where the context is curated and reused by people. High volume (A), programmatic handoff (B), and scheduling (C) all describe system integration, which is what the API is for.",
+  "distractorNotes": {},
+  "reference": "https://support.claude.com/en/articles/9517075-what-are-projects",
+  "verified": true
+ },
+ {
+  "id": "AT-p-30",
+  "set": "amey",
+  "domain": "Product and Model Selection",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "",
+  "scenario": "",
+  "question": "A team asks whether to move to a larger model because outputs are inconsistent. What should be established first?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Whether the inconsistency comes from the prompt and inputs rather than the model"
+   },
+   {
+    "key": "B",
+    "text": "The cost difference between the two models"
+   },
+   {
+    "key": "C",
+    "text": "Whether the larger model is available in their region and under their existing contract terms"
+   },
+   {
+    "key": "D",
+    "text": "How much faster the current model is"
+   }
+  ],
+  "correct": [
+   "A"
+  ],
+  "explanation": "Inconsistency usually traces to an underspecified task or variable inputs, which a larger model does not fix. Cost (B), availability (C), and speed (D) are inputs to a decision that has not yet been shown to be the right one.",
+  "distractorNotes": {},
+  "reference": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/overview",
+  "verified": true
+ },
+ {
+  "id": "AT-p-31",
+  "set": "amey",
+  "domain": "Configuration and Knowledge Management",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "",
+  "scenario": "",
+  "question": "What belongs in a project's knowledge rather than in individual prompts?",
+  "options": [
+   {
+    "key": "A",
+    "text": "The specific question being asked today"
+   },
+   {
+    "key": "B",
+    "text": "Material that every conversation in the project should be able to draw on"
+   },
+   {
+    "key": "C",
+    "text": "The preferred output length for one report"
+   },
+   {
+    "key": "D",
+    "text": "A one-off document being reviewed this week"
+   }
+  ],
+  "correct": [
+   "B"
+  ],
+  "explanation": "Project knowledge holds what recurs, so each conversation starts from the same base. Today's question (A), a single formatting preference (C), and a one-off document (D) all belong in the prompt that needs them.",
+  "distractorNotes": {},
+  "reference": "https://support.claude.com/en/articles/9517075-what-are-projects",
+  "verified": true
+ },
+ {
+  "id": "AT-p-32",
+  "set": "amey",
+  "domain": "Configuration and Knowledge Management",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "",
+  "scenario": "",
+  "question": "A project's answers have grown vaguer as more documents were added. What is the likely cause?",
+  "options": [
+   {
+    "key": "A",
+    "text": "The model version changed since the project was first set up, shifting its behavior"
+   },
+   {
+    "key": "B",
+    "text": "The project has too few documents, so answers cannot be grounded in enough detail"
+   },
+   {
+    "key": "C",
+    "text": "Overlapping or outdated material now competes with the right sources"
+   },
+   {
+    "key": "D",
+    "text": "The prompts have become too specific"
+   }
+  ],
+  "correct": [
+   "C"
+  ],
+  "explanation": "Accumulated, unmaintained knowledge dilutes retrieval, and the symptom is exactly this drift toward vagueness. A version change (A) is unrelated to what was added, and both too few documents (B) and overly specific prompts (D) contradict the described trend.",
+  "distractorNotes": {},
+  "reference": "https://support.claude.com/en/articles/9517075-what-are-projects",
+  "verified": true
+ },
+ {
+  "id": "AT-p-33",
+  "set": "amey",
+  "domain": "Configuration and Knowledge Management",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "",
+  "scenario": "",
+  "question": "How should project knowledge be treated as the underlying material changes?",
+  "options": [
+   {
+    "key": "A",
+    "text": "It updates automatically from the source systems"
+   },
+   {
+    "key": "B",
+    "text": "It only needs review when answers are visibly wrong"
+   },
+   {
+    "key": "C",
+    "text": "It should be rebuilt from scratch each quarter"
+   },
+   {
+    "key": "D",
+    "text": "It must be maintained deliberately, because it does not update itself"
+   }
+  ],
+  "correct": [
+   "D"
+  ],
+  "explanation": "Project knowledge is a curated copy and stays as accurate as the person maintaining it. It does not sync (A), waiting for visible errors (B) means acting after the damage, and periodic rebuilds (C) are wasteful and still unscheduled against real change.",
+  "distractorNotes": {},
+  "reference": "https://support.claude.com/en/articles/9517075-what-are-projects",
+  "verified": true
+ },
+ {
+  "id": "AT-p-34",
+  "set": "amey",
+  "domain": "Troubleshooting and Optimization",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "",
+  "scenario": "",
+  "question": "A workflow that has run reliably for months begins returning off-target output. What is the first diagnostic step?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Establish what changed: inputs, configuration, or knowledge"
+   },
+   {
+    "key": "B",
+    "text": "Rewrite the prompt from scratch, since the current one has clearly stopped working"
+   },
+   {
+    "key": "C",
+    "text": "Switch to a different model"
+   },
+   {
+    "key": "D",
+    "text": "Increase the amount of context supplied with every request so the model has more to work from"
+   }
+  ],
+  "correct": [
+   "A"
+  ],
+  "explanation": "A working system that degrades points to a change, and identifying it is faster and safer than rebuilding. Rewriting (B), switching models (C), and adding context (D) all alter the system before the cause is known.",
+  "distractorNotes": {},
+  "reference": "",
+  "verified": true
+ },
+ {
+  "id": "AT-p-35",
+  "set": "amey",
+  "domain": "Troubleshooting and Optimization",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "",
+  "scenario": "",
+  "question": "Output quality is acceptable but the process takes too long to be worth using. What should be examined first?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Whether a faster model would still meet the quality bar for this specific task"
+   },
+   {
+    "key": "B",
+    "text": "Whether the slow part is the model or the human steps around it"
+   },
+   {
+    "key": "C",
+    "text": "Whether the prompt can be shortened"
+   },
+   {
+    "key": "D",
+    "text": "Whether the task should be abandoned"
+   }
+  ],
+  "correct": [
+   "B"
+  ],
+  "explanation": "Locating the actual delay comes before optimising anything, and in practice the surrounding steps often dominate. Changing the model (A) or the prompt (C) assumes the model is the bottleneck, and abandoning (D) discards a process that already produces acceptable output.",
+  "distractorNotes": {},
+  "reference": "",
+  "verified": true
+ },
+ {
+  "id": "AT-mock-1-1",
+  "set": "amey",
+  "domain": "Output Evaluation and Validation",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "",
+  "scenario": "",
+  "question": "A colleague shares a Claude-drafted policy summary that reads well and cites three internal documents by name. What is the appropriate review step before it circulates to the whole department?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Circulate it, since citing three named internal documents demonstrates grounding"
+   },
+   {
+    "key": "B",
+    "text": "Ask Claude to double-check its own work and circulate if it agrees"
+   },
+   {
+    "key": "C",
+    "text": "Check each cited document exists and supports the claim"
+   },
+   {
+    "key": "D",
+    "text": "Add a disclaimer that the summary was AI-generated and circulate"
+   }
+  ],
+  "correct": [
+   "C"
+  ],
+  "explanation": "Named sources can be fabricated; verification against the actual documents is the diligence step. Self-checking (B) is not independent evidence, and a disclaimer (D) does not make content correct",
+  "distractorNotes": {},
+  "reference": "https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/reduce-hallucinations",
+  "verified": true
+ },
+ {
+  "id": "AT-mock-1-2",
+  "set": "amey",
+  "domain": "Prompting and Task Execution",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "",
+  "scenario": "",
+  "question": "You need a first draft of a stakeholder update from a long project log. Which prompt is most likely to produce a usable draft on the first attempt?",
+  "options": [
+   {
+    "key": "A",
+    "text": "\"Summarize this project log in a short paragraph that a busy reader can skim, covering whatever seems most important to the reader.\""
+   },
+   {
+    "key": "B",
+    "text": "\"Write something good about this project log for my boss, in a tone that sounds confident and positive about the work and the team.\""
+   },
+   {
+    "key": "C",
+    "text": "\"Summarize this project log. Be detailed and thorough and professional, covering everything that happened, in a polished tone throughout.\""
+   },
+   {
+    "key": "D",
+    "text": "\"Write an executive update from this log: one-line status, three progress items, two risks with owners, under 200 words.\""
+   }
+  ],
+  "correct": [
+   "D"
+  ],
+  "explanation": "Role, audience, explicit structure, and length constraints are what turn a vague request into a usable draft. Intensifiers like \"detailed and thorough\" (C) add no structure",
+  "distractorNotes": {},
+  "reference": "",
+  "verified": true
+ },
+ {
+  "id": "AT-mock-1-3",
+  "set": "amey",
+  "domain": "Product and Model Selection",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "",
+  "scenario": "",
+  "question": "A workflow drafts hundreds of routine appointment confirmations each day. Latency and cost dominate; the language is formulaic. Which choice fits?",
+  "options": [
+   {
+    "key": "A",
+    "text": "A fast, low-cost model, reserving a more capable one for exceptions"
+   },
+   {
+    "key": "B",
+    "text": "The most capable model, for consistency"
+   },
+   {
+    "key": "C",
+    "text": "Whichever model is newest"
+   },
+   {
+    "key": "D",
+    "text": "Alternate between models to spread cost"
+   }
+  ],
+  "correct": [
+   "A"
+  ],
+  "explanation": "Match the model tier to the work: fast and cheap for formulaic volume, capable for exceptions",
+  "distractorNotes": {},
+  "reference": "https://platform.claude.com/docs/en/about-claude/models/choosing-a-model",
+  "verified": true
+ },
+ {
+  "id": "AT-mock-1-4",
+  "set": "amey",
+  "domain": "Configuration and Knowledge Management",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "",
+  "scenario": "",
+  "question": "Your team's Project answers questions from a product manual. Users report confident answers about a feature that was removed last quarter. What is the most likely cause?",
+  "options": [
+   {
+    "key": "A",
+    "text": "The model needs retraining on the latest product documentation and manual"
+   },
+   {
+    "key": "B",
+    "text": "The Project's knowledge still contains the outdated manual"
+   },
+   {
+    "key": "C",
+    "text": "Users are phrasing their questions wrongly and confusing the model's answers"
+   },
+   {
+    "key": "D",
+    "text": "The context window is too small"
+   }
+  ],
+  "correct": [
+   "B"
+  ],
+  "explanation": "Project knowledge is maintained by you; stale documents produce confidently outdated answers",
+  "distractorNotes": {},
+  "reference": "https://support.claude.com/en/articles/9517075-what-are-projects",
+  "verified": true
+ },
+ {
+  "id": "AT-mock-1-5",
+  "set": "amey",
+  "domain": "Governance, Risk, and Responsible Use",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "",
+  "scenario": "",
+  "question": "Legal asks you to analyze a spreadsheet of support tickets containing customer names and email addresses. Your organization prohibits sending personal data to external tools. What do you do?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Upload it, since legal requested the analysis"
+   },
+   {
+    "key": "B",
+    "text": "Upload it and ask Claude to disregard the personal columns when it analyzes the tickets"
+   },
+   {
+    "key": "C",
+    "text": "Strip or pseudonymize the personal columns, then analyze what remains"
+   },
+   {
+    "key": "D",
+    "text": "Tell legal the analysis is not possible"
+   }
+  ],
+  "correct": [
+   "C"
+  ],
+  "explanation": "Make the task compliant, then do it. A requester's seniority does not override policy, and instructing the model to ignore data does not un-send it",
+  "distractorNotes": {},
+  "reference": "https://support.claude.com/en/articles/8325621-i-would-like-to-input-sensitive-data-into-claude-ai-who-can-view-my-data",
+  "verified": true
+ },
+ {
+  "id": "AT-mock-1-6",
+  "set": "amey",
+  "domain": "Prompting and Task Execution",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "",
+  "scenario": "",
+  "question": "Claude produces a five-paragraph answer when you needed three bullet points, twice in a row. What is the most effective adjustment?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Ask again and hope for variation"
+   },
+   {
+    "key": "B",
+    "text": "Switch to a more capable model"
+   },
+   {
+    "key": "C",
+    "text": "Manually reformat each response"
+   },
+   {
+    "key": "D",
+    "text": "State the format explicitly, including the number of bullets and their maximum length"
+   }
+  ],
+  "correct": [
+   "D"
+  ],
+  "explanation": "Format failures are fixed by stating the format, not by re-rolling or upgrading the model",
+  "distractorNotes": {},
+  "reference": "",
+  "verified": true
+ },
+ {
+  "id": "AT-mock-1-7",
+  "set": "amey",
+  "domain": "Output Evaluation and Validation",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "",
+  "scenario": "",
+  "question": "Which of these is the strongest signal that a Claude-generated claim needs verification before use?",
+  "options": [
+   {
+    "key": "A",
+    "text": "A specific figure, date, or citation that matters if wrong"
+   },
+   {
+    "key": "B",
+    "text": "The answer is long and covers many separate points in great detail"
+   },
+   {
+    "key": "C",
+    "text": "The answer was produced quickly, within a few seconds of the prompt"
+   },
+   {
+    "key": "D",
+    "text": "The answer uses technical vocabulary that sounds authoritative to the reader"
+   }
+  ],
+  "correct": [
+   "A"
+  ],
+  "explanation": "Specific, consequential details are the highest-risk surface for fabrication. Length, speed, and vocabulary carry no accuracy signal",
+  "distractorNotes": {},
+  "reference": "https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/reduce-hallucinations",
+  "verified": true
+ },
+ {
+  "id": "AT-mock-1-8",
+  "set": "amey",
+  "domain": "Workflow Integration and Solution Design",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "",
+  "scenario": "",
+  "question": "A manager wants to know whether Claude can \"replace our weekly reporting process.\" What is the most useful response?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Yes, automation is what AI is for, so the whole reporting process can be handed over to it with no human involved"
+   },
+   {
+    "key": "B",
+    "text": "Which steps Claude can draft or summarize, which need human judgment, and the review step"
+   },
+   {
+    "key": "C",
+    "text": "No, reporting requires human oversight at every stage, so none of it can move to Claude at all, even the drafting"
+   },
+   {
+    "key": "D",
+    "text": "A recommendation to hire a consultant"
+   }
+  ],
+  "correct": [
+   "B"
+  ],
+  "explanation": "The valued skill is a realistic division of labor with a review step, not a yes or a no",
+  "distractorNotes": {},
+  "reference": "",
+  "verified": true
+ },
+ {
+  "id": "AT-mock-1-9",
+  "set": "amey",
+  "domain": "Configuration and Knowledge Management",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "",
+  "scenario": "",
+  "question": "You are configuring a Project that several colleagues will use for consistent client communications. What belongs in the Project instructions rather than in each individual prompt?",
+  "options": [
+   {
+    "key": "A",
+    "text": "The specific client's name and the key facts of today's particular client message to send"
+   },
+   {
+    "key": "B",
+    "text": "Today's date"
+   },
+   {
+    "key": "C",
+    "text": "The house tone, required disclaimers and standard message structure"
+   },
+   {
+    "key": "D",
+    "text": "The colleague's personal writing preferences"
+   }
+  ],
+  "correct": [
+   "C"
+  ],
+  "explanation": "Durable, shared conventions belong in instructions; per-message specifics belong in the prompt",
+  "distractorNotes": {},
+  "reference": "https://support.claude.com/en/articles/9517075-what-are-projects",
+  "verified": true
+ },
+ {
+  "id": "AT-mock-1-10",
+  "set": "amey",
+  "domain": "Output Evaluation and Validation",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "",
+  "scenario": "",
+  "question": "A summary Claude produced omits a material caveat that appears in the source document. What does this failure mode illustrate?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Hallucination, where the model fabricates a caveat or other detail that is not in the source document"
+   },
+   {
+    "key": "B",
+    "text": "A context window limit"
+   },
+   {
+    "key": "C",
+    "text": "A prompt injection attack"
+   },
+   {
+    "key": "D",
+    "text": "Omission, which requires reading the source rather than only reviewing the output"
+   }
+  ],
+  "correct": [
+   "D"
+  ],
+  "explanation": "Omission is as damaging as fabrication and is only visible if you read the source, not just the output",
+  "distractorNotes": {},
+  "reference": "https://support.claude.com/en/articles/8525154-claude-is-providing-incorrect-or-misleading-responses-what-s-going-on",
+  "verified": true
+ },
+ {
+  "id": "AT-mock-1-11",
+  "set": "amey",
+  "domain": "Troubleshooting and Optimization",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "",
+  "scenario": "",
+  "question": "Your prompt worked well last month and now returns weaker results after your team added twelve documents to the Project's knowledge. What is the first thing to investigate?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Whether the new documents are diluting or contradicting the sources the answers should use"
+   },
+   {
+    "key": "B",
+    "text": "Whether the model changed"
+   },
+   {
+    "key": "C",
+    "text": "Whether colleagues are using different browsers"
+   },
+   {
+    "key": "D",
+    "text": "Whether the prompt should be longer"
+   }
+  ],
+  "correct": [
+   "A"
+  ],
+  "explanation": "Diagnose the change that coincided with the regression before rewriting anything",
+  "distractorNotes": {},
+  "reference": "https://support.claude.com/en/articles/9517075-what-are-projects",
+  "verified": true
+ },
+ {
+  "id": "AT-mock-1-12",
+  "set": "amey",
+  "domain": "Workflow Integration and Solution Design",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "",
+  "scenario": "",
+  "question": "For which task is a Project with persistent instructions and knowledge clearly better than a one-off chat?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Asking for a synonym for one word in a sentence of a draft email message"
+   },
+   {
+    "key": "B",
+    "text": "A monthly report with a fixed structure and shared documents"
+   },
+   {
+    "key": "C",
+    "text": "Checking a single fact, such as a date, that appears in a news article"
+   },
+   {
+    "key": "D",
+    "text": "Rewriting one email so that it sounds more polite and formal to a client"
+   }
+  ],
+  "correct": [
+   "B"
+  ],
+  "explanation": "Repeated work with stable context and structure is exactly what Projects are for",
+  "distractorNotes": {},
+  "reference": "https://support.claude.com/en/articles/9517075-what-are-projects",
+  "verified": true
+ },
+ {
+  "id": "AT-mock-1-13",
+  "set": "amey",
+  "domain": "Output Evaluation and Validation",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "",
+  "scenario": "",
+  "question": "Which practice best reduces the risk of sharing an inaccurate Claude output with a customer?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Reading the output carefully for tone and fluency before sending it to the customer"
+   },
+   {
+    "key": "B",
+    "text": "Sending it with a note that AI assisted, so the customer can judge the content themselves"
+   },
+   {
+    "key": "C",
+    "text": "Verifying claims that would cause harm if wrong, then a second review"
+   },
+   {
+    "key": "D",
+    "text": "Using the largest available model"
+   }
+  ],
+  "correct": [
+   "C"
+  ],
+  "explanation": "Verification of consequential claims plus human review for customer-facing material. Model size is not a control",
+  "distractorNotes": {},
+  "reference": "https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/reduce-hallucinations",
+  "verified": true
+ },
+ {
+  "id": "AT-mock-1-14",
+  "set": "amey",
+  "domain": "Workflow Integration and Solution Design",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "",
+  "scenario": "",
+  "question": "You want Claude to help redesign a slow approval process rather than just speed up its current steps. Which prompt direction fits that goal?",
+  "options": [
+   {
+    "key": "A",
+    "text": "\"Make our approval process faster: suggest ways to shorten each of the current steps, cut the time each approver spends, and send reminders when requests wait too long.\""
+   },
+   {
+    "key": "B",
+    "text": "\"Automate our approvals with software that routes every request through the existing steps automatically, and tell me which tools to buy and how to roll them out.\""
+   },
+   {
+    "key": "C",
+    "text": "\"What do other companies do for approvals?\""
+   },
+   {
+    "key": "D",
+    "text": "\"Here are our approval steps and delays. Propose two redesigns, one keeping the structure and one reordering or removing steps, with tradeoffs.\""
+   }
+  ],
+  "correct": [
+   "D"
+  ],
+  "explanation": "Process redesign requires giving Claude the current steps, the pain points, and asking for alternatives with tradeoffs",
+  "distractorNotes": {},
+  "reference": "",
+  "verified": true
+ },
+ {
+  "id": "AT-mock-1-15",
+  "set": "amey",
+  "domain": "Governance, Risk, and Responsible Use",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "",
+  "scenario": "",
+  "question": "Which situation most clearly calls for escalating to a technical colleague rather than solving it yourself?",
+  "options": [
+   {
+    "key": "A",
+    "text": "A request to connect Claude directly to the company's internal order database through an integration"
+   },
+   {
+    "key": "B",
+    "text": "A prompt that needs better structure"
+   },
+   {
+    "key": "C",
+    "text": "An output with the wrong tone"
+   },
+   {
+    "key": "D",
+    "text": "A Project that needs its knowledge updated"
+   }
+  ],
+  "correct": [
+   "A"
+  ],
+  "explanation": "System integrations belong to the Developer and Architect scope; recognizing that boundary is an Associate competency",
+  "distractorNotes": {},
+  "reference": "",
+  "verified": true
+ },
+ {
+  "id": "AT-mock-2-1",
+  "set": "amey",
+  "domain": "Output Evaluation and Validation",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "",
+  "scenario": "",
+  "question": "Claude returns a policy answer that matches your expectation exactly, with no citation. What does the match tell you?",
+  "options": [
+   {
+    "key": "A",
+    "text": "The answer is confirmed, since it agrees with your own understanding of the policy"
+   },
+   {
+    "key": "B",
+    "text": "The answer is probably correct but should be reworded for clarity and tone"
+   },
+   {
+    "key": "C",
+    "text": "Nothing about accuracy, as agreement is not evidence"
+   },
+   {
+    "key": "D",
+    "text": "The model has read the policy document before answering the question"
+   }
+  ],
+  "correct": [
+   "C"
+  ],
+  "explanation": "Agreement with what you already believed is the easiest error to miss, since nothing prompts a check. Neither confirmation (A), rewording (B), nor an assumption about retrieval (D) establishes that the claim is true",
+  "distractorNotes": {},
+  "reference": "https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/reduce-hallucinations",
+  "verified": true
+ },
+ {
+  "id": "AT-mock-2-2",
+  "set": "amey",
+  "domain": "Output Evaluation and Validation",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "",
+  "scenario": "",
+  "question": "A colleague asks Claude to check its own earlier answer, and it confirms the answer. How much weight does the confirmation carry?",
+  "options": [
+   {
+    "key": "A",
+    "text": "None on its own, since the check is not independent"
+   },
+   {
+    "key": "B",
+    "text": "Substantial, because the model reviewed its own reasoning step by step"
+   },
+   {
+    "key": "C",
+    "text": "Substantial if the confirmation is detailed"
+   },
+   {
+    "key": "D",
+    "text": "It depends on the model used"
+   }
+  ],
+  "correct": [
+   "A"
+  ],
+  "explanation": "Self-review is not an independent source and cannot establish correctness. Detail (C) and model choice (D) do not make a self-check independent",
+  "distractorNotes": {},
+  "reference": "https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/reduce-hallucinations",
+  "verified": true
+ },
+ {
+  "id": "AT-mock-2-3",
+  "set": "amey",
+  "domain": "Output Evaluation and Validation",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "",
+  "scenario": "",
+  "question": "A report drafted with Claude contains one figure you cannot verify from any available source. What is the appropriate handling before circulation?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Circulate it with a disclaimer about AI use"
+   },
+   {
+    "key": "B",
+    "text": "Keep the figure and mark it as an estimate"
+   },
+   {
+    "key": "C",
+    "text": "Ask Claude to provide a source for the figure and keep whatever source it returns"
+   },
+   {
+    "key": "D",
+    "text": "Remove the figure and note that it could not be verified"
+   }
+  ],
+  "correct": [
+   "D"
+  ],
+  "explanation": "An unverifiable claim should not be presented as fact, and a labeled gap is honest. A blanket disclaimer (A) does not address the specific figure, an unfounded estimate (B) misrepresents it, and a citation produced on demand (C) needs the same verification",
+  "distractorNotes": {},
+  "reference": "https://support.claude.com/en/articles/8525154-claude-is-providing-incorrect-or-misleading-responses-what-s-going-on",
+  "verified": true
+ },
+ {
+  "id": "AT-mock-2-4",
+  "set": "amey",
+  "domain": "Workflow Integration and Solution Design",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "",
+  "scenario": "",
+  "question": "Which of these is the strongest candidate to hand to Claude in a monthly close process?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Approving the final journal entries before they are posted to the ledger"
+   },
+   {
+    "key": "B",
+    "text": "Drafting variance commentary from agreed figures"
+   },
+   {
+    "key": "C",
+    "text": "Deciding which variances require investigation and how far to escalate them"
+   },
+   {
+    "key": "D",
+    "text": "Signing off the bank reconciliation as complete and accurate"
+   }
+  ],
+  "correct": [
+   "B"
+  ],
+  "explanation": "Drafting from agreed inputs is bounded and checkable. Approval (A), sign-off (D), and the decision about what to investigate (C) all carry accountability",
+  "distractorNotes": {},
+  "reference": "",
+  "verified": true
+ },
+ {
+  "id": "AT-mock-2-5",
+  "set": "amey",
+  "domain": "Workflow Integration and Solution Design",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "",
+  "scenario": "",
+  "question": "A workflow produces good output but nobody uses it. What should be examined first?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Whether the model should be upgraded"
+   },
+   {
+    "key": "B",
+    "text": "Whether the output arrives where the work happens, in a form people can act on"
+   },
+   {
+    "key": "C",
+    "text": "Whether the prompt is long enough"
+   },
+   {
+    "key": "D",
+    "text": "Whether more people need training"
+   }
+  ],
+  "correct": [
+   "B"
+  ],
+  "explanation": "Adoption usually fails on fit with the existing process rather than on output quality. Model (A) and prompt length (C) address quality that is already acceptable, and training (D) treats a symptom",
+  "distractorNotes": {},
+  "reference": "",
+  "verified": true
+ },
+ {
+  "id": "AT-mock-2-6",
+  "set": "amey",
+  "domain": "Governance, Risk, and Responsible Use",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "",
+  "scenario": "",
+  "question": "A team wants to paste anonymised customer feedback into Claude for theme analysis. What remains a risk after names are removed?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Nothing, since anonymisation removes the risk entirely and the data can no longer identify anyone"
+   },
+   {
+    "key": "B",
+    "text": "The model may store the text permanently, so anything pasted stays retrievable by anyone"
+   },
+   {
+    "key": "C",
+    "text": "Theme analysis is unreliable on anonymised data"
+   },
+   {
+    "key": "D",
+    "text": "Free text can still identify people through details, so it needs review first"
+   }
+  ],
+  "correct": [
+   "D"
+  ],
+  "explanation": "Removing names does not remove identifying detail from free text, which is why a review step remains. Treating anonymisation as complete (A) is the error tested, and neither storage assumptions (B) nor reliability (C) is the governance issue here",
+  "distractorNotes": {},
+  "reference": "https://support.claude.com/en/articles/8325621-i-would-like-to-input-sensitive-data-into-claude-ai-who-can-view-my-data",
+  "verified": true
+ },
+ {
+  "id": "AT-mock-2-7",
+  "set": "amey",
+  "domain": "Governance, Risk, and Responsible Use",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "",
+  "scenario": "",
+  "question": "Who should decide whether a Claude-assisted output is fit to send to a customer?",
+  "options": [
+   {
+    "key": "A",
+    "text": "The person accountable for the customer relationship"
+   },
+   {
+    "key": "B",
+    "text": "Whoever wrote the prompt"
+   },
+   {
+    "key": "C",
+    "text": "The model itself, if it is asked to assess its own output carefully"
+   },
+   {
+    "key": "D",
+    "text": "Nobody, if the workflow was approved in advance by a manager or team lead"
+   }
+  ],
+  "correct": [
+   "A"
+  ],
+  "explanation": "Accountability for the outgoing communication decides the question. Prompt authorship (B) is incidental, self-assessment (C) is not independent, and prior approval of a workflow (D) does not review this instance",
+  "distractorNotes": {},
+  "reference": "",
+  "verified": true
+ },
+ {
+  "id": "AT-mock-2-8",
+  "set": "amey",
+  "domain": "Prompting and Task Execution",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "",
+  "scenario": "",
+  "question": "A prompt works well until the input document is much longer than usual, when quality drops. What is the most likely explanation?",
+  "options": [
+   {
+    "key": "A",
+    "text": "The model became less capable"
+   },
+   {
+    "key": "B",
+    "text": "The prompt is too short"
+   },
+   {
+    "key": "C",
+    "text": "The relevant material is now competing with far more surrounding text"
+   },
+   {
+    "key": "D",
+    "text": "Longer documents always produce worse output, whatever the prompt says or the task involves"
+   }
+  ],
+  "correct": [
+   "C"
+  ],
+  "explanation": "Dilution across a much longer input is the usual cause of this pattern. The model has not changed (A), prompt length (B) is not the variable that changed, and length alone is not determinative (D)",
+  "distractorNotes": {},
+  "reference": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices",
+  "verified": true
+ },
+ {
+  "id": "AT-mock-2-9",
+  "set": "amey",
+  "domain": "Prompting and Task Execution",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "",
+  "scenario": "",
+  "question": "You want the same analysis applied to fifty documents with consistent output. What matters most?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Using the largest model available"
+   },
+   {
+    "key": "B",
+    "text": "Processing the documents in one conversation"
+   },
+   {
+    "key": "C",
+    "text": "Reviewing only a sample of the outputs"
+   },
+   {
+    "key": "D",
+    "text": "Fixing the prompt and output structure, applied unchanged to every document"
+   }
+  ],
+  "correct": [
+   "D"
+  ],
+  "explanation": "Consistency across a set comes from holding the instruction and the output shape constant. Model size (A) does not create consistency, one long conversation (B) invites drift, and sampling (C) is a review policy rather than a design",
+  "distractorNotes": {},
+  "reference": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices",
+  "verified": true
+ },
+ {
+  "id": "AT-mock-2-10",
+  "set": "amey",
+  "domain": "Product and Model Selection",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "",
+  "scenario": "",
+  "question": "A task must return an answer within a second for an interactive interface, and the work is simple classification. What follows?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Use the most capable model to be safe, since accuracy matters more than speed here"
+   },
+   {
+    "key": "B",
+    "text": "Batch the requests to raise throughput and lower the cost of each call"
+   },
+   {
+    "key": "C",
+    "text": "Use the smallest model that is accurate enough"
+   },
+   {
+    "key": "D",
+    "text": "Increase the context supplied so the classifier has more examples to work from"
+   }
+  ],
+  "correct": [
+   "C"
+  ],
+  "explanation": "With a hard latency requirement and a simple task, the smallest sufficient model is the fit. The most capable model (A) spends latency for accuracy that is not needed, batching (B) breaks interactivity, and more context (D) adds cost and time",
+  "distractorNotes": {},
+  "reference": "https://platform.claude.com/docs/en/about-claude/models/choosing-a-model",
+  "verified": true
+ },
+ {
+  "id": "AT-mock-2-11",
+  "set": "amey",
+  "domain": "Product and Model Selection",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "",
+  "scenario": "",
+  "question": "What is the correct reading of a model's published benchmark score when choosing for a specific business task?",
+  "options": [
+   {
+    "key": "A",
+    "text": "It predicts performance on your task"
+   },
+   {
+    "key": "B",
+    "text": "It is a general signal that does not substitute for evaluating on your own task"
+   },
+   {
+    "key": "C",
+    "text": "It is irrelevant"
+   },
+   {
+    "key": "D",
+    "text": "It determines the price you should expect to pay"
+   }
+  ],
+  "correct": [
+   "B"
+  ],
+  "explanation": "Benchmarks indicate general capability and cannot stand in for measurement on the actual task. Treating them as predictive (A) or irrelevant (C) are both wrong, and they do not set price (D)",
+  "distractorNotes": {},
+  "reference": "",
+  "verified": true
+ },
+ {
+  "id": "AT-mock-2-12",
+  "set": "amey",
+  "domain": "Configuration and Knowledge Management",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "",
+  "scenario": "",
+  "question": "Two teams keep separate copies of the same reference documents in their own projects. What is the main risk?",
+  "options": [
+   {
+    "key": "A",
+    "text": "The copies drift apart, so the teams answer the same question differently"
+   },
+   {
+    "key": "B",
+    "text": "Higher storage cost, since every document is stored and indexed twice across the two projects"
+   },
+   {
+    "key": "C",
+    "text": "Slower responses"
+   },
+   {
+    "key": "D",
+    "text": "The model becomes confused between projects and mixes up which team's documents it should use"
+   }
+  ],
+  "correct": [
+   "A"
+  ],
+  "explanation": "Duplicated knowledge diverges as each copy is maintained separately, producing inconsistent answers. Storage (B) and speed (C) are minor, and projects do not leak into one another (D)",
+  "distractorNotes": {},
+  "reference": "https://support.claude.com/en/articles/9517075-what-are-projects",
+  "verified": true
+ },
+ {
+  "id": "AT-mock-2-13",
+  "set": "amey",
+  "domain": "Configuration and Knowledge Management",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "",
+  "scenario": "",
+  "question": "What is the right first step when setting up a project for a recurring task?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Decide what the task needs every time, then add that"
+   },
+   {
+    "key": "B",
+    "text": "Upload every document the team owns, so that nothing is ever missing later"
+   },
+   {
+    "key": "C",
+    "text": "Write the longest possible instruction, covering every case you can think of"
+   },
+   {
+    "key": "D",
+    "text": "Add documents as questions come up, without review or any checks on quality"
+   }
+  ],
+  "correct": [
+   "A"
+  ],
+  "explanation": "A deliberate, minimal base keeps retrieval sharp and is maintainable. Uploading everything (B) and accumulating without review (D) both dilute, and instruction length (C) is not the question",
+  "distractorNotes": {},
+  "reference": "https://support.claude.com/en/articles/9517075-what-are-projects",
+  "verified": true
+ },
+ {
+  "id": "AT-mock-2-14",
+  "set": "amey",
+  "domain": "Troubleshooting and Optimization",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "",
+  "scenario": "",
+  "question": "A user reports that Claude gave a wrong answer, but you cannot reproduce it. What is the most useful next step?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Assume the user made an error"
+   },
+   {
+    "key": "B",
+    "text": "Obtain the exact prompt, inputs, and configuration they used"
+   },
+   {
+    "key": "C",
+    "text": "Increase the model size for everyone so that the error is less likely to recur"
+   },
+   {
+    "key": "D",
+    "text": "Add a warning to the interface"
+   }
+  ],
+  "correct": [
+   "B"
+  ],
+  "explanation": "Reproduction depends on the exact conditions, and gathering them is the only way to diagnose. Dismissing the report (A) discards the signal, and a model change (C) or a warning (D) acts before the cause is known",
+  "distractorNotes": {},
+  "reference": "",
+  "verified": true
+ },
+ {
+  "id": "AT-mock-2-15",
+  "set": "amey",
+  "domain": "Troubleshooting and Optimization",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "",
+  "scenario": "",
+  "question": "Output quality varies between runs of an identical prompt on identical input. What does this indicate?",
+  "options": [
+   {
+    "key": "A",
+    "text": "The system is broken, so the model should be swapped or the vendor contacted to fix it"
+   },
+   {
+    "key": "B",
+    "text": "The temperature must be zero for all tasks, so it should be set to zero in every prompt"
+   },
+   {
+    "key": "C",
+    "text": "Some variation is expected, so constrain the task until it does not matter"
+   },
+   {
+    "key": "D",
+    "text": "The input must be shortened, because long inputs make the model respond inconsistently"
+   }
+  ],
+  "correct": [
+   "C"
+  ],
+  "explanation": "Generation is not deterministic, so the design must tolerate variation within acceptable bounds. Treating it as breakage (A) misreads normal behavior, a universal temperature rule (B) is too blunt, and input length (D) is unrelated",
+  "distractorNotes": {},
+  "reference": "",
+  "verified": true
+ },
+ {
+  "id": "AT-mock-3-1",
+  "set": "amey",
+  "domain": "Output Evaluation and Validation",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "",
+  "scenario": "",
+  "question": "A summary cites a statistic that turns out to be correct. Does that validate the rest of the summary?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Yes, one verified claim shows the whole is reliable"
+   },
+   {
+    "key": "B",
+    "text": "Yes, if the statistic was the hardest claim"
+   },
+   {
+    "key": "C",
+    "text": "No, each material claim needs its own check, however the first one turned out"
+   },
+   {
+    "key": "D",
+    "text": "Only if the source was named"
+   }
+  ],
+  "correct": [
+   "C"
+  ],
+  "explanation": "Verification does not generalise from one claim to the others. Treating it as a proxy for the whole (A, B) is the error tested, and naming a source (D) does not verify the remaining claims",
+  "distractorNotes": {},
+  "reference": "https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/reduce-hallucinations",
+  "verified": true
+ },
+ {
+  "id": "AT-mock-3-2",
+  "set": "amey",
+  "domain": "Output Evaluation and Validation",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "",
+  "scenario": "",
+  "question": "Claude declines to answer part of a request and explains why. How should this be read?",
+  "options": [
+   {
+    "key": "A",
+    "text": "As information about a limit or policy worth understanding before proceeding"
+   },
+   {
+    "key": "B",
+    "text": "As a failure that should be worked around, for example by rewording and retrying the request"
+   },
+   {
+    "key": "C",
+    "text": "As a sign the prompt was too long"
+   },
+   {
+    "key": "D",
+    "text": "As a reason to switch models"
+   }
+  ],
+  "correct": [
+   "A"
+  ],
+  "explanation": "A refusal with a reason is a signal about the task, not an obstacle to route around. Working around it (B) ignores the reason, and neither prompt length (C) nor model choice (D) is indicated",
+  "distractorNotes": {},
+  "reference": "",
+  "verified": true
+ },
+ {
+  "id": "AT-mock-3-3",
+  "set": "amey",
+  "domain": "Output Evaluation and Validation",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "",
+  "scenario": "",
+  "question": "You need to know whether a long report supports a specific conclusion. What is the most reliable approach?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Ask for a summary of the whole report and read that instead of the full text"
+   },
+   {
+    "key": "B",
+    "text": "Ask whether the report supports the conclusion, and accept the model's yes or no"
+   },
+   {
+    "key": "C",
+    "text": "Ask for a confidence score"
+   },
+   {
+    "key": "D",
+    "text": "Ask for the passages bearing on it, then read them yourself"
+   }
+  ],
+  "correct": [
+   "D"
+  ],
+  "explanation": "Retrieving the evidence and reading it keeps the judgment with you. A summary (A) and a direct verdict (B) hand the judgment to the model, and a confidence score (C) is not evidence",
+  "distractorNotes": {},
+  "reference": "https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/reduce-hallucinations",
+  "verified": true
+ },
+ {
+  "id": "AT-mock-3-4",
+  "set": "amey",
+  "domain": "Workflow Integration and Solution Design",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "",
+  "scenario": "",
+  "question": "A manual process takes four hours and produces a document nobody reads. What should happen before automating it?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Automate it, since four hours of work is significant"
+   },
+   {
+    "key": "B",
+    "text": "Check whether the document is needed"
+   },
+   {
+    "key": "C",
+    "text": "Automate it first and measure adoption afterwards"
+   },
+   {
+    "key": "D",
+    "text": "Split it across more people to shorten the four hours"
+   }
+  ],
+  "correct": [
+   "B"
+  ],
+  "explanation": "Automating unnecessary work makes waste faster. Proceeding regardless (A, C) skips the question, and redistributing it (D) does not address whether it is needed",
+  "distractorNotes": {},
+  "reference": "",
+  "verified": true
+ },
+ {
+  "id": "AT-mock-3-5",
+  "set": "amey",
+  "domain": "Workflow Integration and Solution Design",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "",
+  "scenario": "",
+  "question": "Which sequencing is correct when introducing Claude to a recurring team process?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Automate the whole process, then refine"
+   },
+   {
+    "key": "B",
+    "text": "Start with the step that is bounded and checkable, prove it, then extend"
+   },
+   {
+    "key": "C",
+    "text": "Start with the hardest step, since it has most value"
+   },
+   {
+    "key": "D",
+    "text": "Let each person adopt it however they prefer"
+   }
+  ],
+  "correct": [
+   "B"
+  ],
+  "explanation": "A bounded first step produces evidence and trust cheaply. Full automation first (A) risks everything at once, the hardest step (C) is the least likely to succeed early, and uncoordinated adoption (D) produces drift",
+  "distractorNotes": {},
+  "reference": "",
+  "verified": true
+ },
+ {
+  "id": "AT-mock-3-6",
+  "set": "amey",
+  "domain": "Governance, Risk, and Responsible Use",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "",
+  "scenario": "",
+  "question": "A policy forbids sending customer data to external services. A colleague asks Claude to summarise a customer email. What applies?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Nothing, because summarising is not the same as sending data anywhere outside the company"
+   },
+   {
+    "key": "B",
+    "text": "The policy only if the customer is named in the email or the data is sensitive"
+   },
+   {
+    "key": "C",
+    "text": "Nothing, because the output stays internal"
+   },
+   {
+    "key": "D",
+    "text": "The policy, since the email content is customer data being submitted"
+   }
+  ],
+  "correct": [
+   "D"
+  ],
+  "explanation": "Submitting the content is the act the policy governs. Framing it as summarising (A) or by where the output goes (C) misreads the policy, and it is not limited to named individuals (B)",
+  "distractorNotes": {},
+  "reference": "",
+  "verified": true
+ },
+ {
+  "id": "AT-mock-3-7",
+  "set": "amey",
+  "domain": "Governance, Risk, and Responsible Use",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "",
+  "scenario": "",
+  "question": "What is the correct response to a request that a model output be presented as human-written to a customer?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Decline to misrepresent it, and raise disclosure with the relationship owner"
+   },
+   {
+    "key": "B",
+    "text": "Comply, since the customer cares about the quality of the work and not about its provenance"
+   },
+   {
+    "key": "C",
+    "text": "Comply if the output was heavily edited"
+   },
+   {
+    "key": "D",
+    "text": "Comply and record the decision internally"
+   }
+  ],
+  "correct": [
+   "A"
+  ],
+  "explanation": "Actively misrepresenting provenance is the issue, and it belongs to the person accountable for the relationship. Editing (C) and internal records (D) do not make the representation true, and quality (B) is not the point",
+  "distractorNotes": {},
+  "reference": "",
+  "verified": true
+ },
+ {
+  "id": "AT-mock-3-8",
+  "set": "amey",
+  "domain": "Prompting and Task Execution",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "",
+  "scenario": "",
+  "question": "A prompt asks for a recommendation and gets a balanced discussion instead. What is the most likely cause?",
+  "options": [
+   {
+    "key": "A",
+    "text": "The model is incapable of recommending"
+   },
+   {
+    "key": "B",
+    "text": "The temperature is too high"
+   },
+   {
+    "key": "C",
+    "text": "The prompt did not state that a single recommendation with a reason was required"
+   },
+   {
+    "key": "D",
+    "text": "The input was too short"
+   }
+  ],
+  "correct": [
+   "C"
+  ],
+  "explanation": "Output shape follows the instruction, and no decision was requested. Incapability (A) is not the issue, and neither temperature (B) nor input length (D) determines whether a recommendation is given",
+  "distractorNotes": {},
+  "reference": "",
+  "verified": true
+ },
+ {
+  "id": "AT-mock-3-9",
+  "set": "amey",
+  "domain": "Prompting and Task Execution",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "",
+  "scenario": "",
+  "question": "What is the most effective way to get output pitched at the right level for a specific audience?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Ask for it to be clear and easy to follow for any reader"
+   },
+   {
+    "key": "B",
+    "text": "Ask for a shorter response with fewer details and less background"
+   },
+   {
+    "key": "C",
+    "text": "Ask for simpler words and shorter sentences throughout"
+   },
+   {
+    "key": "D",
+    "text": "Name the audience and what they already know"
+   }
+  ],
+  "correct": [
+   "D"
+  ],
+  "explanation": "Naming the reader and their prior knowledge is what calibrates level. Clarity (A), length (B), and vocabulary (C) are consequences rather than the instruction",
+  "distractorNotes": {},
+  "reference": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices",
+  "verified": true
+ },
+ {
+  "id": "AT-mock-3-10",
+  "set": "amey",
+  "domain": "Product and Model Selection",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "",
+  "scenario": "",
+  "question": "A colleague uses the largest model for every task including formatting. What should you point out?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Nothing, since capability is never wasted and the largest model is always the safest default for every task"
+   },
+   {
+    "key": "B",
+    "text": "That the largest model is less accurate on simple tasks, so results get worse the bigger it is"
+   },
+   {
+    "key": "C",
+    "text": "That matching model to work saves cost without losing anything on simple tasks"
+   },
+   {
+    "key": "D",
+    "text": "That formatting should be done manually"
+   }
+  ],
+  "correct": [
+   "C"
+  ],
+  "explanation": "Fit-to-task is the principle, and simple work does not benefit from extra capability. Capability is not free (A), larger models are not less accurate on simple tasks (B), and manual work (D) is not the alternative",
+  "distractorNotes": {},
+  "reference": "https://platform.claude.com/docs/en/about-claude/models/choosing-a-model",
+  "verified": true
+ },
+ {
+  "id": "AT-mock-3-11",
+  "set": "amey",
+  "domain": "Product and Model Selection",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "",
+  "scenario": "",
+  "question": "When does the choice of interface matter more than the choice of model?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Never, because the model determines the outcome and the interface only changes presentation"
+   },
+   {
+    "key": "B",
+    "text": "When the obstacle is how people supply context and act on output"
+   },
+   {
+    "key": "C",
+    "text": "Only for very large teams"
+   },
+   {
+    "key": "D",
+    "text": "Only when cost is constrained"
+   }
+  ],
+  "correct": [
+   "B"
+  ],
+  "explanation": "Where adoption or context-supply is the bottleneck, interface dominates. Treating the model as decisive (A) misses that, and neither team size (C) nor cost (D) defines the case",
+  "distractorNotes": {},
+  "reference": "",
+  "verified": true
+ },
+ {
+  "id": "AT-mock-3-12",
+  "set": "amey",
+  "domain": "Configuration and Knowledge Management",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "",
+  "scenario": "",
+  "question": "What is the risk of adding a document to project knowledge without removing the version it replaces?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Answers can mix current and superseded material"
+   },
+   {
+    "key": "B",
+    "text": "Higher storage cost as the knowledge base grows over time"
+   },
+   {
+    "key": "C",
+    "text": "Slower responses because there is more material to read through"
+   },
+   {
+    "key": "D",
+    "text": "The project will refuse to answer until the old version is deleted"
+   }
+  ],
+  "correct": [
+   "A"
+  ],
+  "explanation": "Superseded material remains retrievable and contradicts the current version. Storage (B) and speed (C) are minor, and the project does not refuse (D)",
+  "distractorNotes": {},
+  "reference": "https://support.claude.com/en/articles/9517075-what-are-projects",
+  "verified": true
+ },
+ {
+  "id": "AT-mock-3-13",
+  "set": "amey",
+  "domain": "Configuration and Knowledge Management",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "",
+  "scenario": "",
+  "question": "Which is the better test of whether something belongs in project knowledge?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Whether every conversation in the project would benefit"
+   },
+   {
+    "key": "B",
+    "text": "Whether it is long enough to be worth the effort of uploading it to the project"
+   },
+   {
+    "key": "C",
+    "text": "Whether it was recently created or revised by a member of the team"
+   },
+   {
+    "key": "D",
+    "text": "Whether it is confidential"
+   }
+  ],
+  "correct": [
+   "A"
+  ],
+  "explanation": "Recurrence across conversations is what distinguishes shared knowledge from prompt content. Length (B), recency (C), and sensitivity (D) are unrelated to that test",
+  "distractorNotes": {},
+  "reference": "https://support.claude.com/en/articles/9517075-what-are-projects",
+  "verified": true
+ },
+ {
+  "id": "AT-mock-3-14",
+  "set": "amey",
+  "domain": "Troubleshooting and Optimization",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "",
+  "scenario": "",
+  "question": "A previously reliable prompt now returns shorter answers than before. What is worth checking first?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Whether the model has been deprecated or replaced by a newer version this quarter or this year"
+   },
+   {
+    "key": "B",
+    "text": "Whether the input or the instructions changed, including project additions"
+   },
+   {
+    "key": "C",
+    "text": "Whether the network is slow"
+   },
+   {
+    "key": "D",
+    "text": "Whether the account has hit a usage limit"
+   }
+  ],
+  "correct": [
+   "B"
+  ],
+  "explanation": "A behavioral change points to a change in inputs or configuration. Deprecation (A), network (C), and limits (D) produce errors rather than shorter answers",
+  "distractorNotes": {},
+  "reference": "",
+  "verified": true
+ },
+ {
+  "id": "AT-mock-3-15",
+  "set": "amey",
+  "domain": "Troubleshooting and Optimization",
+  "type": "single",
+  "selectCount": 1,
+  "difficulty": "",
+  "scenario": "",
+  "question": "Someone reports that Claude is wrong about a fact that it stated correctly last week. What is the most useful first question?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Which model did you use"
+   },
+   {
+    "key": "B",
+    "text": "How long was the conversation"
+   },
+   {
+    "key": "C",
+    "text": "What exactly did you ask, and what did it reply"
+   },
+   {
+    "key": "D",
+    "text": "Have you tried again"
+   }
+  ],
+  "correct": [
+   "C"
+  ],
+  "explanation": "The exact exchange is what makes the claim examinable. Model (A), length (B), and retrying (D) may matter later but none of them establishes what happened",
+  "distractorNotes": {},
+  "reference": "",
+  "verified": true
+ }
+]

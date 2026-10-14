@@ -1,0 +1,56 @@
+{
+ "id": "ccaof",
+ "key": "ccaof",
+ "code": "CCAO-F",
+ "short": "Associate · Foundations",
+ "eyebrow": "Claude Certified Associate · Foundations",
+ "lede": "A cheat sheet on Claude's app features and safe-use rules, and 110 practice questions with the answer and explanation shown when you submit. Domain weights come from Anthropic's CCAO-F Exam Guide v1.0.",
+ "facts": [
+  "<b>60</b> items",
+  "<b>120</b> min",
+  "pass <b>720</b>/1000",
+  "<b>$99</b>",
+  "multiple choice + multiple response"
+ ],
+ "items": 60,
+ "weights": {
+  "Output Evaluation and Validation": 21,
+  "Workflow Integration and Solution Design": 16,
+  "Governance, Risk, and Responsible Use": 15,
+  "Prompting and Task Execution": 14,
+  "Product and Model Selection": 12,
+  "Configuration and Knowledge Management": 12,
+  "Troubleshooting and Optimization": 10
+ },
+ "tabs": [
+  [
+   "docs",
+   "Cheat sheet"
+  ],
+  [
+   "quiz",
+   "Quiz"
+  ]
+ ],
+ "banks": [
+  [
+   "",
+   "All banks (110)"
+  ],
+  [
+   "fresh",
+   "Fresh 30, exam-weighted"
+  ],
+  [
+   "amey",
+   "Amey-Thakur 80"
+  ]
+ ],
+ "bankNotes": {
+  "": "All banks mixed. Each question shows which bank it comes from.",
+  "fresh": "Written for this site against the CCAO-F Exam Guide objectives and checked against the Claude Help Center. Domain mix follows the exam weights. Option lengths are balanced.",
+  "amey": "80 questions from Amey-Thakur/CLAUDE-CERTIFICATIONS (MIT), checked against Anthropic documentation, with option lengths rebalanced so length gives nothing away."
+ },
+ "defaultBank": "",
+ "footer": "Questions from Amey-Thakur/CLAUDE-CERTIFICATIONS (MIT) and written for this site; the cheat sheet is written for this site from the Claude Help Center. Everything was checked against Anthropic documentation in October 2026. Domain weights from Anthropic's CCAO-F Exam Guide v1.0."
+}
