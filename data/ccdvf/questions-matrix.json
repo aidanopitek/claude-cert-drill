@@ -1,0 +1,349 @@
+[
+ {
+  "id": "MX-D1",
+  "set": "matrix",
+  "type": "matrix",
+  "domain": "Applications and Integration",
+  "scenario": "",
+  "question": "Your application receives each of these stop_reason values from the Messages API. Choose the correct handling for each.",
+  "choices": [
+   "Use the response",
+   "Run the tools and send tool_result blocks",
+   "Send the assistant content back to continue",
+   "Treat the output as truncated",
+   "Check stop_details; retry on a fallback model"
+  ],
+  "rows": [
+   {
+    "text": "end_turn",
+    "answer": "Use the response",
+    "note": "Claude finished naturally."
+   },
+   {
+    "text": "tool_use",
+    "answer": "Run the tools and send tool_result blocks",
+    "note": "Your code executes client tools and returns the results."
+   },
+   {
+    "text": "pause_turn",
+    "answer": "Send the assistant content back to continue",
+    "note": "A server-tool loop hit its iteration limit; resend the assistant content as-is."
+   },
+   {
+    "text": "max_tokens",
+    "answer": "Treat the output as truncated",
+    "note": "Raise max_tokens or continue the response."
+   },
+   {
+    "text": "model_context_window_exceeded",
+    "answer": "Treat the output as truncated",
+    "note": "The response filled the context window; the content is valid but cut off."
+   },
+   {
+    "text": "refusal",
+    "answer": "Check stop_details; retry on a fallback model",
+    "note": "Returned as HTTP 200; stop_details names the policy category."
+   }
+  ],
+  "explanation": "stop_reason drives the loop; only tool_use needs your tool results, and pause_turn comes from server tools.",
+  "reference": "https://platform.claude.com/docs/en/build-with-claude/handling-stop-reasons",
+  "difficulty": "",
+  "options": [],
+  "correct": [],
+  "selectCount": 1,
+  "verified": true
+ },
+ {
+  "id": "MX-D2",
+  "set": "matrix",
+  "type": "matrix",
+  "domain": "Applications and Integration",
+  "scenario": "",
+  "question": "Choose the API for each workload.",
+  "choices": [
+   "Message Batches API",
+   "Messages API (real time)"
+  ],
+  "rows": [
+   {
+    "text": "Summarise 10,000 documents overnight for a report read the next morning.",
+    "answer": "Message Batches API",
+    "note": "Latency-tolerant volume at 50% of the cost, within 24 hours."
+   },
+   {
+    "text": "A chat assistant inside the product that users wait on.",
+    "answer": "Messages API (real time)",
+    "note": "Someone is waiting for each answer."
+   },
+   {
+    "text": "Run a 5,000-prompt regression eval after each prompt change.",
+    "answer": "Message Batches API",
+    "note": "Evals are a standard batch workload."
+   },
+   {
+    "text": "An agent that calls your client-side tools and needs each result before its next step.",
+    "answer": "Messages API (real time)",
+    "note": "Batch requests run independently, so your tool loop cannot run inside one."
+   },
+   {
+    "text": "A healthcare customer under zero data retention needs cheaper nightly summaries.",
+    "answer": "Messages API (real time)",
+    "note": "The Batch API is not ZDR-eligible; use the Messages API with prompt caching."
+   }
+  ],
+  "explanation": "Ask first whether anyone is waiting and whether the work needs a live tool loop; then check data-retention constraints.",
+  "reference": "https://platform.claude.com/docs/en/build-with-claude/batch-processing",
+  "difficulty": "",
+  "options": [],
+  "correct": [],
+  "selectCount": 1,
+  "verified": true
+ },
+ {
+  "id": "MX-D3",
+  "set": "matrix",
+  "type": "matrix",
+  "domain": "Model Selection and Optimization",
+  "scenario": "",
+  "question": "You are migrating requests to Claude Opus 5.5. For each request setting, will it work or be rejected?",
+  "choices": [
+   "Works",
+   "Returns a 400 error"
+  ],
+  "rows": [
+   {
+    "text": "tool_choice: {\"type\": \"tool\", \"name\": \"extract\"}",
+    "answer": "Returns a 400 error",
+    "note": "Opus 5.5 rejects forced tool use; use auto with strict tools or structured outputs."
+   },
+   {
+    "text": "A prefilled assistant turn that starts the JSON with {",
+    "answer": "Returns a 400 error",
+    "note": "Prefill is rejected on Claude 4.6 and later."
+   },
+   {
+    "text": "thinking: {\"type\": \"enabled\", \"budget_tokens\": 8000}",
+    "answer": "Returns a 400 error",
+    "note": "Manual extended thinking is rejected on 4.7 and later; use adaptive thinking with effort."
+   },
+   {
+    "text": "temperature: 0.2",
+    "answer": "Returns a 400 error",
+    "note": "Opus 4.7 and later reject non-default sampling values."
+   },
+   {
+    "text": "output_config with a JSON schema format (structured outputs)",
+    "answer": "Works",
+    "note": "Structured outputs are the documented way to get a fixed JSON shape."
+   },
+   {
+    "text": "thinking: {\"type\": \"adaptive\"} with output_config effort set to high",
+    "answer": "Works",
+    "note": "Adaptive thinking with an effort level replaces budget_tokens."
+   }
+  ],
+  "explanation": "Several older controls are rejected on current models; read the migration guide before switching model IDs.",
+  "reference": "https://platform.claude.com/docs/en/agents-and-tools/tool-use/define-tools#forcing-tool-use",
+  "difficulty": "",
+  "options": [],
+  "correct": [],
+  "selectCount": 1,
+  "verified": true
+ },
+ {
+  "id": "MX-D4",
+  "set": "matrix",
+  "type": "matrix",
+  "domain": "Tools and MCPs",
+  "scenario": "",
+  "question": "Choose the best way to give Claude each capability.",
+  "choices": [
+   "Built-in tool",
+   "Custom tool",
+   "MCP server",
+   "Skill"
+  ],
+  "rows": [
+   {
+    "text": "Several Claude applications need the same internal inventory service, maintained by one team.",
+    "answer": "MCP server",
+    "note": "One reusable server, many clients."
+   },
+   {
+    "text": "A single app needs Claude to call one internal pricing function in its own codebase.",
+    "answer": "Custom tool",
+    "note": "A tool definition with a clear schema, executed by your app."
+   },
+   {
+    "text": "A documented, multi-step procedure for preparing a release, with templates.",
+    "answer": "Skill",
+    "note": "Instructions and resources that load only when needed."
+   },
+   {
+    "text": "Searching the public web for current information.",
+    "answer": "Built-in tool",
+    "note": "Web search is an Anthropic-provided server tool."
+   },
+   {
+    "text": "Editing files and running shell commands in a coding agent.",
+    "answer": "Built-in tool",
+    "note": "Bash and text-editor tools are Anthropic-defined."
+   }
+  ],
+  "explanation": "Built-ins for standard capabilities, custom tools for one app's functions, MCP for reuse across apps, Skills for instructions.",
+  "reference": "https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview",
+  "difficulty": "",
+  "options": [],
+  "correct": [],
+  "selectCount": 1,
+  "verified": true
+ },
+ {
+  "id": "MX-D5",
+  "set": "matrix",
+  "type": "matrix",
+  "domain": "Model Selection and Optimization",
+  "scenario": "",
+  "question": "Mark each statement about prompt caching true or false.",
+  "choices": [
+   "True",
+   "False"
+  ],
+  "rows": [
+   {
+    "text": "The cache prefix is built in the order tools, then system, then messages.",
+    "answer": "True",
+    "note": "Each level builds on the previous ones."
+   },
+   {
+    "text": "Changing a tool definition invalidates the cached system prompt and messages too.",
+    "answer": "True",
+    "note": "Tool changes invalidate every level after them."
+   },
+   {
+    "text": "Putting the current timestamp at the start of the system prompt does not affect cache hits.",
+    "answer": "False",
+    "note": "Any change before the breakpoint breaks the exact-prefix match."
+   },
+   {
+    "text": "The default cache lifetime is 5 minutes and is refreshed each time the cache is read.",
+    "answer": "True",
+    "note": "A 1-hour TTL is available at a higher write price."
+   },
+   {
+    "text": "A request can have at most 4 explicit cache breakpoints.",
+    "answer": "True",
+    "note": "Automatic caching uses one of the four slots."
+   },
+   {
+    "text": "Cache reads cost more than base input tokens because the cache must be looked up.",
+    "answer": "False",
+    "note": "Reads cost a fraction of base input (0.1× on most models, less on some newer ones); writes cost more."
+   }
+  ],
+  "explanation": "Static content first, volatile content after the breakpoint, and keep tool definitions stable.",
+  "reference": "https://platform.claude.com/docs/en/build-with-claude/prompt-caching",
+  "difficulty": "",
+  "options": [],
+  "correct": [],
+  "selectCount": 1,
+  "verified": true
+ },
+ {
+  "id": "MX-D6",
+  "set": "matrix",
+  "type": "matrix",
+  "domain": "Security and Safety",
+  "scenario": "",
+  "question": "In Claude Code, can a hook on each of these events prevent or block the action?",
+  "choices": [
+   "Can block",
+   "Cannot block"
+  ],
+  "rows": [
+   {
+    "text": "PreToolUse",
+    "answer": "Can block",
+    "note": "Exit code 2 or permissionDecision deny blocks the tool call."
+   },
+   {
+    "text": "PostToolUse",
+    "answer": "Cannot block",
+    "note": "The tool has already run; feedback only."
+   },
+   {
+    "text": "UserPromptSubmit",
+    "answer": "Can block",
+    "note": "The prompt never reaches Claude."
+   },
+   {
+    "text": "Stop",
+    "answer": "Can block",
+    "note": "It can keep Claude working instead of stopping."
+   },
+   {
+    "text": "SessionStart",
+    "answer": "Cannot block",
+    "note": "It can only add context."
+   },
+   {
+    "text": "Notification",
+    "answer": "Cannot block",
+    "note": "Used for side effects; exit codes are ignored."
+   }
+  ],
+  "explanation": "To stop a dangerous action, hook it before it happens with PreToolUse; PostToolUse is for reacting afterwards.",
+  "reference": "https://code.claude.com/docs/en/hooks",
+  "difficulty": "",
+  "options": [],
+  "correct": [],
+  "selectCount": 1,
+  "verified": true
+ },
+ {
+  "id": "MX-D7",
+  "set": "matrix",
+  "type": "matrix",
+  "domain": "Claude Code",
+  "scenario": "",
+  "question": "Is each Claude Code file shared with the team through the repository, or personal to one developer?",
+  "choices": [
+   "Shared with the team",
+   "Personal"
+  ],
+  "rows": [
+   {
+    "text": ".claude/settings.json",
+    "answer": "Shared with the team",
+    "note": "Shared project settings, committed to git."
+   },
+   {
+    "text": ".claude/settings.local.json",
+    "answer": "Personal",
+    "note": "Project-local settings, added to git excludes automatically."
+   },
+   {
+    "text": "~/.claude/settings.json",
+    "answer": "Personal",
+    "note": "User settings for every project on that machine."
+   },
+   {
+    "text": "CLAUDE.md at the repository root",
+    "answer": "Shared with the team",
+    "note": "Project memory committed with the code."
+   },
+   {
+    "text": ".mcp.json at the repository root",
+    "answer": "Shared with the team",
+    "note": "Project-scoped MCP servers shared through version control."
+   }
+  ],
+  "explanation": "Team standards live in committed files; personal overrides live in local or user files, which sit at different precedence levels.",
+  "reference": "https://code.claude.com/docs/en/settings",
+  "difficulty": "",
+  "options": [],
+  "correct": [],
+  "selectCount": 1,
+  "verified": true
+ }
+]

@@ -1,0 +1,462 @@
+[
+ {
+  "num": 3,
+  "title": "Integration",
+  "weight": 19,
+  "blocks": [
+   {
+    "kind": "Decision heuristics",
+    "items": [
+     "Capability must touch the user's machine, then stdio MCP server. Many users share it, then remote MCP over Streamable HTTP.",
+     "You need MCP resources or prompts, then you need a real MCP client. The Messages API connector is tools-only.",
+     "Corpus under ~200k tokens and reasonably static, then long context plus prompt caching, not RAG.",
+     "Retrieval misses exact identifiers, then add BM25 (hybrid), not a bigger embedding model.",
+     "Retrieval recall is fine but answers are wrong, then fix generation, not the index.",
+     "Tool definitions exceed roughly 1-5% of the context window, or you cross ~30-50 tools, then defer loading and add tool search.",
+     "Task chains tools with large intermediates, then programmatic tool calling in a sandbox.",
+     "An MCP server proxies a third-party API with a static client ID, then per-client consent stored server-side is mandatory.",
+     "A token was not issued for this server, then reject it. Never forward it.",
+     "A tool result feeds another tool, then treat it as untrusted user input.",
+     "The model calls a tool with bad arguments repeatedly, then fix the description and the error message before the system prompt.",
+     "The model needs a confirmation or a missing value mid-call, then elicitation, not a guess and not a new tool."
+    ],
+    "ordered": false
+   },
+   {
+    "kind": "Common distractors",
+    "items": [
+     "<strong>\"Use MCP sampling so the server stays model-agnostic.\"</strong> Deprecated in <code>2026-07-28</code>.",
+     "<strong>\"Register the client dynamically (RFC 7591).\"</strong> Deprecated in favour of Client ID Metadata Documents.",
+     "<strong>\"Validate the token's signature.\"</strong> Necessary but insufficient; the named requirement is <strong>audience</strong> validation.",
+     "<strong>\"Add PKCE to prevent mix-up attacks.\"</strong> PKCE protects the code, not the AS identity. Issuer validation is the stated mitigation.",
+     "<strong>\"Expose all endpoints as tools for full capability.\"</strong> Directly contradicted; consolidate around workflows.",
+     "<strong>\"Increase top-K to fix retrieval.\"</strong> Wrong when the failure is lexical or the chunks are context-poor.",
+     "<strong>\"Chunk smaller to improve recall.\"</strong> Smaller chunks lose the context that makes them retrievable; add chunk-level context instead.",
+     "<strong>\"Set <code>idempotentHint: true</code> to make retries safe.\"</strong> Annotations are untrusted hints, not behaviour.",
+     "<strong>\"Enable <code>OTEL_LOG_RAW_API_BODIES</code> for better debugging.\"</strong> Only when the pipeline is approved for full conversation content.",
+     "<strong>\"Sandbox the code, so the script's calls are pre-approved.\"</strong> The broker must still evaluate each call.",
+     "<strong>\"Cache the deferred tool definitions.\"</strong> <code>defer_loading</code> plus <code>cache_control</code> on one tool is a 400."
+    ],
+    "ordered": false
+   },
+   {
+    "kind": "Recalls",
+    "items": [
+     "One MCP client per server; the host owns many clients.",
+     "Two transports: stdio and Streamable HTTP.",
+     "Tools are model-controlled, resources application-controlled, prompts user-controlled.",
+     "MCP <code>2026-07-28</code> is stateless: <code>server/discover</code>, no <code>initialize</code>, no protocol session.",
+     "Sampling, Roots and Logging are deprecated (plus HTTP+SSE); elicitation is the live client primitive.",
+     "Notifications are opt-in via <code>subscriptions/listen</code> and best-effort.",
+     "Tool execution errors use <code>isError: true</code>; protocol errors use JSON-RPC error codes.",
+     "Claude Code truncates tool responses at 25,000 tokens by default.",
+     "Concise vs detailed responses: 72 vs 206 tokens in Anthropic's Slack example.",
+     "Selection accuracy degrades past ~30-50 tools; tool search cuts definition context by &gt;85%.",
+     "Deferred tools cap 10,000; at least one tool must stay non-deferred.",
+     "Progressive discovery threshold: 1-5% of context window spent on definitions.",
+     "Servers MUST implement RFC 9728; clients MUST send the RFC 8707 <code>resource</code> parameter.",
+     "Servers MUST NOT accept or transit tokens not issued for them.",
+     "Confused deputy needs static client ID + dynamic registration + consent cookie + no per-client consent.",
+     "Contextual retrieval: 35% / 49% / 67% failure reduction; ~$1.02 per million document tokens.",
+     "Chunks a few hundred tokens, context prefix 50-100 tokens, retrieve 150, rerank to 20.",
+     "Under ~200k tokens of corpus, skip RAG and cache the whole thing."
+    ],
+    "ordered": true
+   }
+  ]
+ },
+ {
+  "num": 1,
+  "title": "Solution Design & Architecture",
+  "weight": 17,
+  "blocks": [
+   {
+    "kind": "Decision heuristics",
+    "items": [
+     "If the number of steps is knowable at design time, it is a workflow. If not, it is an agent.",
+     "If subtasks are fixed, use sectioning. If the input determines the subtasks, use orchestrator-workers.",
+     "If you can write the rubric, evaluator-optimizer is on the table. If you cannot, it is not.",
+     "If the scenario says \"strict p95 latency\" plus \"multi-step reasoning\", route and parallelise; do not add refinement loops.",
+     "If the scenario mentions cost blowout on an agent, first check for caching and model routing, then downgrade agent to workflow. Do not add more agents.",
+     "If an action is irreversible, insert a human checkpoint or a deterministic validator before it, not after.",
+     "If the task is breadth-first research over many independent sources, multi-agent is justified. If it is coding or anything with shared state, it is not.",
+     "If a subagent's verbose output would pollute the main context, isolate it and return a summary.",
+     "If the answer options include both \"add an orchestrator\" and \"improve the single prompt plus retrieval\", and eval evidence is absent, the simpler option is correct."
+    ],
+    "ordered": false
+   },
+   {
+    "kind": "Common distractors",
+    "items": [
+     "<strong>Multi-agent for a coding task.</strong> Real technique, wrong context: coding has few parallelisable components and agents cannot see each other's edits.",
+     "<strong>Evaluator-optimizer where success criteria are subjective.</strong> The evaluator has no signal, so you pay 2-4x for noise.",
+     "<strong>Voting to reduce cost.</strong> Voting multiplies cost. It buys confidence, not savings.",
+     "<strong>Autonomous agent because \"the task is complex\".</strong> Complexity is not the trigger; unpredictable step count is.",
+     "<strong>Adding a human checkpoint at every step to improve reliability.</strong> Kills the throughput case and does not fix systematic model error. Deterministic validators are usually the right answer for mechanical checks.",
+     "<strong>Routing when categories overlap.</strong> A misroute sends the request down a specialised path that cannot recover.",
+     "<strong>Prompt chaining to reduce latency.</strong> Chaining adds sequential hops and increases latency; it buys accuracy.",
+     "<strong>Restart the agent from scratch on failure.</strong> Expensive and user-hostile. Checkpoint and resume."
+    ],
+    "ordered": false
+   },
+   {
+    "kind": "Recalls",
+    "items": [
+     "Workflow = predefined code paths; agent = model directs its own process.",
+     "Augmented LLM (model + retrieval + tools + memory) is the baseline building block.",
+     "Six patterns: chaining, routing, parallelisation (sectioning, voting), orchestrator-workers, evaluator-optimizer, autonomous agents.",
+     "Agentic systems trade latency and cost for task performance.",
+     "Sectioning is code-decided; orchestrator-workers is model-decided.",
+     "Voting = same task N times for confidence; sectioning = different subtasks concurrently for speed.",
+     "Multi-agent ~15x chat tokens; single agent ~4x.",
+     "Lead agent spawns 3-5 subagents; each returns ~1-2k tokens of distilled findings.",
+     "Opus lead + Sonnet subagents outperformed single-agent Opus by 90.2% on internal research eval.",
+     "Multi-agent fails on shared-context, high-interdependency, real-time tasks.",
+     "Persist the plan to external memory: context beyond the window is truncated.",
+     "Rainbow deployments avoid disrupting in-flight agents.",
+     "Guardrails run parallel to the main call, not in series.",
+     "Only add complexity when simpler solutions demonstrably underperform on eval.",
+     "Document and test the agent-computer interface as carefully as a human UI."
+    ],
+    "ordered": true
+   }
+  ]
+ },
+ {
+  "num": 4,
+  "title": "Evaluation, Testing & Optimization",
+  "weight": 16,
+  "blocks": [
+   {
+    "kind": "Decision heuristics",
+    "items": [
+     "Deterministic or schema-shaped outputs, then code-based grading. Do not reach for a judge.",
+     "Using an LLM judge, then validate against human labels first and force a discrete scale.",
+     "Eval and production distributions differ, then fix the eval before trusting any number from it.",
+     "One metric for an agent, then task completion rate, guarded by cost per task and unsafe-action rate.",
+     "Users watch the stream, then TTFT is the latency metric; otherwise total latency.",
+     "Changing model version, then run the golden set behind a shadow or canary first, and keep the version pinned.",
+     "Quality regressed with no repo change, then check for a floating model alias or a changed retrieval index.",
+     "Recall@k healthy but answers wrong, then the fault is downstream: prompt, grounding instructions, or model tier.",
+     "Cost is the problem, then cache, shorten context, route smaller, batch. Fine-tuning is not the first answer.",
+     "Tasks complete but take too many calls, then consolidate tools and fix pagination.",
+     "Fails on every phrasing with perfect context, then it is capability and prompt work will not save it."
+    ],
+    "ordered": false
+   },
+   {
+    "kind": "Common distractors",
+    "items": [
+     "<strong>\"Fine-tune the model.\"</strong> Almost never the first move.",
+     "<strong>\"Add more few-shot examples\"</strong> offered against a retrieval miss or tool error. Wrong layer.",
+     "<strong>\"Use an LLM judge for a classification eval.\"</strong> Slower, noisier, less reliable than exact match.",
+     "<strong>\"Have the model grade its own output\"</strong> with no rubric and no human calibration.",
+     "<strong>\"Hand-grade 1,000 items.\"</strong> Right instinct, wrong economics; automate grading, spend humans on calibration.",
+     "<strong>\"Ship to 100% and monitor.\"</strong> Canary and shadow exist to avoid exactly this.",
+     "<strong>\"A/B test it\"</strong> when traffic cannot reach significance, or when a shadow run would answer it with no user risk.",
+     "<strong>\"Grade against the golden trajectory.\"</strong> Over-strict whenever multiple valid paths exist.",
+     "<strong>\"Measure tokens per second\"</strong> as the user-facing latency metric for chat. TTFT is what the user feels.",
+     "<strong>\"Enable prompt caching\"</strong> to fix accuracy. Caching changes cost and TTFT, not quality.",
+     "<strong>\"Use batch processing\"</strong> for anything interactive. No streaming, up to 24 hours.",
+     "<strong>\"Raise temperature\"</strong> when the complaint is inconsistency. That makes it worse."
+    ],
+    "ordered": false
+   },
+   {
+    "kind": "Recalls",
+    "items": [
+     "Prefer many auto-graded cases over few hand-graded ones.",
+     "Always hold out a split you never tune against.",
+     "Code grading: fastest, most reliable, no nuance. LLM judge: scalable nuance, must be validated.",
+     "Judge recipe: detailed rubric, discrete score, reason then score, discard reasoning.",
+     "Judge biases to name: position, verbosity, self-preference.",
+     "SMAR criteria, and usually multidimensional.",
+     "TTFT is perceived latency; streaming changes only TTFT.",
+     "Cost per task, not per request, is the agent unit.",
+     "End-state evaluation is primary for agents; trajectory is diagnostic unless the path is regulated.",
+     "Track tool calls per task, error rate by type, and total tokens alongside accuracy.",
+     "Shadow = no user risk, double cost. Canary = real signal, bounded blast radius.",
+     "Pin model versions; a floating alias is an unlogged deploy.",
+     "Batch API: 50% off, most within 1 hour, 24-hour max, 100,000 requests or 256 MB, no streaming.",
+     "Cache reads 0.1x by default (0.05x on Opus 5.5 and Sonnet 5.5, 0.025x on Fable 5.1 and Mythos 5.1), 5-minute writes 1.25x, 1-hour writes 2x, max 4 breakpoints.",
+     "Cache prefix order tools, system, messages; changing tools invalidates all of it.",
+     "Optimization order: prompt, tools, few-shot, caching, context reduction, routing, batch, fine-tune-like last.",
+     "Diagnosis order: transcript, context presence, tool errors, hallucination, prompt, capability.",
+     "Phrasing-sensitive means prompt; query-sensitive means retrieval; length-correlated means context overflow; universally stable failure means capability."
+    ],
+    "ordered": true
+   }
+  ]
+ },
+ {
+  "num": 5,
+  "title": "Governance, Safety and Risk Management",
+  "weight": 14,
+  "blocks": [
+   {
+    "kind": "Decision heuristics",
+    "items": [
+     "If the action is <strong>irreversible and externally visible</strong>, insert a synchronous approval gate. Everything else is secondary.",
+     "If the action is <strong>reversible</strong>, invest in rollback and monitoring before you invest in gates.",
+     "If the threat is <strong>injection or exfiltration</strong>, the answer involves <strong>tool scope and sandboxing</strong>, not prompt wording.",
+     "If untrusted third-party content enters the loop, it goes in a <strong>tool result block</strong>, JSON-encoded, with its origin declared, and gets screened before the model acts on it.",
+     "If the scenario is <strong>PHI</strong>, the answer is <strong>BAA + HIPAA configuration + audit logging</strong>, not ZDR.",
+     "If the requirement is <strong>data must not leave the region</strong>, pin inference geo (first-party) or choose the region/endpoint (Bedrock/Vertex), and confirm the feature you need is available there.",
+     "If the requirement is <strong>US federal / CUI</strong>, route to <strong>Bedrock in GovCloud</strong>.",
+     "If reviewers approve nearly everything, <strong>switch to risk-weighted sampling</strong> and spend the savings on evals.",
+     "If the decision is <strong>solely automated with legal or significant effect on a person</strong>, add human intervention with authority to overturn.",
+     "If the use case is <strong>consumer-facing in law, medicine, finance, employment, housing or insurance</strong>, you need qualified human review *and* AI disclosure.",
+     "If the stem mentions <strong>cost or latency pressure and low severity</strong>, the correct control stack is smaller than the maximal one.",
+     "If a model version changes, run the <strong>regression eval suite</strong> and canary before rollout. Never rely on \"it should be better\"."
+    ],
+    "ordered": false
+   },
+   {
+    "kind": "Common distractors",
+    "items": [
+     "<strong>\"Strengthen the system prompt\" as a fix for prompt injection or exfiltration.</strong> Prompts are not a security boundary. Right answer lives in permissioning.",
+     "<strong>\"Apply ZDR\" for a healthcare scenario.</strong> ZDR removes the audit trail HIPAA expects. BAA plus HIPAA configuration is the pairing.",
+     "<strong>\"Review 100% of outputs\" for a high-volume, low-severity workflow.</strong> Correct-sounding, kills the ROI, and induces rubber-stamping.",
+     "<strong>\"Fine-tune to remove bias.\"</strong> Fine-tuning changes behaviour but is not a bias control programme. You still need disaggregated testing and monitoring.",
+     "<strong>\"Use a larger model to eliminate hallucination.\"</strong> Reduces rate, never eliminates. Grounding and validation are the controls.",
+     "<strong>\"Show chain of thought to satisfy the right to explanation.\"</strong> Reasoning traces are not faithful explanations and not an audit artefact.",
+     "<strong>\"Get a DPA\" as the whole answer to a cross-border transfer question.</strong> A DPA covers processor duties; the transfer needs a Chapter V mechanism or in-region processing.",
+     "<strong>\"Anthropic is SOC 2 certified so we are compliant.\"</strong> Vendor attestations cover the vendor. Your application's controls are yours.",
+     "<strong>\"Log everything, forever.\"</strong> Over-retention creates its own GDPR and DPDP exposure and expands breach blast radius.",
+     "<strong>\"The architect accepts the residual risk.\"</strong> Risk acceptance belongs to the accountable business owner.",
+     "<strong>\"High-risk EU AI Act obligations bite in August 2026.\"</strong> Deferred to December 2027 (Annex III). August 2026 is the transparency and general applicability date.",
+     "<strong>\"Deploying on Bedrock makes us FedRAMP compliant.\"</strong> It makes an authorised path available. Your own system still needs its own authorisation."
+    ],
+    "ordered": false
+   },
+   {
+    "kind": "Recalls",
+    "items": [
+     "Reversibility decides where the human gate goes; blast radius breaks ties.",
+     "Approve the plan, not every step, for multi-step agents.",
+     "Untrusted content belongs in tool result blocks, JSON-encoded, origin declared.",
+     "Screen tool output with a cheap classifier before the model acts on it.",
+     "Confused deputy is fixed by propagating the caller's identity, not the agent's.",
+     "Exfiltration is a scope-and-egress problem, not an output-filtering problem.",
+     "Commercial Anthropic data is not used for training by default; thumbs feedback is the main opt-in exception and retains the conversation up to five years.",
+     "Anthropic is a processor on the API; you are the controller.",
+     "ZDR excludes Console/Workbench, consumer products, managed agent sessions, Files/Batch/code execution/MCP connector.",
+     "Anthropic holds SOC 2 Type I and II, ISO 27001:2022, ISO 42001:2023, and offers HIPAA-ready configuration with BAAs.",
+     "<code>inference_geo</code> is <code>\"global\"</code> or <code>\"us\"</code>, per request, Claude 4.6+, 1.1x price for US pinning; workspace geo is set at creation and immutable.",
+     "Bedrock in AWS GovCloud is the FedRAMP High / DoD IL4-IL5 path.",
+     "EU AI Act: prohibitions Feb 2025, GPAI Aug 2025, transparency Aug 2026, Annex III high-risk Dec 2027, Annex I Aug 2028.",
+     "DPDP Rules 2025 phase in through roughly Nov 2026 (consent managers) to May 2027 (full compliance); breach report to the Board within 72 hours; security logs kept at least a year.",
+     "GDPR Art. 22 gives the right to human intervention and to contest; the strong \"right to explanation\" language sits in Recital 71.",
+     "SOC 2 Type II proves controls operated over time; Type I only proves they were designed.",
+     "Anthropic's High-Risk Use Case Requirements (legal, medical, finance, credit, insurance, housing, employment, education, healthcare access, public benefits, legal status and adjudication) require a qualified human in the loop plus AI disclosure to the affected individual.",
+     "NIST AI RMF is Govern, Map, Measure, Manage; Govern is the cross-cutting one."
+    ],
+    "ordered": true
+   }
+  ]
+ },
+ {
+  "num": 6,
+  "title": "Stakeholder Communication and Lifecycle Management",
+  "weight": 14,
+  "blocks": [
+   {
+    "kind": "Decision heuristics",
+    "items": [
+     "If acceptance criteria were never agreed, <strong>stop and agree them</strong> before arguing about performance.",
+     "If the stated ask and the underlying job differ, design for the job and say so explicitly.",
+     "If the task is deterministic and rule-expressible, recommend conventional software.",
+     "If a subset of the scope meets the bar, <strong>descope and ship the subset</strong>.",
+     "If the sponsor asks for a guarantee, offer an accuracy target on a named eval set plus a fallback path.",
+     "If a POC is being promoted straight to production, insert a pilot with real users and a measured baseline.",
+     "If adoption is low but accuracy is fine, the problem is workflow, trust or enablement, not the model.",
+     "If the audience is compliance, lead with data flow and human control, not accuracy.",
+     "If a pilot is behind, report early with options; never let the sponsor discover it.",
+     "If cost per task exceeds budget, look at model routing, caching, prompt size and review minutes before declaring it infeasible.",
+     "If the vendor capability is undifferentiated, buy it; if the workflow is the differentiator, build it.",
+     "If a stem offers \"add more features\" as a response to a missed target, it is wrong. Narrow, or fix measurement."
+    ],
+    "ordered": false
+   },
+   {
+    "kind": "Common distractors",
+    "items": [
+     "<strong>\"Extend the pilot by a quarter\"</strong> with no change to hypothesis, scope or measurement. Time is not an intervention.",
+     "<strong>\"Build the full production architecture during discovery.\"</strong> Over-engineering before value is proven.",
+     "<strong>\"Present the architecture to the executive sponsor.\"</strong> Wrong artefact for the audience.",
+     "<strong>\"Commit to 99% accuracy in the SLA.\"</strong> Open-ended generation quality is not contractually guaranteeable.",
+     "<strong>\"Train users more\"</strong> when the workflow itself got worse for them.",
+     "<strong>\"Escalate to the steering committee\"</strong> before diagnosing. Escalation without a recommendation reads as abdication.",
+     "<strong>\"Start with the highest-value use case\"</strong> ignoring feasibility. That quadrant is where pilots die.",
+     "<strong>\"Swap to a bigger model\"</strong> before checking whether the eval set is representative.",
+     "<strong>\"Hand over prompts in a shared doc.\"</strong> Prompts need versioning, evals and a changelog.",
+     "<strong>\"Roll out to everyone because the pilot went well.\"</strong> Pilot distribution rarely survives the full population.",
+     "<strong>\"Let the sponsor lower the target\"</strong> without recording that it moved and why."
+    ],
+    "ordered": false
+   },
+   {
+    "kind": "Recalls",
+    "items": [
+     "Design against the underlying job, not the stated ask.",
+     "Agree acceptance criteria, dataset, threshold and sign-off before the pilot starts.",
+     "\"Good enough\" is defined against the human baseline, not perfection.",
+     "Cost per task includes retries, guardrail model calls, retrieval and human review minutes.",
+     "Latency budget is allocated across retrieval, model, validation and network before build.",
+     "SLA availability and latency percentiles yes; contractual accuracy percentage no.",
+     "POC proves feasibility, pilot proves value, production adds SLOs, on-call and rollback.",
+     "Production gates: eval threshold, cost, latency, guardrail incidents, owner, runbook, tested rollback, compliance sign-off.",
+     "Descoping to the high-confidence subset is usually better than missing the target on everything.",
+     "Bad news travels early and arrives with options and a recommendation.",
+     "ROI must be discounted by the adoption ramp.",
+     "Buy the undifferentiated platform, build the differentiating workflow.",
+     "Every incident and every failure case becomes a new eval case.",
+     "Prompts are versioned artefacts with a changelog, not documents.",
+     "Exec message: recommendation, three numbers, the ask.",
+     "Compliance message: data flow, residency, retention, human control, audit trail.",
+     "Low adoption with good accuracy means workflow, trust or enablement.",
+     "Kill criteria are defined at pilot start, not invented at pilot end."
+    ],
+    "ordered": true
+   }
+  ]
+ },
+ {
+  "num": 2,
+  "title": "Claude Models, Prompting & Context Engineering",
+  "weight": 13,
+  "blocks": [
+   {
+    "kind": "Decision heuristics",
+    "items": [
+     "If the same large prefix repeats across requests, cache it and move volatile content after the breakpoint.",
+     "If the prefix changes every call (timestamps, per-user data at the top), caching pays nothing. Reorder first, then cache.",
+     "If the prompt is under the model minimum, do not bother caching.",
+     "If requests are async and not user-facing, batch them before you consider downgrading the model.",
+     "If the task is classification, extraction, routing or moderation at volume, use Haiku.",
+     "If the agent is planning and decomposing, use Opus as lead and a cheaper tier for workers.",
+     "If output must be machine-parsed, use structured outputs, not \"please respond in JSON\".",
+     "If a tool call must happen every time, use <code>tool_choice: any</code> plus <code>strict: true</code>, and accept that no prose precedes it. Forced <code>any</code>/<code>tool</code> is rejected (400) on Opus 5.5, Sonnet 5.5, Fable 5.1 and Mythos 5.1, and with manual extended thinking; on those use <code>auto</code> with <code>strict: true</code>.",
+     "If context is filling on a long task, choose in this order: retrieve instead of stuff, isolate in subagents, take notes externally, compact last.",
+     "If a scenario mentions degraded recall over a long session, the answer is context rot, not model capability."
+    ],
+    "ordered": false
+   },
+   {
+    "kind": "Common distractors",
+    "items": [
+     "<strong>Cache the whole request including the user message.</strong> Guarantees a miss every turn.",
+     "<strong>Put the changing instruction in the system prompt.</strong> System sits before messages in the cache order, so it invalidates everything after it.",
+     "<strong>Use the 1-hour TTL for a single follow-up.</strong> 2x write for one read is a loss.",
+     "<strong>Batch API for a chat feature.</strong> Latency SLA rules it out; batches take up to 24 hours.",
+     "<strong>Stuff the whole knowledge base into the 1M window because there is no long-context premium.</strong> Price is fine, attention is not: context rot degrades recall.",
+     "<strong>Chain of thought on a classification task.</strong> Adds output tokens and latency, no accuracy gain.",
+     "<strong>Prefill to force JSON when structured outputs are available.</strong> Prefill is incompatible with structured outputs and gives weaker guarantees.",
+     "<strong><code>budget_tokens</code> on a Claude 5 model.</strong> 400 error; use adaptive thinking with effort.",
+     "<strong>Raise <code>budget_tokens</code>/effort mid-conversation to improve quality.</strong> Invalidates the message cache for every following turn.",
+     "<strong>Add an MCP server to give the agent a documented workflow.</strong> That is a Skill. MCP is for external systems and network access."
+    ],
+    "ordered": false
+   },
+   {
+    "kind": "Recalls",
+    "items": [
+     "Cache order: tools, then system, then messages. Static first, always.",
+     "Max 4 cache breakpoints; 20-block lookback window.",
+     "Cache minimums: 512 (Opus 5 / Fable 5), 1,024 (Sonnet 5, Opus 4.8, Sonnet 4.6/4.5), 2,048 (Opus 4.7), 4,096 (Opus 4.6/4.5, Haiku 4.5).",
+     "5m write 1.25x, 1h write 2x, reads 0.1x on most models (0.05x on Opus 5.5 / Sonnet 5.5, 0.025x on Fable 5.1 / Mythos 5.1). TTL counts from request start.",
+     "Batch API: 50% off, most under 1 hour, 24h max, 100k requests or 256MB, results kept 29 days, no streaming.",
+     "Sonnet 5 is $2/$10, Opus 5 $5/$25, Haiku 4.5 $1/$5, Fable 5 $10/$50.",
+     "1M context on 4.6+ has no long-context price premium (Haiku 5.5 is the exception: higher rates above 100k tokens).",
+     "Adaptive thinking from 4.6 onward (4.6 supports both modes); extended thinking with budget_tokens is 400 on 4.7+.",
+     "Effort levels: low, medium, high, xhigh, max. Default is high on most models, but medium on Opus 5.5 and Haiku 5.5. Changing effort between requests invalidates the message cache.",
+     "Manual extended thinking blocks <code>tool_choice: any</code> and <code>tool</code>; adaptive does not (but Opus 5.5, Sonnet 5.5, Fable 5.1 and Mythos 5.1 reject forced tool_choice regardless, and forcing skips thinking).",
+     "Skill levels: ~100 tokens metadata, &lt;5k body, bundled files free until read.",
+     "Subagents return roughly 1-2k tokens after spending tens of thousands.",
+     "Context rot: recall degrades as context grows; attention is a finite budget.",
+     "Structured outputs use grammar-constrained sampling; incompatible with prefill and citations; <code>pattern</code> is supported, but min/max keywords are not.",
+     "Strict tools cap: 20 strict tools, 24 optional params, 16 union params.",
+     "Claude 4.7+ models use a newer tokenizer that produces roughly 30% more tokens for the same text. Any cost comparison across model generations has to account for this, not just the per-token price."
+    ],
+    "ordered": true
+   }
+  ]
+ },
+ {
+  "num": 7,
+  "title": "Developer Productivity & Operational Enablement",
+  "weight": 7,
+  "blocks": [
+   {
+    "kind": "Decision heuristics",
+    "items": [
+     "If it must happen every time regardless of what Claude decides, use a hook or a permission rule. Never CLAUDE.md.",
+     "If it is guidance the model should weigh, use CLAUDE.md or a rule.",
+     "If it only matters for part of the tree, use <code>.claude/rules/</code> with <code>paths:</code> frontmatter.",
+     "If it is a multi-step procedure invoked occasionally, use a Skill so it stays out of context until needed.",
+     "If output would be verbose and you only need the conclusion, use a subagent.",
+     "If you need the current conversation's context in a side task, use a fork, not a fresh subagent.",
+     "If the org must not be able to opt out, use managed settings and managed CLAUDE.md.",
+     "If the run is in CI, add <code>--bare</code> and an explicit tool allowlist.",
+     "If a team member's local config could change CI results, that is the argument for <code>--bare</code>.",
+     "If two repos need the same setup, promote <code>.claude/</code> config into a plugin."
+    ],
+    "ordered": false
+   },
+   {
+    "kind": "Common distractors",
+    "items": [
+     "<strong>Put the security policy in the project CLAUDE.md.</strong> Committed CLAUDE.md is advisory and any contributor can edit it. Use managed settings <code>permissions.deny</code>.",
+     "<strong>Use a PostToolUse hook to prevent a dangerous command.</strong> Too late; PostToolUse cannot block. Use PreToolUse.",
+     "<strong>Rely on <code>.claude/settings.local.json</code> for team standards.</strong> It is gitignored and personal.",
+     "<strong>Give every engineer their own subagent definitions in <code>~/.claude/agents/</code>.</strong> Not shared and not reviewable. Use <code>.claude/agents/</code> in the repo.",
+     "<strong>Assume CLI flags beat managed settings.</strong> Managed settings sit above CLI args.",
+     "<strong>Import a large doc into CLAUDE.md for organisation.</strong> Imports still load fully at launch and cost the same context. Path-scoped rules or Skills reduce context; imports do not.",
+     "<strong>Expect a subagent to know what the main thread just discussed.</strong> It does not, unless it is a fork.",
+     "<strong>Run <code>claude -p</code> in CI without <code>--bare</code> and expect reproducibility.</strong> It picks up repo hooks, <code>.mcp.json</code> and the runner's <code>~/.claude</code>.",
+     "<strong>Use auto memory as the team knowledge base.</strong> Machine-local, Claude-authored, not versioned."
+    ],
+    "ordered": false
+   },
+   {
+    "kind": "Recalls",
+    "items": [
+     "Settings precedence: managed, CLI args, local, project, user.",
+     "CLAUDE.md load order: managed policy, user, project, local; all concatenated, closest to cwd read last.",
+     "Managed policy CLAUDE.md cannot be excluded; <code>claudeMdExcludes</code> handles the rest.",
+     "<code>@path</code> imports expand at launch, max 4 hops, skipped inside code spans.",
+     "Target under 200 lines per CLAUDE.md; longer files reduce adherence.",
+     "<code>.claude/rules/*.md</code> with <code>paths:</code> frontmatter loads only for matching files.",
+     "Project-root CLAUDE.md survives <code>/compact</code> (re-read from disk); nested CLAUDE.md files and path-scoped rules are not re-injected but reload on demand when matching files are accessed.",
+     "Hook exit 2 blocks and overrides a JSON allow; exit 0 is success.",
+     "PreToolUse, UserPromptSubmit, Stop, SubagentStop and PreCompact can block; PostToolUse cannot.",
+     "Subagent precedence: managed, <code>--agents</code>, project, user, plugin.",
+     "Subagents get CLAUDE.md and git status but not conversation history or parent auto memory; forks get everything.",
+     "MCP scopes: local (default), project (<code>.mcp.json</code>, shared), user; precedence local &gt; project &gt; user &gt; plugin &gt; connector.",
+     "<code>-p</code> and SDK sessions load project MCP servers without an approval prompt.",
+     "<code>--bare</code> skips hooks, skills, plugins, MCP, auto memory and CLAUDE.md; recommended for CI.",
+     "<code>--output-format json</code> gives <code>total_cost_usd</code> and <code>session_id</code>; <code>--json-schema</code> adds <code>structured_output</code>.",
+     "Plugin skills are namespaced <code>/plugin-name:skill-name</code>; project and user agents override same-named plugin agents."
+    ],
+    "ordered": true
+   }
+  ]
+ },
+ {
+  "num": 0,
+  "title": "Cross-domain reminders",
+  "weight": 0,
+  "blocks": [
+   {
+    "kind": "Reminders",
+    "items": [
+     "Multiple-response items (\"Select TWO/THREE\") in these domains usually pair <strong>one preventive control with one detective control</strong>, or <strong>one technical action with one stakeholder action</strong>. If your two picks are both technical or both preventive, re-read.",
+     "When two options are both correct in isolation, pick the one that matches the <strong>stage</strong> named in the stem. A control that is right in production is often wrong during discovery, and vice versa.",
+     "The word \"immediately\" in an option is often a tell for an over-reaction. The words \"before proceeding\" often flag the correct sequencing answer.",
+     "Anything you cannot verify against a primary source, treat as directional. The two areas most likely to have moved since these notes: EU AI Act sub-deadlines, and the exact list of Anthropic features and models eligible for ZDR."
+    ],
+    "ordered": false
+   }
+  ]
+ }
+]

@@ -1,0 +1,582 @@
+<title>Claude Cert Drill Desk</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,750&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Layout: a certification switch above one reading column with a sticky tab bar; reading tabs are domain sections, the quiz is a card plus a score ledger. */
+:root {
+  --paper: #f5f6f9;
+  --sheet: #ffffff;
+  --ink: #1b2130;
+  --ink-soft: #545d72;
+  --rule: #dde1ea;
+  --accent: #2f49b8;
+  --accent-wash: #e8ecfb;
+  --good: #1f7a4d;
+  --good-wash: #e3f4ea;
+  --bad: #b3322c;
+  --bad-wash: #fbe8e6;
+  --warn: #8a5a00;
+  --display: "Bricolage Grotesque", "Avenir Next", system-ui, sans-serif;
+  --body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #12151d; --sheet: #1a1f2a; --ink: #e4e7ee; --ink-soft: #9aa3b6; --rule: #2c3342;
+    --accent: #8da2ff; --accent-wash: #252d4a; --good: #6fd19c; --good-wash: #183527;
+    --bad: #ff8f87; --bad-wash: #3d1f1e; --warn: #e8b85a; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #12151d; --sheet: #1a1f2a; --ink: #e4e7ee; --ink-soft: #9aa3b6; --rule: #2c3342;
+  --accent: #8da2ff; --accent-wash: #252d4a; --good: #6fd19c; --good-wash: #183527;
+  --bad: #ff8f87; --bad-wash: #3d1f1e; --warn: #e8b85a; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--paper); color: var(--ink); font: 15px/1.6 var(--body); }
+.wrap { max-width: 860px; margin: 0 auto; padding-inline: 16px; padding-block: 0 64px; }
+
+.certbar { display: flex; flex-wrap: wrap; gap: 6px; padding-block: 20px 0; }
+.cert { display: grid; gap: 2px; text-align: left; font: 600 14px/1.2 var(--body); color: var(--ink-soft); background: none; border: 1px solid var(--rule); border-radius: 10px; padding: 9px 14px; cursor: pointer; }
+.cert small { font: 500 11.5px/1 var(--mono); letter-spacing: .04em; }
+.cert[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--sheet); }
+.cert:hover:not([aria-pressed="true"]) { border-color: var(--accent); color: var(--ink); }
+
+header.top { padding-block: 20px 8px; display: grid; gap: 6px; }
+.eyebrow { font: 500 12px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-soft); }
+h1 { font: 750 clamp(28px, 5vw, 40px)/1.1 var(--display); margin: 0; text-wrap: balance; letter-spacing: -.01em; }
+.lede { margin: 0; color: var(--ink-soft); max-width: 62ch; }
+.facts { display: flex; flex-wrap: wrap; gap: 6px 16px; font: 500 12.5px/1.4 var(--mono); color: var(--ink-soft); margin-top: 6px; }
+.facts b { color: var(--ink); font-weight: 500; }
+
+nav.tabs { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--paper); display: flex; gap: 4px; padding-block: 12px; border-bottom: 1px solid var(--rule); margin-bottom: 20px; overflow-x: auto; }
+.tab { font: 600 14px/1 var(--body); border: 1px solid transparent; background: none; color: var(--ink-soft); padding: 10px 14px; border-radius: 8px; cursor: pointer; white-space: nowrap; }
+.tab[aria-selected="true"] { background: var(--sheet); color: var(--ink); border-color: var(--rule); }
+.tab:focus-visible, button:focus-visible, select:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.toolbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 16px; }
+input[type="search"], select { font: 14px var(--body); color: var(--ink); background: var(--sheet); border: 1px solid var(--rule); border-radius: 8px; padding: 9px 12px; max-width: 100%; }
+input[type="search"] { flex: 1 1 220px; min-width: 0; }
+.jump { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 24px; }
+.jump a { font: 500 12px/1 var(--mono); color: var(--ink-soft); text-decoration: none; border: 1px solid var(--rule); border-radius: 999px; padding: 6px 10px; background: var(--sheet); }
+.jump a:hover { color: var(--accent); border-color: var(--accent); }
+section.domain { margin-bottom: 36px; scroll-margin-top: 80px; }
+.dhead { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; border-bottom: 2px solid var(--ink); padding-bottom: 6px; margin-bottom: 14px; }
+.dhead h2 { font: 650 22px/1.2 var(--display); margin: 0; text-wrap: balance; flex: 1 1 auto; min-width: 0; }
+.weight { font: 500 13px/1 var(--mono); color: var(--accent); }
+.wbar { width: 100%; height: 4px; background: var(--rule); border-radius: 2px; overflow: hidden; }
+.wbar i { display: block; height: 100%; background: var(--accent); }
+details.blk { background: var(--sheet); border: 1px solid var(--rule); border-radius: 10px; margin-bottom: 10px; }
+details.blk > summary { cursor: pointer; padding: 12px 16px; font: 600 14px/1.3 var(--body); display: flex; gap: 10px; align-items: center; list-style: none; }
+details.blk > summary::-webkit-details-marker { display: none; }
+details.blk > summary::before { content: "▸"; color: var(--ink-soft); transition: transform .15s; }
+details.blk[open] > summary::before { transform: rotate(90deg); }
+.kind-Distractors > summary .k { color: var(--bad); }
+.kind-Recalls > summary .k { color: var(--good); }
+.cnt { font: 500 12px/1 var(--mono); color: var(--ink-soft); margin-left: auto; }
+details.blk ul, details.blk ol { margin: 0; padding: 0 18px 14px 40px; display: grid; gap: 8px; }
+details.blk li { max-width: 72ch; }
+code { font: 500 .88em var(--mono); background: var(--accent-wash); padding: 1px 5px; border-radius: 4px; }
+a { color: var(--accent); }
+mark { background: var(--accent-wash); color: inherit; padding: 0 2px; border-radius: 3px; }
+.empty { color: var(--ink-soft); padding: 24px 0; }
+
+/* Scenario guide */
+.technique { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 10px; margin-bottom: 32px; }
+.tech { background: var(--sheet); border: 1px solid var(--rule); border-radius: 10px; padding: 12px 14px; min-width: 0; }
+.tech h4 { font: 600 14px/1.3 var(--body); margin: 0 0 4px; }
+.tech p { margin: 0; font-size: 13.5px; color: var(--ink-soft); }
+.obj { margin: 18px 0 8px; font: 500 12px/1.3 var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-soft); scroll-margin-top: 80px; }
+.sit { background: var(--sheet); border: 1px solid var(--rule); border-radius: 10px; padding: 14px 16px; margin-bottom: 10px; display: grid; gap: 8px; }
+.sit .stem { margin: 0; font-style: italic; color: var(--ink-soft); }
+.sit dl { margin: 0; display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 6px 12px; }
+.sit dt { font: 500 11.5px/1.6 var(--mono); text-transform: uppercase; letter-spacing: .06em; padding-top: 2px; }
+.sit dd { margin: 0; max-width: 72ch; }
+.sit dt.p { color: var(--good); } .sit dd.p { font-weight: 600; }
+.sit dt.w { color: var(--accent); }
+.sit dt.t { color: var(--bad); }
+@media (max-width: 480px) { .sit dl { grid-template-columns: minmax(0, 1fr); gap: 2px; } .sit dd { margin-bottom: 6px; } }
+
+/* Reading documents (CCDV-F) */
+.prose { min-width: 0; }
+.dsec { background: var(--sheet); border: 1px solid var(--rule); border-radius: 12px; padding: 4px 20px 16px; margin-bottom: 14px; scroll-margin-top: 80px; }
+.dtitle { font: 650 20px/1.25 var(--display); margin: 14px 0 8px; text-wrap: balance; }
+.prose h3 { font: 600 16px/1.35 var(--body); margin: 18px 0 6px; }
+.prose h4 { font: 600 14.5px/1.35 var(--body); margin: 14px 0 4px; }
+.prose p, .prose li { max-width: 72ch; }
+.prose ul, .prose ol { padding-left: 22px; display: grid; gap: 4px; }
+.prose blockquote { margin: 10px 0; padding: 8px 14px; border-left: 3px solid var(--accent); background: var(--accent-wash); border-radius: 0 8px 8px 0; }
+.prose blockquote p { margin: 4px 0; }
+.prose hr { border: none; border-top: 1px solid var(--rule); margin: 16px 0; }
+.prose pre { background: var(--paper); border: 1px solid var(--rule); border-radius: 8px; padding: 10px 12px; overflow-x: auto; font: 500 12.5px/1.5 var(--mono); }
+.prose pre code { background: none; padding: 0; }
+.prose pre.mdiag { white-space: pre; text-align: center; }
+.prose pre.mdiag svg { max-width: 100%; height: auto; }
+.tscroll { overflow-x: auto; margin: 10px 0; }
+.prose table { border-collapse: collapse; font-size: 14px; min-width: 100%; }
+.prose th, .prose td { border-bottom: 1px solid var(--rule); padding: 7px 10px; text-align: left; vertical-align: top; }
+.prose th { font: 600 13px/1.3 var(--body); color: var(--ink-soft); }
+.docsrc { font-size: 12.5px; color: var(--ink-soft); }
+
+/* Quiz */
+.banknote { font-size: 13px; color: var(--ink-soft); margin: -6px 0 16px; max-width: 72ch; }
+.banknote.warn { color: var(--warn); }
+.qgrid { display: grid; grid-template-columns: minmax(0, 1fr) 240px; gap: 20px; align-items: start; }
+@media (max-width: 760px) { .qgrid { grid-template-columns: minmax(0, 1fr); } }
+.card { background: var(--sheet); border: 1px solid var(--rule); border-radius: 12px; padding: 20px; min-width: 0; }
+.qmeta { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+.chip { font: 500 11.5px/1 var(--mono); padding: 5px 8px; border-radius: 999px; background: var(--accent-wash); color: var(--accent); }
+.chip.plain { background: none; border: 1px solid var(--rule); color: var(--ink-soft); }
+.chip.sel { background: var(--ink); color: var(--sheet); }
+.chip.warn { background: none; border: 1px solid var(--warn); color: var(--warn); }
+.scenario { margin: 0 0 10px; color: var(--ink-soft); }
+.question { font: 600 16.5px/1.45 var(--body); margin: 0 0 16px; }
+.opts { display: grid; gap: 8px; }
+.opt { display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: 10px; text-align: left; font: 14.5px/1.5 var(--body); color: var(--ink); background: var(--sheet); border: 1px solid var(--rule); border-radius: 10px; padding: 12px; cursor: pointer; }
+.opt:hover:not(:disabled) { border-color: var(--accent); }
+.opt .key { font: 500 13px/28px var(--mono); text-align: center; width: 28px; height: 28px; border-radius: 6px; background: var(--paper); color: var(--ink-soft); }
+.opt.picked { border-color: var(--accent); background: var(--accent-wash); }
+.opt.right { border-color: var(--good); background: var(--good-wash); }
+.opt.right .key { background: var(--good); color: var(--sheet); }
+.opt.wrong { border-color: var(--bad); background: var(--bad-wash); }
+.opt.wrong .key { background: var(--bad); color: var(--sheet); }
+.opt:disabled { cursor: default; }
+.note { font-size: 13.5px; color: var(--ink-soft); margin-top: 6px; grid-column: 2; }
+.mx { width: 100%; border-collapse: collapse; margin-bottom: 4px; }
+.mx td { border-top: 1px solid var(--rule); padding: 10px 6px; vertical-align: top; }
+.mx td.stmt { width: 60%; }
+.mx select { width: 100%; }
+.mx tr.right td.stmt { background: var(--good-wash); }
+.mx tr.wrong td.stmt { background: var(--bad-wash); }
+.mx .ans { display: block; font-size: 13px; margin-top: 4px; }
+.mx tr.right .ans { color: var(--good); } .mx tr.wrong .ans { color: var(--bad); }
+@media (max-width: 560px) { .mx td { display: block; width: 100% !important; border-top: none; padding: 4px 0; } .mx tr { display: block; border-top: 1px solid var(--rule); padding: 8px 0; } }
+.verdict { font: 650 17px/1.2 var(--display); margin: 18px 0 6px; }
+.verdict.ok { color: var(--good); }
+.verdict.no { color: var(--bad); }
+.explain { margin: 0 0 8px; }
+.ref { font-size: 13px; word-break: break-word; }
+.actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+.btn { font: 600 14px/1 var(--body); padding: 11px 16px; border-radius: 8px; border: 1px solid var(--rule); background: var(--sheet); color: var(--ink); cursor: pointer; }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--sheet); }
+.btn:disabled { opacity: .45; cursor: default; }
+.hint { font-size: 13px; color: var(--warn); margin-top: 10px; }
+.ledger h3 { font: 650 15px/1.2 var(--display); margin: 0 0 12px; }
+.total { font: 750 30px/1 var(--display); font-variant-numeric: tabular-nums; }
+.total small { font: 500 13px var(--mono); color: var(--ink-soft); }
+.drow { display: grid; gap: 4px; margin-top: 12px; font-size: 12.5px; }
+.drow .lab { display: flex; justify-content: space-between; gap: 8px; }
+.drow .lab span:last-child { font: 500 12px var(--mono); font-variant-numeric: tabular-nums; color: var(--ink-soft); white-space: nowrap; }
+.track { height: 6px; background: var(--rule); border-radius: 3px; position: relative; overflow: hidden; }
+.track i { position: absolute; inset: 0 auto 0 0; background: var(--ink-soft); }
+.track i.ok { background: var(--good); }
+.track i.no { background: var(--bad); }
+.passline { font-size: 12px; color: var(--ink-soft); margin-top: 12px; }
+.linkbtn { background: none; border: none; color: var(--accent); font: 500 13px var(--body); padding: 0; cursor: pointer; margin-top: 12px; }
+.progress { font: 500 12.5px var(--mono); color: var(--ink-soft); margin-left: auto; align-self: center; }
+footer { margin-top: 48px; font-size: 12.5px; color: var(--ink-soft); border-top: 1px solid var(--rule); padding-top: 14px; display: grid; gap: 6px; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="wrap">
+  <div class="certbar" role="group" aria-label="Certification">
+    <button class="cert" type="button" data-cert="ccarp" aria-pressed="false"><small>CCAR-P</small>Architect · Professional</button>
+    <button class="cert" type="button" data-cert="ccdvf" aria-pressed="false"><small>CCDV-F</small>Developer · Foundations</button>
+  </div>
+
+  <header class="top">
+    <div class="eyebrow" id="h-eyebrow"></div>
+    <h1 id="h-title"></h1>
+    <p class="lede" id="h-lede"></p>
+    <div class="facts" id="h-facts"></div>
+  </header>
+
+  <nav class="tabs" role="tablist" id="tabs"></nav>
+
+  <main>
+    <div id="view-guide" role="tabpanel" hidden>
+      <p class="lede" style="margin-bottom:16px">The situations the exam is likely to put in front of you, grouped by the official objectives in Anthropic's CCAR-P Exam Guide and ordered by domain weight. Each one gives the answer to pick, why it is right, and the tempting wrong answer.</p>
+      <div class="toolbar">
+        <input type="search" id="guide-search" placeholder="Filter, e.g. RAG, chunk, ZDR, canary" aria-label="Filter scenario guide">
+      </div>
+      <div class="jump" id="guide-jump"></div>
+      <div id="guide"></div>
+    </div>
+
+    <div id="view-cheat" role="tabpanel" hidden>
+      <div class="toolbar">
+        <input type="search" id="cheat-search" placeholder="Filter, e.g. caching, ZDR, rollout" aria-label="Filter quick recall">
+        <button class="btn" id="cheat-toggle" type="button">Collapse all</button>
+      </div>
+      <div class="jump" id="jump"></div>
+      <div id="cheat"></div>
+    </div>
+
+    <div id="view-docs" role="tabpanel" hidden>
+      <div class="toolbar">
+        <select id="doc-pick" aria-label="Document"></select>
+        <input type="search" id="doc-search" placeholder="Filter sections, e.g. batch, hooks, stop_reason" aria-label="Filter sections">
+      </div>
+      <div class="jump" id="doc-jump"></div>
+      <div id="docs">
+<!--__DOCS__-->
+      </div>
+      <p class="empty" id="doc-empty" hidden></p>
+    </div>
+
+    <div id="view-quiz" role="tabpanel" hidden>
+      <div class="toolbar">
+        <select id="q-set" aria-label="Question bank"></select>
+        <select id="q-domain" aria-label="Domain"></select>
+        <select id="q-pool" aria-label="Question set">
+          <option value="all">All questions</option>
+          <option value="mock">Exam-weighted mock</option>
+          <option value="unseen">Not answered yet</option>
+          <option value="missed">Ones I got wrong</option>
+        </select>
+        <span class="progress" id="q-progress"></span>
+      </div>
+      <p class="banknote" id="banknote"></p>
+      <div class="qgrid">
+        <div class="card" id="q-card"></div>
+        <aside class="card ledger" id="ledger"></aside>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <span id="f-cert"></span>
+    <span>Unofficial practice material, not Anthropic exam content. Check version-specific facts against the current docs and the official exam guide.</span>
+    <span id="f-repo"></span>
+  </footer>
+</div>
+
+<script>
+const DATA = /*__DATA__*/null;
+const $ = (s, el = document) => el.querySelector(s);
+const $$ = (s, el = document) => [...el.querySelectorAll(s)];
+const store = {
+  get(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch { return d; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} }
+};
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const slug = s => s.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+const VIEWS = ["guide", "cheat", "docs", "quiz"];
+let C = null;
+
+/* Certification switch and tabs */
+function setCert(id) {
+  C = DATA.certs[id];
+  store.set("drill.cert", id);
+  $$(".cert").forEach(b => b.setAttribute("aria-pressed", b.dataset.cert === id));
+  $("#h-eyebrow").textContent = C.eyebrow;
+  $("#h-title").textContent = C.code + " Drill Desk";
+  $("#h-lede").textContent = C.lede;
+  $("#h-facts").innerHTML = C.facts.map(f => `<span>${f}</span>`).join("");
+  $("#f-cert").innerHTML = C.footer;
+  $("#f-repo").innerHTML = DATA.repo ? `Source, corrections and question reports: <a href="https://github.com/${DATA.repo}" target="_blank" rel="noopener">github.com/${DATA.repo}</a>` : "";
+  $("#tabs").innerHTML = C.tabs.map(([v, label]) => `<button class="tab" role="tab" id="tab-${v}" aria-controls="view-${v}" data-view="${v}">${esc(label)}</button>`).join("");
+  $$("#tabs .tab").forEach(b => b.onclick = () => showTab(b.dataset.view));
+  initQuiz();
+  const want = location.hash.slice(1);
+  const tabs = C.tabs.map(t => t[0]);
+  showTab(tabs.includes(want) ? want : store.get(C.key + ".tab", tabs[0]));
+}
+function showTab(name) {
+  if (!C.tabs.some(t => t[0] === name)) name = C.tabs[0][0];
+  for (const v of VIEWS) {
+    $("#view-" + v).hidden = v !== name;
+    const t = $("#tab-" + v); if (t) t.setAttribute("aria-selected", v === name);
+  }
+  store.set(C.key + ".tab", name);
+  if (name === "docs") showDoc($("#doc-pick").value);
+}
+$$(".cert").forEach(b => b.onclick = () => setCert(b.dataset.cert));
+
+/* CCAR-P scenario guide */
+const G = DATA.certs.ccarp.guide;
+function renderGuide(filter = "") {
+  const f = filter.trim().toLowerCase();
+  const match = it => !f || [it.s, it.p, it.w, it.t].join(" ").toLowerCase().includes(f);
+  let out = "";
+  if (!f) out += `<section class="domain" id="g-technique"><div class="dhead"><h2>How to read the questions</h2></div><div class="technique">${G.technique.map(t => `<div class="tech"><h4>${esc(t.h)}</h4><p>${esc(t.b)}</p></div>`).join("")}</div></section>`;
+  let n = 0;
+  for (const d of G.domains) {
+    let body = "";
+    for (const o of d.objectives) {
+      const items = o.items.filter(match);
+      if (!items.length) continue;
+      n += items.length;
+      body += `<h3 class="obj" id="g-${slug(o.o)}">${esc(o.o)}</h3>` + items.map(it => `<article class="sit"><p class="stem">${esc(it.s)}</p><dl><dt class="p">Pick</dt><dd class="p">${esc(it.p)}</dd><dt class="w">Why</dt><dd>${esc(it.w)}</dd><dt class="t">Trap</dt><dd>${esc(it.t)}</dd></dl></article>`).join("");
+    }
+    if (body) out += `<section class="domain" id="g-d${d.num}"><div class="dhead"><h2>${d.num}. ${esc(d.title)}</h2><span class="weight">${d.weight}%</span><div class="wbar"><i style="width:${d.weight * 5}%"></i></div></div>${body}</section>`;
+  }
+  $("#guide").innerHTML = (f && !n) ? `<p class="empty">Nothing matches “${esc(filter)}”.</p>` : out;
+}
+function jumpTo(container, clearInput, rerender) {
+  container.addEventListener("click", e => {
+    const a = e.target.closest("a"); if (!a) return;
+    e.preventDefault();
+    if (clearInput && clearInput.value) { clearInput.value = ""; rerender(""); }
+    const t = document.getElementById(a.getAttribute("href").slice(1)); t && t.scrollIntoView({ behavior: "smooth" });
+  });
+}
+$("#guide-jump").innerHTML = `<a href="#g-technique">Exam technique</a>` + G.domains.map(d => `<a href="#g-d${d.num}">${d.num} · ${d.weight}% ${esc(d.title.split(/[ ,&]/)[0])}</a>`).join("") + `<a href="#g-${slug("RAG pipeline design: chunking and indexing")}">RAG design</a>`;
+jumpTo($("#guide-jump"), $("#guide-search"), renderGuide);
+$("#guide-search").addEventListener("input", e => renderGuide(e.target.value));
+renderGuide();
+
+/* CCAR-P quick recall */
+const R = DATA.certs.ccarp.recall;
+function renderCheat(filter = "") {
+  const f = filter.trim().toLowerCase();
+  const re = f ? new RegExp("(" + f.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + ")", "gi") : null;
+  const hi = h => re ? h.replace(/>([^<]+)</g, (m, t) => ">" + t.replace(re, "<mark>$1</mark>") + "<").replace(/^([^<]+)/, t => t.replace(re, "<mark>$1</mark>")) : h;
+  let out = "", any = false;
+  for (const d of R) {
+    let blocks = "";
+    for (const b of d.blocks) {
+      const items = b.items.filter(i => !f || i.replace(/<[^>]+>/g, "").toLowerCase().includes(f));
+      if (!items.length) continue;
+      const tag = b.ordered ? "ol" : "ul";
+      blocks += `<details class="blk kind-${b.kind.split(" ").pop()}" open><summary><span class="k">${esc(b.kind)}</span><span class="cnt">${items.length}</span></summary><${tag}>${items.map(i => `<li>${hi(i)}</li>`).join("")}</${tag}></details>`;
+    }
+    if (!blocks) continue;
+    any = true;
+    const head = d.num
+      ? `<div class="dhead"><h2>${d.num}. ${esc(d.title)}</h2><span class="weight">${d.weight}%</span><div class="wbar"><i style="width:${d.weight * 5}%"></i></div></div>`
+      : `<div class="dhead"><h2>${esc(d.title)}</h2></div>`;
+    out += `<section class="domain" id="d-${slug(d.title)}">${head}${blocks}</section>`;
+  }
+  $("#cheat").innerHTML = any ? out : `<p class="empty">Nothing matches “${esc(filter)}”.</p>`;
+}
+$("#jump").innerHTML = R.map(d => `<a href="#d-${slug(d.title)}">${d.num ? d.num + " · " + d.weight + "%" : "Cross-domain"} ${esc(d.title.split(/[ ,&]/)[0])}</a>`).join("");
+jumpTo($("#jump"), $("#cheat-search"), renderCheat);
+$("#cheat-search").addEventListener("input", e => renderCheat(e.target.value));
+$("#cheat-toggle").onclick = e => {
+  const all = $$("details.blk"); const open = all.some(d => d.open);
+  all.forEach(d => d.open = !open); e.target.textContent = open ? "Expand all" : "Collapse all";
+};
+renderCheat();
+
+/* CCDV-F reading documents */
+const DOCS = DATA.certs.ccdvf.docs;
+$("#doc-pick").innerHTML = DOCS.map(d => `<option value="${d.id}">${esc(d.label)}</option>`).join("");
+$("#doc-pick").value = store.get("ccdvf.doc", DOCS[0].id);
+if (!$("#doc-pick").value) $("#doc-pick").value = DOCS[0].id;
+let mermaidLoad = null;
+function drawDiagrams(art) {
+  const nodes = $$("pre.mdiag:not([data-done])", art);
+  if (!nodes.length) return;
+  mermaidLoad = mermaidLoad || new Promise((ok, fail) => {
+    const s = document.createElement("script");
+    s.src = "https://cdn.jsdelivr.net/npm/mermaid@11.4.1/dist/mermaid.min.js";
+    s.onload = () => { const dark = getComputedStyle(document.documentElement).colorScheme === "dark"; window.mermaid.initialize({ startOnLoad: false, theme: dark ? "dark" : "neutral" }); ok(window.mermaid); };
+    s.onerror = fail; document.head.appendChild(s);
+  });
+  mermaidLoad.then(m => { nodes.forEach(n => n.dataset.done = "1"); return m.run({ nodes }); }).catch(() => {});
+}
+function showDoc(id) {
+  store.set("ccdvf.doc", id);
+  $$("#docs .doc").forEach(a => a.hidden = a.dataset.doc !== id);
+  const art = $(`#docs .doc[data-doc="${id}"]`);
+  filterDoc($("#doc-search").value);
+  $("#doc-jump").innerHTML = $$(".dsec", art).map(s => `<a href="#${s.id}">${esc($(".dtitle", s).textContent)}</a>`).join("");
+  drawDiagrams(art);
+}
+function filterDoc(filter) {
+  const f = filter.trim().toLowerCase();
+  const art = $(`#docs .doc[data-doc="${$("#doc-pick").value}"]`);
+  let n = 0;
+  $$(".dsec", art).forEach(s => { const show = !f || s.textContent.toLowerCase().includes(f); s.hidden = !show; n += show; });
+  $("#doc-empty").hidden = n > 0;
+  $("#doc-empty").textContent = `No section in this document mentions “${filter}”. Try another document.`;
+}
+$("#doc-pick").onchange = e => showDoc(e.target.value);
+$("#doc-search").addEventListener("input", e => filterDoc(e.target.value));
+jumpTo($("#doc-jump"), $("#doc-search"), filterDoc);
+
+/* Quiz (works for whichever certification is selected) */
+let Q = [], results = {}, flags = [], deck = [], pos = 0, picked = new Set(), answered = false, label = {};
+const weightOf = n => C.weights[n] || 0;
+const inSet = q => !$("#q-set").value || q.set === $("#q-set").value;
+function shuffle(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+function initQuiz() {
+  Q = C.questions;
+  results = store.get(C.key + ".results", {});
+  flags = store.get(C.key + ".flags", []);
+  $("#q-set").innerHTML = C.banks.map(([v, l]) => `<option value="${v}">${esc(l)}</option>`).join("");
+  const saved = store.get(C.key + ".set", C.defaultBank);
+  $("#q-set").value = C.banks.some(b => b[0] === saved) ? saved : C.defaultBank;
+  const names = Object.keys(C.weights).sort((a, b) => weightOf(b) - weightOf(a));
+  $("#q-domain").innerHTML = `<option value="">All domains</option>` + names.map(n => `<option value="${esc(n)}">${esc(n)} (${weightOf(n)}%)</option>`).join("");
+  $("#q-pool").options[1].textContent = `Exam-weighted mock (${C.items})`;
+  buildDeck(); renderLedger();
+}
+function mockDeck(pool) {
+  const byDom = {};
+  pool.forEach(q => (byDom[q.domain] = byDom[q.domain] || []).push(q));
+  const names = Object.keys(C.weights);
+  const raw = names.map(n => ({ n, exact: C.items * weightOf(n) / 100 }));
+  raw.forEach(r => r.take = Math.floor(r.exact));
+  let left = C.items - raw.reduce((s, r) => s + r.take, 0);
+  raw.slice().sort((a, b) => (b.exact - b.take) - (a.exact - a.take)).forEach(r => { if (left > 0) { r.take++; left--; } });
+  return shuffle(raw.flatMap(r => shuffle((byDom[r.n] || []).slice()).slice(0, r.take)));
+}
+function buildDeck() {
+  const dom = $("#q-domain").value, pool = $("#q-pool").value;
+  $("#banknote").textContent = C.bankNotes[$("#q-set").value] || "";
+  $("#banknote").classList.toggle("warn", /longest/.test($("#banknote").textContent));
+  if (pool === "mock") {
+    $("#q-domain").value = ""; $("#q-domain").disabled = true;
+    deck = mockDeck(Q.filter(inSet));
+  } else {
+    $("#q-domain").disabled = false;
+    deck = shuffle(Q.filter(q => inSet(q) && (!dom || q.domain === dom) &&
+      (pool === "all" || (pool === "unseen" && !(q.id in results)) || (pool === "missed" && results[q.id] === false))));
+  }
+  pos = 0; renderQ();
+}
+// "Report on GitHub" opens a pre-filled issue when the site is built with a repo in site.json.
+function reportLink(q) {
+  if (!DATA.repo) return "";
+  const p = new URLSearchParams({ template: "report-question.yml", title: `[${C.code}] Question #${q.id}`, exam: C.code, question_id: String(q.id) });
+  return `<a class="btn" href="https://github.com/${DATA.repo}/issues/new?${p}" target="_blank" rel="noopener">Report on GitHub</a>`;
+}
+function bankName(s) { return { amey: "Amey-Thakur", breeganzo: "Breeganzo", nirav: "NiravRVaghasiya", fresh: "Fresh 30", original: "Prep kit", matrix: "Assess each" }[s] || s; }
+function renderMatrix(q) {
+  const card = $("#q-card");
+  const rows = shuffle(q.rows.map((r, i) => ({ ...r, i })));
+  $("#q-progress").textContent = `${pos + 1} / ${deck.length}`;
+  card.innerHTML = `
+    <div class="qmeta"><span class="chip plain">#${esc(q.id)}</span><span class="chip plain">Assess each</span><span class="chip">${esc(q.domain)}</span><span class="chip sel">${rows.length} statements</span></div>
+    <p class="question">${esc(q.question)}</p>
+    <table class="mx"><tbody>${rows.map(r => `<tr data-i="${r.i}"><td class="stmt">${esc(r.text)}<span class="ans"></span></td><td><select aria-label="Your assessment"><option value="">Choose…</option>${q.choices.map(c => `<option>${esc(c)}</option>`).join("")}</select></td></tr>`).join("")}</tbody></table>
+    <div id="fb"></div>
+    <div class="actions"><button class="btn" id="skip" type="button">Skip</button><button class="btn primary" id="check" type="button" disabled>Check answers</button><button class="btn primary" id="next" type="button" hidden>Next question</button><button class="btn" id="flag" type="button" aria-pressed="${flags.includes(q.id)}">${flags.includes(q.id) ? "Flagged" : "Flag as wrong"}</button>${reportLink(q)}</div>`;
+  const sels = $$("#q-card .mx select");
+  const left = () => sels.filter(s => !s.value).length;
+  sels.forEach(s => s.onchange = () => { $("#check").disabled = left() > 0; $("#fb").innerHTML = left() ? `<p class="hint">${left()} more to assess.</p>` : ""; });
+  $("#check").onclick = () => {
+    answered = true;
+    let ok = true;
+    $$("#q-card .mx tr").forEach(tr => {
+      const r = q.rows[+tr.dataset.i], v = $("select", tr).value, good = v === r.answer;
+      ok = ok && good; $("select", tr).disabled = true; tr.classList.add(good ? "right" : "wrong");
+      $(".ans", tr).textContent = (good ? "Correct: " : "Answer: " + r.answer + ". ") + r.note;
+    });
+    const n = $$("#q-card .mx tr.right").length;
+    results[q.id] = ok; store.set(C.key + ".results", results);
+    $("#fb").innerHTML = `<p class="verdict ${ok ? "ok" : "no"}">${ok ? "All correct" : `${n} of ${rows.length} correct`}</p><p class="explain">${esc(q.explanation)}</p>${q.reference ? `<a class="ref" href="${esc(q.reference)}" target="_blank" rel="noopener">${esc(q.reference)}</a>` : ""}`;
+    $("#check").hidden = true; $("#skip").hidden = true; $("#next").hidden = false; $("#next").focus({ preventScroll: true });
+    renderLedger();
+  };
+  $("#flag").onclick = () => {
+    flags = flags.includes(q.id) ? flags.filter(i => i !== q.id) : [...flags, q.id];
+    store.set(C.key + ".flags", flags);
+    $("#flag").textContent = flags.includes(q.id) ? "Flagged" : "Flag as wrong";
+    renderLedger();
+  };
+  $("#skip").onclick = () => { pos++; renderQ(); };
+  $("#next").onclick = () => { pos++; renderQ(); };
+}
+function renderQ() {
+  picked = new Set(); answered = false;
+  const card = $("#q-card");
+  if (!deck.length) {
+    card.innerHTML = `<p class="question">No questions in this set.</p><p class="scenario">Pick another domain or bank, or switch to “All questions”.</p>`;
+    $("#q-progress").textContent = ""; return;
+  }
+  if (pos >= deck.length) {
+    const got = deck.filter(q => results[q.id] === true).length;
+    card.innerHTML = `<p class="verdict ${got / deck.length >= .72 ? "ok" : "no"}">Set done: ${got} of ${deck.length} correct</p><p class="scenario">Your scores are in the panel. Switch to “Ones I got wrong” to go over the misses again.</p><div class="actions"><button class="btn primary" id="again">Shuffle and restart</button></div>`;
+    $("#again").onclick = buildDeck; $("#q-progress").textContent = `${deck.length} / ${deck.length}`; return;
+  }
+  const q = deck[pos], multi = q.selectCount > 1;
+  if (q.type === "matrix") return renderMatrix(q);
+  const opts = shuffle([...q.options]);
+  label = Object.fromEntries(opts.map((o, i) => [o.key, "ABCDEFGH"[i]]));
+  $("#q-progress").textContent = `${pos + 1} / ${deck.length}`;
+  card.innerHTML = `
+    <div class="qmeta"><span class="chip plain">#${esc(q.id)}</span>${C.banks.length > 2 || !$("#q-set").value ? `<span class="chip plain">${esc(bankName(q.set))}</span>` : ""}<span class="chip">${esc(q.domain)}</span>${q.difficulty ? `<span class="chip plain">${esc(q.difficulty)}</span>` : ""}${multi ? `<span class="chip sel">Select ${["", "", "TWO", "THREE", "FOUR"][q.selectCount] || q.selectCount}</span>` : ""}${q.unverified ? `<span class="chip warn">source marks it needs review</span>` : ""}</div>
+    ${q.scenario ? `<p class="scenario">${esc(q.scenario)}</p>` : ""}
+    <p class="question">${esc(q.question)}</p>
+    <div class="opts">${opts.map(o => `<button class="opt" data-k="${o.key}" data-label="${label[o.key]}" type="button"><span class="key">${label[o.key]}</span><span>${esc(o.text)}</span></button>`).join("")}</div>
+    <div id="fb"></div>
+    <div class="actions"><button class="btn" id="skip" type="button">Skip</button><button class="btn primary" id="next" type="button" hidden>Next question</button><button class="btn" id="flag" type="button" aria-pressed="${flags.includes(q.id)}">${flags.includes(q.id) ? "Flagged" : "Flag as wrong"}</button>${reportLink(q)}</div>`;
+  $$("#q-card .opt").forEach(b => b.onclick = () => pick(q, b));
+  $("#flag").onclick = () => {
+    flags = flags.includes(q.id) ? flags.filter(i => i !== q.id) : [...flags, q.id];
+    store.set(C.key + ".flags", flags);
+    $("#flag").textContent = flags.includes(q.id) ? "Flagged" : "Flag as wrong";
+    $("#flag").setAttribute("aria-pressed", flags.includes(q.id));
+    renderLedger();
+  };
+  $("#skip").onclick = () => { pos++; renderQ(); };
+  $("#next").onclick = () => { pos++; renderQ(); };
+}
+function pick(q, btn) {
+  if (answered) return;
+  const k = btn.dataset.k;
+  if (q.selectCount > 1) {
+    picked.has(k) ? picked.delete(k) : picked.add(k);
+    btn.classList.toggle("picked", picked.has(k));
+    if (picked.size < q.selectCount) { $("#fb").innerHTML = `<p class="hint">${q.selectCount - picked.size} more to select.</p>`; return; }
+  } else picked.add(k);
+  reveal(q);
+}
+// Explanations that cite options as "(B)" or "(A, C)" use the stored keys; map them to the letters shown on screen.
+const relabel = s => String(s).replace(/\(([A-H](?:\s*(?:,|and|or)\s*[A-H])*)\)/g, (m, inner) => "(" + inner.replace(/\b[A-H]\b/g, k => label[k] || k) + ")");
+function reveal(q) {
+  answered = true;
+  const correct = new Set(q.correct);
+  const ok = picked.size === correct.size && [...picked].every(k => correct.has(k));
+  results[q.id] = ok; store.set(C.key + ".results", results);
+  $$("#q-card .opt").forEach(b => {
+    const k = b.dataset.k; b.disabled = true; b.classList.remove("picked");
+    if (correct.has(k)) b.classList.add("right");
+    else if (picked.has(k)) b.classList.add("wrong");
+    const note = q.distractorNotes && q.distractorNotes[k];
+    if (note && (picked.has(k) || !correct.has(k))) b.insertAdjacentHTML("beforeend", `<span class="note">${esc(note)}</span>`);
+  });
+  $("#fb").innerHTML = `<p class="verdict ${ok ? "ok" : "no"}">${ok ? "Correct" : "Not quite. Answer: " + q.correct.map(k => label[k]).sort().join(", ")}</p>
+    <p class="explain">${esc(relabel(q.explanation))}</p>
+    ${q.reference ? `<a class="ref" href="${esc(q.reference)}" target="_blank" rel="noopener">${esc(q.reference)}</a>` : ""}`;
+  $("#skip").hidden = true; $("#next").hidden = false; $("#next").focus({ preventScroll: true });
+  renderLedger();
+}
+function renderLedger() {
+  const ids = Q.filter(q => inSet(q) && q.id in results).map(q => q.id), right = ids.filter(i => results[i]).length;
+  let rows = "", weighted = 0, wsum = 0;
+  for (const n of Object.keys(C.weights).sort((a, b) => weightOf(b) - weightOf(a))) {
+    const qs = Q.filter(q => inSet(q) && q.domain === n), done = qs.filter(q => q.id in results), r = done.filter(q => results[q.id]).length;
+    const pct = done.length ? r / done.length : 0, w = weightOf(n);
+    if (done.length) { weighted += pct * w; wsum += w; }
+    rows += `<div class="drow"><div class="lab"><span>${esc(n)}</span><span>${r}/${done.length} of ${qs.length}</span></div><div class="track"><i class="${done.length ? (pct >= .72 ? "ok" : "no") : ""}" style="width:${done.length ? Math.max(pct * 100, 3) : 0}%"></i></div></div>`;
+  }
+  const mine = flags.filter(i => Q.some(q => q.id === i));
+  $("#ledger").innerHTML = `<h3>Your ${esc(C.code)} scores · ${esc($("#q-set").selectedOptions[0].text)}</h3>
+    <div class="total">${ids.length ? Math.round(right / ids.length * 100) : 0}%<small> ${right}/${ids.length} answered</small></div>
+    ${rows}
+    <p class="passline">Green means 72% or better on that domain, a rough proxy for the 720 pass mark. ${wsum ? "Weighted by exam share: " + Math.round(weighted / wsum * 100) + "%." : ""}</p>
+    ${mine.length ? `<p class="passline">Flagged: ${mine.map(i => "#" + esc(i)).join(", ")}. Send these to Claude to have them checked.</p>` : ""}
+    <button class="linkbtn" id="reset" type="button">Reset scores</button><span id="reset-confirm"></span>`;
+  $("#reset").onclick = () => {
+    $("#reset-confirm").innerHTML = ` <button class="linkbtn" id="reset-yes" type="button" style="color:var(--bad)">Yes, clear ${ids.length} answers in this bank</button>`;
+    $("#reset-yes").onclick = () => { ids.forEach(i => delete results[i]); store.set(C.key + ".results", results); renderLedger(); buildDeck(); };
+  };
+}
+$("#q-domain").onchange = buildDeck;
+$("#q-pool").onchange = buildDeck;
+$("#q-set").onchange = () => { store.set(C.key + ".set", $("#q-set").value); buildDeck(); renderLedger(); };
+document.addEventListener("keydown", e => {
+  if ($("#view-quiz").hidden || e.target.matches("input, select, button")) return;
+  const b = $$("#q-card .opt").find(b => b.dataset.label === e.key.toUpperCase());
+  if (b && !b.disabled) b.click();
+  else if (e.key === "Enter" && answered) $("#next").click();
+});
+
+const startCert = ["ccarp", "ccdvf"].includes(location.hash.slice(1)) ? location.hash.slice(1) : store.get("drill.cert", "ccdvf");
+setCert(DATA.certs[startCert] ? startCert : "ccdvf");
+</script>

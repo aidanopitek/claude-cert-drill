@@ -1,0 +1,64 @@
+[
+ {
+  "id": "amey-cheat",
+  "label": "Cheat sheet \u00b7 Amey-Thakur",
+  "src": "https://github.com/Amey-Thakur/CLAUDE-CERTIFICATIONS/blob/main/developer-foundations/cheat-sheet.md",
+  "files": [
+   "amey-cheat.md"
+  ],
+  "split": "h2",
+  "base": "https://github.com/Amey-Thakur/CLAUDE-CERTIFICATIONS/blob/main/developer-foundations/"
+ },
+ {
+  "id": "amey-notes",
+  "label": "Study notes \u00b7 Amey-Thakur",
+  "src": "https://github.com/Amey-Thakur/CLAUDE-CERTIFICATIONS/blob/main/developer-foundations/notes.md",
+  "files": [
+   "amey-notes.md"
+  ],
+  "split": "h2",
+  "base": "https://github.com/Amey-Thakur/CLAUDE-CERTIFICATIONS/blob/main/developer-foundations/"
+ },
+ {
+  "id": "bz-guide",
+  "label": "Study guide by weight \u00b7 Breeganzo",
+  "src": "https://github.com/Breeganzo/CCDV-F-Preparation/blob/main/STUDY-GUIDE.md",
+  "files": [
+   "bz-guide.md"
+  ],
+  "split": "h2",
+  "base": "https://github.com/Breeganzo/CCDV-F-Preparation/blob/main/"
+ },
+ {
+  "id": "nv-topics",
+  "label": "Topic sheets \u00b7 NiravRVaghasiya",
+  "src": "https://github.com/NiravRVaghasiya/Claude-Developer-Foundations/blob/main/cheat-sheets",
+  "files": [
+   "nv-topics-01.md",
+   "nv-topics-02.md",
+   "nv-topics-03.md",
+   "nv-topics-04.md",
+   "nv-topics-05.md",
+   "nv-topics-06.md",
+   "nv-topics-07.md",
+   "nv-topics-08.md",
+   "nv-topics-09.md",
+   "nv-topics-10.md",
+   "nv-topics-11.md",
+   "nv-topics-12.md",
+   "nv-topics-13.md"
+  ],
+  "split": "files",
+  "base": "https://github.com/NiravRVaghasiya/Claude-Developer-Foundations/blob/main/cheat-sheets/"
+ },
+ {
+  "id": "nv-traps",
+  "label": "What the exam really tests \u00b7 NiravRVaghasiya",
+  "src": "https://github.com/NiravRVaghasiya/Claude-Developer-Foundations/blob/main/common-traps/what-the-exam-is-really-testing.md",
+  "files": [
+   "nv-traps.md"
+  ],
+  "split": "h2",
+  "base": "https://github.com/NiravRVaghasiya/Claude-Developer-Foundations/blob/main/common-traps/"
+ }
+]

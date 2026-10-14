@@ -1,0 +1,1202 @@
+[
+ {
+  "domain": "Integration",
+  "difficulty": "medium",
+  "scenario": "An internal operations agent is connected to six MCP servers exposing about 180 tools. Tool definitions take roughly 60,000 tokens before the user says anything, and traces show the agent increasingly picks the wrong tool. About five tools account for most calls.",
+  "question": "Which change most directly addresses both problems?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Put most tools behind tool search with defer_loading, and keep the five most-used tools loaded so they need no search."
+   },
+   {
+    "key": "B",
+    "text": "Move to the model with the largest context window so all 180 definitions fit with plenty of room left for the conversation and tool results."
+   },
+   {
+    "key": "C",
+    "text": "Replace the 180 tool definitions with a single system-prompt section that summarises what each server can do, and let the agent infer the call format."
+   },
+   {
+    "key": "D",
+    "text": "Raise max_tokens so the agent has more room to reason about which of the 180 tools fits before it commits to a call."
+   }
+  ],
+  "correct": [
+   "A"
+  ],
+  "explanation": "This is capability bloat. Tool search keeps deferred definitions out of the context until Claude searches for them, which cuts definition tokens sharply and keeps selection accuracy up, since accuracy degrades once dozens of tools are visible at once. Keeping the handful of frequently used tools non-deferred avoids a search step for the common path.",
+  "distractorNotes": {
+   "B": "A larger window makes the definitions fit but does nothing for selection accuracy. The model still has to choose among 180 visible tools.",
+   "C": "Without real definitions the model has no schema to call against, so calls become guesses. It also removes the tools rather than managing them.",
+   "D": "max_tokens limits output length. It has no effect on input context size or on which tools are visible."
+  },
+  "reference": "https://platform.claude.com/docs/en/agents-and-tools/tool-use/tool-search-tool",
+  "id": 101,
+  "type": "single",
+  "selectCount": 1,
+  "set": "fresh",
+  "verified": true
+ },
+ {
+  "domain": "Integration",
+  "difficulty": "hard",
+  "scenario": "A team builds a remote MCP server in front of an HR system. Its implementation accepts any unexpired JWT signed by the corporate identity provider, and for downstream calls it forwards the same bearer token it received to the payroll API.",
+  "question": "Which TWO are security gaps the architect should require the team to fix? (Select TWO)",
+  "options": [
+   {
+    "key": "A",
+    "text": "It does not verify that each token was issued for this MCP server as its intended audience, so tokens meant for other services are accepted."
+   },
+   {
+    "key": "B",
+    "text": "It forwards the client's token to the payroll API instead of obtaining a separate token issued specifically for that downstream API."
+   },
+   {
+    "key": "C",
+    "text": "It uses OAuth bearer tokens rather than long-lived API keys passed as a URL query parameter, which would be simpler for clients to configure."
+   },
+   {
+    "key": "D",
+    "text": "It runs over HTTP transport rather than stdio, so it should be moved to stdio and launched locally on each employee's machine to avoid network exposure."
+   },
+   {
+    "key": "E",
+    "text": "It relies on the corporate identity provider instead of issuing its own user accounts and passwords for each MCP client."
+   }
+  ],
+  "correct": [
+   "A",
+   "B"
+  ],
+  "explanation": "The MCP authorization spec requires servers to validate that access tokens were issued specifically for them as the intended audience (RFC 8707 resource indicators), and forbids accepting or passing through other tokens. Accepting any corporate token enables a token meant for another service to be replayed here, and forwarding it downstream creates a confused-deputy path into payroll.",
+  "distractorNotes": {
+   "C": "The spec says tokens must not be sent in the URI query string, and long-lived keys are weaker than scoped OAuth tokens. This would make it worse.",
+   "D": "Stdio suits local servers. A shared remote HR integration is a legitimate HTTP use case; the gap is token validation, not the transport.",
+   "E": "Delegating authentication to the enterprise IdP is the intended model. Separate passwords add credential sprawl without fixing either gap."
+  },
+  "reference": "https://modelcontextprotocol.io/specification/2026-07-28/basic/authorization",
+  "id": 102,
+  "type": "multi",
+  "selectCount": 2,
+  "set": "fresh",
+  "verified": true
+ },
+ {
+  "domain": "Integration",
+  "difficulty": "medium",
+  "scenario": "A client wants a Q&A assistant over its employee handbook: about 120 pages, roughly 80,000 tokens, updated once a quarter. The team has started designing a vector database, a chunking strategy and a reranker.",
+  "question": "What should the architect recommend first?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Put the whole handbook in the prompt and use prompt caching; skip the retrieval pipeline."
+   },
+   {
+    "key": "B",
+    "text": "Proceed with contextual retrieval, hybrid embeddings plus BM25 and a reranker, since that combination gives the lowest retrieval failure rate in Anthropic's published results."
+   },
+   {
+    "key": "C",
+    "text": "Fine-tune a model on the handbook so the content is in the weights and no context is needed at query time."
+   },
+   {
+    "key": "D",
+    "text": "Use very small chunks of about 100 tokens so each retrieved passage is precise, then send the top 50 to the model."
+   }
+  ],
+  "correct": [
+   "A"
+  ],
+  "explanation": "Anthropic's contextual retrieval guidance notes that for knowledge bases under roughly 200,000 tokens, putting the whole corpus in the prompt is often simpler and better, and prompt caching makes repeated use cheaper and faster. A quarterly update cadence means the cached prefix stays stable for long periods.",
+  "distractorNotes": {
+   "B": "That stack is the right answer for large corpora. At 80,000 tokens it adds moving parts and retrieval failure modes the whole-document approach does not have.",
+   "C": "Fine-tuning is costly, hard to update quarterly, and does not reliably make a model quote policy accurately.",
+   "D": "Tiny chunks lose context, and sending 50 of them recreates most of the document with worse coherence."
+  },
+  "reference": "https://www.anthropic.com/engineering/contextual-retrieval",
+  "id": 103,
+  "type": "single",
+  "selectCount": 1,
+  "set": "fresh",
+  "verified": true
+ },
+ {
+  "domain": "Integration",
+  "difficulty": "medium",
+  "scenario": "A support assistant retrieves from a large knowledge base using embeddings only. Users often paste exact error codes such as E-4021 or product SKUs, and for those queries the right article is frequently missing from the results, while conceptual questions work well.",
+  "question": "Which retrieval change best fits this query pattern?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Switch to a larger embedding model with more dimensions so that rare identifiers such as error codes are represented more distinctly in vector space."
+   },
+   {
+    "key": "B",
+    "text": "Add a BM25 lexical index alongside the embeddings, run both searches for every query, and merge the two ranked lists before passing the top results to the model."
+   },
+   {
+    "key": "C",
+    "text": "Raise top-k from 20 to 200 and pass every retrieved chunk directly to the model so the right article is almost certainly somewhere in the context."
+   },
+   {
+    "key": "D",
+    "text": "Double the chunk size so each chunk covers more of an article and is therefore more likely to contain the error code the user typed."
+   }
+  ],
+  "correct": [
+   "B"
+  ],
+  "explanation": "Exact identifiers are a lexical match problem. Semantic embeddings capture meaning well but can miss exact strings; BM25 excels at them. Hybrid retrieval combines both, which is the pattern Anthropic's contextual retrieval work measured as reducing retrieval failures further than embeddings alone.",
+  "distractorNotes": {
+   "A": "Bigger embeddings still encode meaning, not exact-string identity. Rare codes remain weakly represented.",
+   "C": "Flooding the context costs tokens and latency and dilutes attention. It treats the symptom, not the retrieval mismatch.",
+   "D": "Chunk size does not change whether embeddings match an exact code, and larger chunks reduce precision for conceptual queries."
+  },
+  "reference": "https://www.anthropic.com/engineering/contextual-retrieval",
+  "id": 104,
+  "type": "single",
+  "selectCount": 1,
+  "set": "fresh",
+  "verified": true
+ },
+ {
+  "domain": "Integration",
+  "difficulty": "hard",
+  "scenario": "A RAG system over quarterly financial filings returns chunks such as \"Revenue grew 3% over the previous quarter\" with no company name or period in the text. Answers frequently attribute figures to the wrong company or quarter.",
+  "question": "Which change addresses the root cause?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Increase chunk overlap to 50% so neighbouring text is more likely to include the company name."
+   },
+   {
+    "key": "B",
+    "text": "Instruct the model in the system prompt to infer the company and quarter from each chunk's wording before answering."
+   },
+   {
+    "key": "C",
+    "text": "Prepend each chunk with a short context, generated from its full document, before embedding and indexing it."
+   },
+   {
+    "key": "D",
+    "text": "Retrieve whole filings instead of chunks so the company name is always present, even though each filing is 80,000 tokens."
+   }
+  ],
+  "correct": [
+   "C"
+  ],
+  "explanation": "Chunks lose the context that made them meaningful. Contextual retrieval generates a short chunk-specific context from the whole document (for example, which company and quarter) and prepends it before building both the embedding and BM25 indexes, so retrieval and the answer both carry the missing identity.",
+  "distractorNotes": {
+   "A": "Overlap helps only if the name happens to be nearby. Filings often state it once, far from the figures.",
+   "B": "The information is not in the chunk, so the model can only guess. That produces exactly the misattribution being reported.",
+   "D": "Whole filings at that size make each query expensive and slow, and multiple filings quickly exceed what is sensible to send."
+  },
+  "reference": "https://www.anthropic.com/engineering/contextual-retrieval",
+  "id": 105,
+  "type": "single",
+  "selectCount": 1,
+  "set": "fresh",
+  "verified": true
+ },
+ {
+  "domain": "Integration",
+  "difficulty": "medium",
+  "scenario": "A nightly back-office job reads 5,000 invoices from the ERP and asks Claude to classify each one. The flow is fixed and owned by one service. A developer proposes wrapping the ERP as an MCP server first so Claude can fetch invoices itself.",
+  "question": "What is the better integration choice for this job?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Build the MCP server, because MCP is the standard way to connect Claude to enterprise systems and every future integration should go through it."
+   },
+   {
+    "key": "B",
+    "text": "Expose the ERP to Claude through an agent-to-agent protocol so a dedicated ERP agent can negotiate with the classifier agent."
+   },
+   {
+    "key": "C",
+    "text": "Give Claude a general-purpose HTTP tool and the ERP's API documentation, and let it work out which endpoints to call for each invoice."
+   },
+   {
+    "key": "D",
+    "text": "Fetch invoices in application code and send them to Claude via the Messages API; add MCP only when several agents need the ERP."
+   }
+  ],
+  "correct": [
+   "D"
+  ],
+  "explanation": "When the application controls a fixed flow, the simplest integration is to fetch the data in code and call the Messages API. MCP pays off when a capability must be reused across many clients or agents, or when the model needs to decide what to fetch. Neither applies to this batch job yet.",
+  "distractorNotes": {
+   "A": "MCP is a good standard, but adopting it for a single fixed pipeline adds a server to build, secure and operate with no benefit today.",
+   "B": "Agent-to-agent coordination is for independent agents with their own goals. Here there is one deterministic job.",
+   "C": "Letting the model discover endpoints adds variance, latency and a wide permission surface to a task that code already does deterministically."
+  },
+  "reference": "https://www.anthropic.com/engineering/building-effective-agents",
+  "id": 106,
+  "type": "single",
+  "selectCount": 1,
+  "set": "fresh",
+  "verified": true
+ },
+ {
+  "domain": "Solution Design & Architecture",
+  "difficulty": "medium",
+  "scenario": "A retailer translates marketing copy into eight languages. A brand glossary and a tone guide define success precisely, and reviewers report that first drafts are fluent but regularly miss glossary terms and tone rules.",
+  "question": "Which pattern fits best?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Routing: classify each piece of copy by product line, then send it to a product-specific translation prompt."
+   },
+   {
+    "key": "B",
+    "text": "Evaluator-optimizer: one call drafts, another checks the draft against the glossary and tone guide, and the draft is revised."
+   },
+   {
+    "key": "C",
+    "text": "Parallel voting: translate each piece five times and keep the version most of the runs agree on."
+   },
+   {
+    "key": "D",
+    "text": "An autonomous agent with web search that researches local market language before deciding how to translate."
+   }
+  ],
+  "correct": [
+   "B"
+  ],
+  "explanation": "Evaluator-optimizer works when there are clear evaluation criteria and iterative refinement measurably improves the result. Here the glossary and tone guide are the rubric, and the failure is systematic misses that a focused check can catch and feed back.",
+  "distractorNotes": {
+   "A": "Routing helps when categories need different handling. The problem is rule adherence, which routing does not address.",
+   "C": "Voting raises confidence on the same task; five fluent drafts can all miss the same glossary term.",
+   "D": "The steps are known and the criteria are internal. Autonomy adds cost and variance without addressing the rubric failures."
+  },
+  "reference": "https://www.anthropic.com/engineering/building-effective-agents",
+  "id": 107,
+  "type": "single",
+  "selectCount": 1,
+  "set": "fresh",
+  "verified": true
+ },
+ {
+  "domain": "Solution Design & Architecture",
+  "difficulty": "hard",
+  "scenario": "A due-diligence team needs a report that draws on about 40 independent public sources: filings, news, court records and patents. Each source can be investigated on its own, and the team accepts a higher run cost if the report is faster and more complete.",
+  "question": "Which TWO statements about a multi-agent design for this task are correct? (Select TWO)",
+  "options": [
+   {
+    "key": "A",
+    "text": "Subagents should return condensed findings to the lead agent rather than the raw text of the sources they read."
+   },
+   {
+    "key": "B",
+    "text": "Expect token usage to be several times that of a single agent, so the value of a faster, more complete report has to justify the extra cost."
+   },
+   {
+    "key": "C",
+    "text": "All subagents should share a single context window so that each one can see what the others have already read."
+   },
+   {
+    "key": "D",
+    "text": "Multi-agent suits this task for the same reason it suits large refactors: both split into parallel pieces of work that share a lot of state."
+   },
+   {
+    "key": "E",
+    "text": "The lead agent should read every source itself first, then delegate only the writing of the report sections to subagents."
+   }
+  ],
+  "correct": [
+   "A",
+   "B"
+  ],
+  "explanation": "Breadth-first research over independent sources is the case Anthropic describes for orchestrator-worker multi-agent systems. Subagents explore in their own context windows and return distilled findings, which keeps the lead's context clean. Anthropic reports multi-agent runs use far more tokens than single-agent chat, so the approach is justified only when the task's value is high.",
+  "distractorNotes": {
+   "C": "Separate context windows are the point: they let subagents work in parallel without polluting each other or the lead.",
+   "D": "Coding tasks with shared state are the classic poor fit for multi-agent. Independence of subtasks is what makes this one suitable.",
+   "E": "That removes the parallel exploration that makes multi-agent worthwhile, and the lead's context would fill with raw sources."
+  },
+  "reference": "https://www.anthropic.com/engineering/multi-agent-research-system",
+  "id": 108,
+  "type": "multi",
+  "selectCount": 2,
+  "set": "fresh",
+  "verified": true
+ },
+ {
+  "domain": "Solution Design & Architecture",
+  "difficulty": "medium",
+  "scenario": "A team proposes four parallel coding agents to refactor a tightly coupled billing module. Each agent would own one area, but most changes touch shared types and the same few files.",
+  "question": "What should the architect recommend?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Keep the four agents but have them commit to a shared branch every few minutes so that conflicts are surfaced and resolved early in the run."
+   },
+   {
+    "key": "B",
+    "text": "Use a single agent for the edits, perhaps with read-only exploration subagents; parallel writers would conflict on shared code."
+   },
+   {
+    "key": "C",
+    "text": "Add a fifth supervisor agent whose only job is to merge the other four agents' edits and resolve conflicts automatically as they arise."
+   },
+   {
+    "key": "D",
+    "text": "Use voting: let all four agents attempt the whole refactor independently and keep the version that passes the most tests."
+   }
+  ],
+  "correct": [
+   "B"
+  ],
+  "explanation": "Multi-agent systems fit tasks that split into independent parts. Coding with heavy shared state has few truly parallel pieces, and agents cannot see each other's in-progress edits, so they conflict. A single agent, optionally using subagents for read-only exploration, is the better design.",
+  "distractorNotes": {
+   "A": "Frequent commits only make the conflicts visible sooner. The coupling that causes them remains.",
+   "C": "An automatic merger has to understand all four changes to resolve semantic conflicts, which recreates the single-agent problem with more overhead.",
+   "D": "Four full independent attempts multiply cost roughly fourfold, and test pass counts alone may not reflect refactor quality."
+  },
+  "reference": "https://www.anthropic.com/engineering/multi-agent-research-system",
+  "id": 109,
+  "type": "single",
+  "selectCount": 1,
+  "set": "fresh",
+  "verified": true
+ },
+ {
+  "domain": "Solution Design & Architecture",
+  "difficulty": "medium",
+  "scenario": "A contract-review assistant drafts risk summaries that in-house lawyers edit before sending. Lawyers correct the same kinds of mistakes repeatedly, and the team wants the system to improve over time.",
+  "question": "Which feedback-loop design is most appropriate?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Log each correction with its input and output, and add it to the eval set before changing the prompt."
+   },
+   {
+    "key": "B",
+    "text": "Fine-tune a model every night on that day's corrections so the system improves automatically without any manual review step or evaluation gate."
+   },
+   {
+    "key": "C",
+    "text": "Let the model rewrite its own system prompt after each correction, so it learns from lawyers in real time."
+   },
+   {
+    "key": "D",
+    "text": "Collect a thumbs-up or thumbs-down from lawyers and adjust the temperature when the share of thumbs-down rises."
+   }
+  ],
+  "correct": [
+   "A"
+  ],
+  "explanation": "An end-to-end design closes the loop through evaluation: corrections become labelled cases, the eval set grows to cover the recurring failures, and any prompt change is measured against it before release. This captures learning without letting unreviewed changes reach production.",
+  "distractorNotes": {
+   "B": "Automatic nightly training with no evaluation gate can silently regress quality and is hard to audit, which is risky for legal work.",
+   "C": "Self-modifying prompts drift unpredictably and cannot be reviewed or rolled back cleanly.",
+   "D": "A thumbs signal says something is wrong but not what. Temperature is not the cause of systematic legal misreadings."
+  },
+  "reference": "https://platform.claude.com/docs/en/test-and-evaluate/develop-tests",
+  "id": 110,
+  "type": "single",
+  "selectCount": 1,
+  "set": "fresh",
+  "verified": true
+ },
+ {
+  "domain": "Solution Design & Architecture",
+  "difficulty": "hard",
+  "scenario": "A pharmaceutical client needs a 200-page regulatory submission drafted from internal study data. The document has a mandated structure, and sections must stay consistent with each other on doses, dates and study names.",
+  "question": "Which decomposition is most appropriate?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Generate the full document in a single request with the largest output limit, so the model holds everything in one pass and consistency is automatic."
+   },
+   {
+    "key": "B",
+    "text": "Run an autonomous agent in a loop with instructions to keep writing and revising until it judges the submission complete."
+   },
+   {
+    "key": "C",
+    "text": "Have an outline approved first, draft the sections in parallel against it, then run a dedicated check that doses, dates and study names agree across all sections."
+   },
+   {
+    "key": "D",
+    "text": "Generate the complete document five times and pick the version that a separate model scores highest overall."
+   }
+  ],
+  "correct": [
+   "C"
+  ],
+  "explanation": "The structure is known in advance, so this is a workflow, not an agent. Prompt chaining with a gate (the approved outline), sectioning for parallel drafting, and a final consistency check across sections match the requirements and keep each step reviewable.",
+  "distractorNotes": {
+   "A": "A single very long generation is hard to review, easy to drift, and expensive to redo when one section is wrong.",
+   "B": "The steps are knowable at design time. An open-ended loop adds cost and unpredictability to a regulated deliverable.",
+   "D": "Five full drafts multiply cost, and an overall score does not check cross-section consistency."
+  },
+  "reference": "https://www.anthropic.com/engineering/building-effective-agents",
+  "id": 111,
+  "type": "single",
+  "selectCount": 1,
+  "set": "fresh",
+  "verified": true
+ },
+ {
+  "domain": "Evaluation, Testing & Optimization",
+  "difficulty": "medium",
+  "scenario": "A team is building the evaluation set for a customer-support assistant before launch.",
+  "question": "Which TWO practices should the architect require? (Select TWO)",
+  "options": [
+   {
+    "key": "A",
+    "text": "Include real customer queries sampled from logs or pilots, covering edge cases and adversarial inputs as well as common requests."
+   },
+   {
+    "key": "B",
+    "text": "Use code-based graders where an exact answer exists, and an LLM judge whose grades have been checked against human labels."
+   },
+   {
+    "key": "C",
+    "text": "Generate every test case with the same model that the assistant uses, because it understands the domain best."
+   },
+   {
+    "key": "D",
+    "text": "Hand-pick ten representative questions that the current prompt answers well, so regressions are easy to spot."
+   },
+   {
+    "key": "E",
+    "text": "Rely on an LLM judge alone, since it scales and needs no human involvement once the rubric has been written."
+   }
+  ],
+  "correct": [
+   "A",
+   "B"
+  ],
+  "explanation": "Good eval sets reflect the real task distribution, including edge cases, and use mixed grading: code-based checks where an exact answer exists, and model-based grading with a clear rubric, validated against human judgement so you know it measures the right thing.",
+  "distractorNotes": {
+   "C": "Self-generated cases share the model's blind spots and miss how real users phrase things.",
+   "D": "Ten cases chosen because they pass measure nothing new and cannot detect most regressions.",
+   "E": "An unvalidated judge can be systematically wrong. Its agreement with humans needs to be checked first."
+  },
+  "reference": "https://platform.claude.com/docs/en/test-and-evaluate/develop-tests",
+  "id": 112,
+  "type": "multi",
+  "selectCount": 2,
+  "set": "fresh",
+  "verified": true
+ },
+ {
+  "domain": "Evaluation, Testing & Optimization",
+  "difficulty": "medium",
+  "scenario": "To save cost, a team switched document extraction from a larger model to a smaller one. Accuracy on short single-table documents is unchanged, but it dropped sharply on long documents with many linked tables. Prompts, temperature and retrieval did not change.",
+  "question": "What is the most likely diagnosis and fix?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Prompt caching is serving stale results; disable caching for long documents."
+   },
+   {
+    "key": "B",
+    "text": "The temperature is too high for long inputs; set it to zero for documents over a certain length."
+   },
+   {
+    "key": "C",
+    "text": "The long documents contain prompt injections; add an input sanitiser before extraction."
+   },
+   {
+    "key": "D",
+    "text": "Model mismatch for complex documents; route long multi-table documents to the larger model."
+   }
+  ],
+  "correct": [
+   "D"
+  ],
+  "explanation": "The regression is confined to the hardest inputs and started with the model change, with everything else held constant. That points to model capability for that task tier. Routing by complexity keeps the savings on simple documents and restores quality on hard ones.",
+  "distractorNotes": {
+   "A": "Caching reuses the prompt prefix, not answers, so it cannot return stale extractions.",
+   "B": "Temperature did not change, and it would not cause a regression specific to document complexity.",
+   "C": "Nothing indicates injected instructions, and the pattern tracks document complexity, not content source."
+  },
+  "reference": "https://platform.claude.com/docs/en/about-claude/models/choosing-a-model",
+  "id": 113,
+  "type": "single",
+  "selectCount": 1,
+  "set": "fresh",
+  "verified": true
+ },
+ {
+  "domain": "Evaluation, Testing & Optimization",
+  "difficulty": "hard",
+  "scenario": "A new prompt version scores 3 points higher than the current one on the offline eval set. The product owner wants to ship it to all users today.",
+  "question": "What should happen before a full rollout?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Ship it to everyone today, since the offline eval already shows the improvement is real and further testing only delays the benefit."
+   },
+   {
+    "key": "B",
+    "text": "Run an A/B test, checking significance daily and stopping as soon as the new version looks better."
+   },
+   {
+    "key": "C",
+    "text": "Canary it on a fixed traffic share, with primary, guardrail and rollback criteria agreed before it starts."
+   },
+   {
+    "key": "D",
+    "text": "Ship it to everyone and compare this week's support metrics with last week's to confirm the effect."
+   }
+  ],
+  "correct": [
+   "C"
+  ],
+  "explanation": "Offline gains do not always transfer to production traffic. A controlled rollout with predefined success, guardrail and rollback criteria tests the change on real users while limiting exposure if it regresses something the eval set did not cover.",
+  "distractorNotes": {
+   "A": "The eval set is a sample. Real traffic can expose regressions it did not cover, with every user affected at once.",
+   "B": "Stopping when results first look good (peeking) inflates false positives. The stopping rule must be fixed in advance.",
+   "D": "Week-over-week comparisons are confounded by seasonality, releases and traffic mix, so they cannot isolate the prompt's effect."
+  },
+  "reference": "",
+  "id": 114,
+  "type": "single",
+  "selectCount": 1,
+  "set": "fresh",
+  "verified": true
+ },
+ {
+  "domain": "Evaluation, Testing & Optimization",
+  "difficulty": "medium",
+  "scenario": "A production agent makes several tool calls per request. Occasionally its final answer is wrong, and engineers cannot tell why, because only the user's question and the final answer are logged.",
+  "question": "Which monitoring change best supports diagnosis at scale?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Trace every step, with tool inputs, outputs, latency and tokens, under one request ID."
+   },
+   {
+    "key": "B",
+    "text": "Log the final answer in more detail, including the full text and a timestamp, and review a larger share of final answers by hand each week."
+   },
+   {
+    "key": "C",
+    "text": "Add a second model that rewrites every final answer before it is shown, which reduces visible errors without needing more logging."
+   },
+   {
+    "key": "D",
+    "text": "Raise the alerting threshold so that only requests that time out are investigated, since wrong answers are rare."
+   }
+  ],
+  "correct": [
+   "A"
+  ],
+  "explanation": "Multi-step systems fail at intermediate steps: a bad tool call, an empty result, a misread output. Step-level traces correlated by request let engineers find where the reasoning went wrong and build evals from real failures.",
+  "distractorNotes": {
+   "B": "More detail on the final answer still hides the steps that produced it.",
+   "C": "A rewriter masks symptoms, adds cost and latency, and leaves the cause unknown.",
+   "D": "Wrong answers are the problem being diagnosed; alerting only on timeouts ignores them."
+  },
+  "reference": "https://www.anthropic.com/engineering/multi-agent-research-system",
+  "id": 115,
+  "type": "single",
+  "selectCount": 1,
+  "set": "fresh",
+  "verified": true
+ },
+ {
+  "domain": "Evaluation, Testing & Optimization",
+  "difficulty": "medium",
+  "scenario": "An agent's cost per task is high. Traces show its customer-lookup tool returns the full 20,000-token customer record every time, though the agent only ever uses the name, tier and open-ticket count.",
+  "question": "What is the most effective first optimisation?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Move the agent to the Batch API to get the batch discount on every call, including interactive ones that customers are waiting on."
+   },
+   {
+    "key": "B",
+    "text": "Change the tool to return only the name, tier and open-ticket count that the agent actually uses."
+   },
+   {
+    "key": "C",
+    "text": "Lower max_tokens on each request so the model spends fewer tokens responding."
+   },
+   {
+    "key": "D",
+    "text": "Switch to a model with a larger context window so the full records fit more comfortably across longer tasks."
+   }
+  ],
+  "correct": [
+   "B"
+  ],
+  "explanation": "Tool responses should be token-efficient and return high-signal information. Trimming the response at the source removes most of the input cost on every call and also reduces noise in the agent's context.",
+  "distractorNotes": {
+   "A": "Batch is for asynchronous work. An interactive agent cannot wait for batch processing.",
+   "C": "max_tokens caps output. The cost here is input tokens from oversized tool results.",
+   "D": "More room does not reduce the tokens billed; it only lets the waste continue longer."
+  },
+  "reference": "https://www.anthropic.com/engineering/writing-tools-for-agents",
+  "id": 116,
+  "type": "single",
+  "selectCount": 1,
+  "set": "fresh",
+  "verified": true
+ },
+ {
+  "domain": "Governance, Safety & Risk Management",
+  "difficulty": "hard",
+  "scenario": "A bank in the EU deploys an assistant that pre-assesses consumer loan applications. The business wants it to approve and decline applications automatically to cut processing time.",
+  "question": "Which design best meets GDPR safeguards for automated decisions?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Disclose in the terms of service that an AI is used; with consent, fully automated approvals and declines are then acceptable without further safeguards."
+   },
+   {
+    "key": "B",
+    "text": "Automate approvals and declines, and have a compliance officer audit a random 5% sample of decisions each month."
+   },
+   {
+    "key": "C",
+    "text": "Let a human make adverse decisions, with the right to an explanation and to contest the outcome."
+   },
+   {
+    "key": "D",
+    "text": "Automatically decide only when the model's confidence is above 0.9, and send everything else to a human."
+   }
+  ],
+  "correct": [
+   "C"
+  ],
+  "explanation": "GDPR Article 22 gives people the right not to be subject to decisions based solely on automated processing that significantly affect them, and where exceptions apply it requires safeguards including human intervention, the ability to express a view and to contest the decision. A meaningful human decision on adverse outcomes meets that.",
+  "distractorNotes": {
+   "A": "Even where consent or contract permits automation, the Article 22 safeguards still apply.",
+   "B": "Sampling after the fact does not give individual applicants human intervention in their own decision.",
+   "D": "High-confidence declines would still be solely automated, and model confidence is not a legal safeguard."
+  },
+  "reference": "https://gdpr-info.eu/art-22-gdpr/",
+  "id": 117,
+  "type": "single",
+  "selectCount": 1,
+  "set": "fresh",
+  "verified": true
+ },
+ {
+  "domain": "Governance, Safety & Risk Management",
+  "difficulty": "hard",
+  "scenario": "A healthcare client has a zero data retention (ZDR) arrangement with Anthropic. It wants to cut the cost of a nightly job that summarises 50,000 clinical notes, all sharing a long fixed instruction block.",
+  "question": "Which plan reduces cost while staying within ZDR?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Submit the job through the Message Batches API, because its 50% discount is the largest cost lever available for asynchronous work like this."
+   },
+   {
+    "key": "B",
+    "text": "Upload the notes once through the Files API and reference them by file ID, which avoids resending content on every request."
+   },
+   {
+    "key": "C",
+    "text": "Use the Batch API with 1-hour prompt caching on the instruction block to combine both discounts."
+   },
+   {
+    "key": "D",
+    "text": "Use the standard Messages API with prompt caching on the shared instruction block, and leave the Batch API out."
+   }
+  ],
+  "correct": [
+   "D"
+  ],
+  "explanation": "Anthropic's data retention documentation lists prompt caching as ZDR-eligible, while the Batch API (29-day retention for asynchronous results) and the Files API are not. Caching the shared instruction block gives a large saving on every request without stepping outside the arrangement.",
+  "distractorNotes": {
+   "A": "Batch is the usual async cost lever, but it is not ZDR-eligible because results are stored for retrieval.",
+   "B": "Files API storage persists until deletion or expiry, so it is not ZDR-eligible either.",
+   "C": "The caching part is fine, but routing through the Batch API still steps outside ZDR."
+  },
+  "reference": "https://platform.claude.com/docs/en/manage-claude/api-and-data-retention",
+  "id": 118,
+  "type": "single",
+  "selectCount": 1,
+  "set": "fresh",
+  "verified": true
+ },
+ {
+  "domain": "Governance, Safety & Risk Management",
+  "difficulty": "hard",
+  "scenario": "An agent triages inbound customer emails. It can read the CRM and send emails on the company's behalf. During red-teaming, an email containing hidden instructions made the agent email a customer's account details to an outside address.",
+  "question": "Which TWO controls most directly reduce this risk? (Select TWO)",
+  "options": [
+   {
+    "key": "A",
+    "text": "Require a human to approve any outbound email the agent wants to send while it is processing inbound content."
+   },
+   {
+    "key": "B",
+    "text": "Restrict the agent's CRM credentials to read-only access, limited to the fields that triage actually needs."
+   },
+   {
+    "key": "C",
+    "text": "Add a line to the system prompt telling the agent to ignore any instructions found inside emails."
+   },
+   {
+    "key": "D",
+    "text": "Switch to the most capable model available, which follows the system prompt more reliably and is less likely to obey injected text."
+   },
+   {
+    "key": "E",
+    "text": "Encrypt stored emails at rest so that injected instructions cannot be read by attackers."
+   }
+  ],
+  "correct": [
+   "A",
+   "B"
+  ],
+  "explanation": "Prompt injection cannot be fully prevented by instructions, so architecture must limit what a manipulated agent can do. A human gate on the dangerous action (outbound send) and least-privilege data access shrink both the blast radius and what can be leaked.",
+  "distractorNotes": {
+   "C": "Worth adding as one layer, but instructions alone are not a reliable control against injection.",
+   "D": "Stronger models resist some injections but give no guarantee, and the agent's permissions stay the same.",
+   "E": "Encryption at rest protects stored data from theft; it does nothing about instructions the agent reads while processing."
+  },
+  "reference": "https://code.claude.com/docs/en/security",
+  "id": 119,
+  "type": "multi",
+  "selectCount": 2,
+  "set": "fresh",
+  "verified": true
+ },
+ {
+  "domain": "Governance, Safety & Risk Management",
+  "difficulty": "medium",
+  "scenario": "An HR team wants to use Claude to shortlist job applicants from CVs. Legal has raised concerns about bias against protected groups.",
+  "question": "What should the architect require before launch?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Add an instruction to the system prompt telling the model to evaluate every candidate fairly and without regard to any protected characteristic."
+   },
+   {
+    "key": "B",
+    "text": "Measure shortlist rates by group on a labelled test set before launch, and keep monitoring after it."
+   },
+   {
+    "key": "C",
+    "text": "Remove candidate names from CVs; once names are hidden, the process can be treated as unbiased and launched."
+   },
+   {
+    "key": "D",
+    "text": "Raise the temperature so the shortlist varies more between runs and no group is consistently excluded."
+   }
+  ],
+  "correct": [
+   "B"
+  ],
+  "explanation": "Fairness has to be measured, not asserted. Comparing outcomes across groups on representative data reveals disparate impact, including from proxy features, and ongoing monitoring catches drift. Human decision-making and documentation complete the control set.",
+  "distractorNotes": {
+   "A": "An instruction does not show whether outcomes are fair and cannot be audited.",
+   "C": "Names are one signal among many; schools, gaps and locations can act as proxies.",
+   "D": "Randomness adds noise without removing systematic bias, and makes decisions less consistent and harder to justify."
+  },
+  "reference": "",
+  "id": 120,
+  "type": "single",
+  "selectCount": 1,
+  "set": "fresh",
+  "verified": true
+ },
+ {
+  "domain": "Stakeholder Communication & Lifecycle Management",
+  "difficulty": "medium",
+  "scenario": "An executive sponsor asks for a contractual SLA of \"100% accurate answers\" for a policy Q&A assistant.",
+  "question": "How should the architect respond?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Agree to the SLA and add a disclaimer in the user interface stating that answers may occasionally be inaccurate."
+   },
+   {
+    "key": "B",
+    "text": "Decline to commit to any quality target, since probabilistic systems cannot be measured meaningfully."
+   },
+   {
+    "key": "C",
+    "text": "Promise 100% accuracy by using the most capable model and adding a second model to double-check every answer before it is shown."
+   },
+   {
+    "key": "D",
+    "text": "Propose measurable targets: accuracy on an agreed eval set, p95 latency, and human escalation when the assistant is unsure."
+   }
+  ],
+  "correct": [
+   "D"
+  ],
+  "explanation": "Expectation management for probabilistic systems means translating the goal into measurable commitments the team can monitor, with a fallback path where the model is uncertain. It keeps the sponsor's intent while being honest about what can be guaranteed.",
+  "distractorNotes": {
+   "A": "A disclaimer does not change a contractual commitment the system cannot meet.",
+   "B": "LLM quality is measurable with evals. Refusing all targets damages trust and leaves nothing to manage against.",
+   "C": "No model or verification step guarantees 100%. Promising it sets up a broken commitment."
+  },
+  "reference": "",
+  "id": 121,
+  "type": "single",
+  "selectCount": 1,
+  "set": "fresh",
+  "verified": true
+ },
+ {
+  "domain": "Stakeholder Communication & Lifecycle Management",
+  "difficulty": "medium",
+  "scenario": "In the first discovery workshop, a procurement director says: \"We want AI for procurement.\"",
+  "question": "Which TWO activities belong in this first session? (Select TWO)",
+  "options": [
+   {
+    "key": "A",
+    "text": "Map the current process with the people who run it: volumes, handling times, error rates and where effort goes today."
+   },
+   {
+    "key": "B",
+    "text": "Identify the data sources involved, who owns them, and constraints such as access rights, compliance rules and retention requirements."
+   },
+   {
+    "key": "C",
+    "text": "Demo the most capable model on a sample contract to build excitement before the requirements are understood."
+   },
+   {
+    "key": "D",
+    "text": "Choose the model and the architecture pattern so that engineering can start building straight after the workshop."
+   },
+   {
+    "key": "E",
+    "text": "Agree a fixed go-live date with the director before the scope of the use case has been defined."
+   }
+  ],
+  "correct": [
+   "A",
+   "B"
+  ],
+  "explanation": "Structured discovery establishes the business problem, a measurable baseline, and the data and constraints that shape feasibility. Those inputs decide whether and how to build, and they give the business case its numbers.",
+  "distractorNotes": {
+   "C": "Demos can help later, but leading with one anchors expectations on capability rather than the client's real problem.",
+   "D": "Choosing the solution before understanding the problem is the classic discovery mistake.",
+   "E": "Committing to dates before scope sets up the project to miss them."
+  },
+  "reference": "",
+  "id": 122,
+  "type": "multi",
+  "selectCount": 2,
+  "set": "fresh",
+  "verified": true
+ },
+ {
+  "domain": "Stakeholder Communication & Lifecycle Management",
+  "difficulty": "medium",
+  "scenario": "Six weeks into a pilot, an invoice-coding assistant scores 94% on its eval set, but only about 1 in 5 eligible accountants use it regularly.",
+  "question": "What should the architect do next?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Move to a more capable model to push accuracy above 97%, since higher accuracy will persuade the remaining accountants to start using the tool."
+   },
+   {
+    "key": "B",
+    "text": "Find out why accountants don't use it, through interviews and usage data, before changing the model."
+   },
+   {
+    "key": "C",
+    "text": "Expand the pilot to three more departments so that adoption numbers grow and the business case looks stronger."
+   },
+   {
+    "key": "D",
+    "text": "Add new features, such as automatic approval routing, so the tool offers more value and becomes harder to ignore."
+   }
+  ],
+  "correct": [
+   "B"
+  ],
+  "explanation": "Low adoption with good accuracy usually points to workflow fit, trust or enablement, not the model. Diagnosing the cause with users comes first; it decides whether the fix is integration into their tools, training, or explaining how outputs are checked.",
+  "distractorNotes": {
+   "A": "Accuracy is not the evident barrier. A costlier model may not change behaviour at all.",
+   "C": "Scaling an unexplained adoption problem spreads it to more teams.",
+   "D": "More features add complexity before the core value is landing with users."
+  },
+  "reference": "",
+  "id": 123,
+  "type": "single",
+  "selectCount": 1,
+  "set": "fresh",
+  "verified": true
+ },
+ {
+  "domain": "Stakeholder Communication & Lifecycle Management",
+  "difficulty": "medium",
+  "scenario": "Your team is handing a production Claude solution over to the client's operations team, who will run and evolve it.",
+  "question": "Which handoff package is most important?",
+  "options": [
+   {
+    "key": "A",
+    "text": "The source code with inline comments, since well-commented code is self-documenting for an experienced operations team."
+   },
+   {
+    "key": "B",
+    "text": "Hand over ADRs for the key decisions, a runbook covering incidents and rollback, and the eval suite the team can rerun before any change goes live."
+   },
+   {
+    "key": "C",
+    "text": "A slide deck of the architecture and the recording of the final demo, so that the operations team understands how the system is meant to behave."
+   },
+   {
+    "key": "D",
+    "text": "A list of the prompts in use, so the operations team can tune them freely whenever users report a problem with an answer."
+   }
+  ],
+  "correct": [
+   "B"
+  ],
+  "explanation": "Operations teams need to know why things are the way they are (ADRs), what to do when something breaks (runbook and rollback), and how to tell whether a change made things better or worse (a runnable eval suite). Without the evals, any later prompt change is unmeasured.",
+  "distractorNotes": {
+   "A": "Code shows what the system does, not why decisions were taken or how to respond to incidents.",
+   "C": "Useful context, but not operational. Nobody can run or safely change the system from a deck.",
+   "D": "Tuning prompts without the eval suite invites silent regressions."
+  },
+  "reference": "",
+  "id": 124,
+  "type": "single",
+  "selectCount": 1,
+  "set": "fresh",
+  "verified": true
+ },
+ {
+  "domain": "Claude Models, Prompting & Context Engineering",
+  "difficulty": "medium",
+  "scenario": "A platform classifies about 2 million support tickets a day into 12 categories, with a hard 1-second latency budget. Offline, the smallest current model scores 96% and the largest scores 97%.",
+  "question": "Which model strategy is best?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Use the largest model for all tickets, because the extra point of accuracy matters at this scale and quality should come first."
+   },
+   {
+    "key": "B",
+    "text": "Use the smallest fast model for every ticket, and send only low-confidence classifications to a larger model for a second pass."
+   },
+   {
+    "key": "C",
+    "text": "Use the mid-tier model as a compromise for every ticket, since it balances cost and accuracy without the complexity of routing."
+   },
+   {
+    "key": "D",
+    "text": "Use the largest model with thinking effort set to high, to get the highest possible accuracy on every ticket."
+   }
+  ],
+  "correct": [
+   "B"
+  ],
+  "explanation": "High-volume, latency-sensitive classification is the textbook fit for the smallest fast tier. A one-point accuracy gap rarely justifies a several-fold cost and latency increase at 2 million calls a day, and routing ambiguous cases upward recovers most of the difference.",
+  "distractorNotes": {
+   "A": "This multiplies cost and puts the 1-second budget at risk for a one-point gain.",
+   "C": "Paying more on every ticket is less efficient than routing only the hard ones.",
+   "D": "Thinking adds latency and tokens, which directly conflicts with the 1-second budget."
+  },
+  "reference": "https://platform.claude.com/docs/en/models/overview",
+  "id": 125,
+  "type": "single",
+  "selectCount": 1,
+  "set": "fresh",
+  "verified": true
+ },
+ {
+  "domain": "Claude Models, Prompting & Context Engineering",
+  "difficulty": "medium",
+  "scenario": "An assistant's system prompt starts with the current timestamp, followed by a 6,000-token policy document that never changes. Prompt caching is enabled, but the cache hit rate is close to zero.",
+  "question": "What is the fix?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Move the timestamp out of the start of the prompt and place it after the cached policy block, so the unchanging content comes first."
+   },
+   {
+    "key": "B",
+    "text": "Switch the cache to the 1-hour TTL so cached entries last longer between requests and are more likely to be reused."
+   },
+   {
+    "key": "C",
+    "text": "Shorten the policy document below the minimum cacheable length so caching no longer applies and stops adding write costs."
+   },
+   {
+    "key": "D",
+    "text": "Add more cache breakpoints throughout the policy document so that at least some segments of it are matched on each request."
+   }
+  ],
+  "correct": [
+   "A"
+  ],
+  "explanation": "A cache hit requires an exact match of the prefix up to the breakpoint. A timestamp at the start changes the prefix on every request, so nothing after it can be reused. Placing static content first and volatile content after the breakpoint restores hits.",
+  "distractorNotes": {
+   "B": "A longer TTL does not help when the prefix itself changes every request.",
+   "C": "This gives up caching instead of fixing the ordering, and may remove policy the assistant needs.",
+   "D": "Every breakpoint after the timestamp still sits behind a changing prefix, so none of them match."
+  },
+  "reference": "https://platform.claude.com/docs/en/build-with-claude/prompt-caching",
+  "id": 126,
+  "type": "single",
+  "selectCount": 1,
+  "set": "fresh",
+  "verified": true
+ },
+ {
+  "domain": "Claude Models, Prompting & Context Engineering",
+  "difficulty": "hard",
+  "scenario": "An operations agent may need any of 40 internal procedures, each 3,000 to 5,000 tokens long. Putting all of them in the system prompt costs about 150,000 tokens per conversation, though a typical task needs one or two.",
+  "question": "Which approach best fits this reuse pattern?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Keep all 40 procedures in the system prompt and cache it, since cached reads are cheap and the agent then always has every procedure available."
+   },
+   {
+    "key": "B",
+    "text": "Fine-tune a model on all 40 procedures so that their content no longer needs to be supplied in the context at all."
+   },
+   {
+    "key": "C",
+    "text": "Package each procedure as an Agent Skill, so only its short name and description sit in context until a task needs the full instructions."
+   },
+   {
+    "key": "D",
+    "text": "Summarise each procedure to about 100 tokens so that all 40 fit comfortably in the system prompt."
+   }
+  ],
+  "correct": [
+   "C"
+  ],
+  "explanation": "Agent Skills use progressive disclosure: only each skill's name and description sit in context, and the full instructions load when the task calls for them. That keeps the context lean and focused while every procedure stays available in full.",
+  "distractorNotes": {
+   "A": "Caching lowers cost, but 150,000 tokens of mostly irrelevant procedures still fill the window and dilute attention.",
+   "B": "Fine-tuning is slow to update when procedures change and does not reliably reproduce exact steps.",
+   "D": "100-token summaries lose the detail needed to follow a procedure correctly."
+  },
+  "reference": "https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview",
+  "id": 127,
+  "type": "single",
+  "selectCount": 1,
+  "set": "fresh",
+  "verified": true
+ },
+ {
+  "domain": "Claude Models, Prompting & Context Engineering",
+  "difficulty": "medium",
+  "scenario": "An extraction pipeline asks Claude to return JSON that a downstream service parses. About 1 in 200 responses is invalid JSON or is missing a required field, and each one breaks the batch.",
+  "question": "What is the most reliable fix?",
+  "options": [
+   {
+    "key": "A",
+    "text": "Add more few-shot examples of correctly formatted JSON to the prompt so the model learns to copy the format consistently."
+   },
+   {
+    "key": "B",
+    "text": "Write \"RESPOND ONLY WITH VALID JSON\" in capitals at the end of the prompt to emphasise the format requirement."
+   },
+   {
+    "key": "C",
+    "text": "Wrap the call in a retry loop that resends the request until the response parses successfully."
+   },
+   {
+    "key": "D",
+    "text": "Use structured outputs, passing a JSON schema so each response is constrained to it and required fields are always present."
+   }
+  ],
+  "correct": [
+   "D"
+  ],
+  "explanation": "Structured outputs constrain generation to the supplied JSON schema, so responses parse and contain required fields. Prompting techniques improve compliance but cannot guarantee it.",
+  "distractorNotes": {
+   "A": "Few-shot examples improve format adherence but still allow occasional failures.",
+   "B": "Emphasis is a prompt-level nudge, not a guarantee.",
+   "C": "Retries add latency and cost and can still fail repeatedly; they manage symptoms rather than prevent them."
+  },
+  "reference": "https://platform.claude.com/docs/en/build-with-claude/structured-outputs",
+  "id": 128,
+  "type": "single",
+  "selectCount": 1,
+  "set": "fresh",
+  "verified": true
+ },
+ {
+  "domain": "Developer Productivity & Operational Enablement",
+  "difficulty": "medium",
+  "scenario": "A security team requires that Claude Code never reads .env files or runs curl on any developer's machine, and that individual developers cannot override this.",
+  "question": "Where should these rules go?",
+  "options": [
+   {
+    "key": "A",
+    "text": "In each repository's CLAUDE.md, as a clear instruction that Claude must never read .env files or run curl commands."
+   },
+   {
+    "key": "B",
+    "text": "As deny rules in managed settings, which individual developers cannot edit and no lower settings level can override."
+   },
+   {
+    "key": "C",
+    "text": "As deny rules in each repository's shared .claude/settings.json file, which is committed to git and applies to everyone who clones it."
+   },
+   {
+    "key": "D",
+    "text": "In each developer's ~/.claude/settings.json, configured centrally during laptop onboarding by the IT team."
+   }
+  ],
+  "correct": [
+   "B"
+  ],
+  "explanation": "Managed settings sit at the top of Claude Code's settings precedence, and deny rules take precedence over ask and allow. A tool denied in managed settings cannot be allowed from any other level, and users cannot edit managed settings.",
+  "distractorNotes": {
+   "A": "CLAUDE.md is guidance to the model, not an enforced permission.",
+   "C": "Project deny rules apply, but developers can edit or remove the file in their own checkout, and it covers only repositories that include it.",
+   "D": "User settings are the lowest-precedence level and are editable by the developer."
+  },
+  "reference": "https://code.claude.com/docs/en/managed-settings",
+  "id": 129,
+  "type": "single",
+  "selectCount": 1,
+  "set": "fresh",
+  "verified": true
+ },
+ {
+  "domain": "Developer Productivity & Operational Enablement",
+  "difficulty": "medium",
+  "scenario": "A team wants Claude Code to review every merge request automatically in CI and post findings as a comment.",
+  "question": "Which TWO configuration choices are appropriate? (Select TWO)",
+  "options": [
+   {
+    "key": "A",
+    "text": "Run Claude Code headless with claude -p and an explicit, narrow list of allowed tools, since nobody is there to answer permission prompts."
+   },
+   {
+    "key": "B",
+    "text": "Provide credentials from the CI secret store, scoped to this job and nothing else in the pipeline."
+   },
+   {
+    "key": "C",
+    "text": "Run it on the shared CI runner with permission prompts skipped and production credentials available, so it can verify fixes end to end."
+   },
+   {
+    "key": "D",
+    "text": "Use the team lead's personal Claude login token in the pipeline so that usage shows up under a known account."
+   },
+   {
+    "key": "E",
+    "text": "Run an interactive session on the CI runner and have whoever is on call approve tool prompts as they appear."
+   }
+  ],
+  "correct": [
+   "A",
+   "B"
+  ],
+  "explanation": "Non-interactive mode with an explicit allowed-tools list fits CI: there is no human to answer prompts, so the permitted actions must be defined up front. Credentials should come from the CI secret store with the least scope the job needs.",
+  "distractorNotes": {
+   "C": "Skipping permissions on a shared runner with production access gives an automated process a very wide blast radius.",
+   "D": "Personal tokens tie the pipeline to one person, break on rotation, and blur audit trails.",
+   "E": "Interactive approval does not scale in CI and blocks the pipeline whenever nobody responds."
+  },
+  "reference": "https://code.claude.com/docs/en/headless",
+  "id": 130,
+  "type": "multi",
+  "selectCount": 2,
+  "set": "fresh",
+  "verified": true
+ }
+]

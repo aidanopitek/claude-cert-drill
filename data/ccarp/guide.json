@@ -1,0 +1,762 @@
+{
+ "technique": [
+  {
+   "h": "Simplest thing that works",
+   "b": "When two options both solve the problem, the exam favours the one with fewer moving parts, unless the stem gives evidence that the simple one already failed. Anthropic's own guidance is to add complexity only when it demonstrably improves outcomes."
+  },
+  {
+   "h": "Fix the cause, not the symptom",
+   "b": "Distractors often add monitoring, retries, a bigger model or a disclaimer. Ask what actually caused the failure in the stem, and pick the option that removes it."
+  },
+  {
+   "h": "Architecture beats instructions",
+   "b": "For security and reliability, a control in code or configuration (removing a tool, a schema, a permission rule, a human gate) beats a sentence in the prompt. Prompt instructions are a layer, never the only control."
+  },
+  {
+   "h": "Read for the stage",
+   "b": "Discovery, pilot, rollout and operation have different right answers. A control that is correct in production can be premature in discovery. Look for words like \"first\", \"before launch\", \"six weeks into the pilot\"."
+  },
+  {
+   "h": "Constraints in the stem decide",
+   "b": "Latency budgets, ZDR or HIPAA, \"irreversible\", \"regulated\", \"2 million a day\": each one eliminates options. Underline them before reading the answers."
+  },
+  {
+   "h": "Select TWO",
+   "b": "The two correct picks are usually complementary: one preventive and one detective control, or one technical and one stakeholder action. If your two picks are near-duplicates, re-read."
+  },
+  {
+   "h": "Over-reaction words",
+   "b": "Options with \"always\", \"every\", \"immediately\" or \"all users today\" are often wrong. \"Before\", \"measure\", \"agreed in advance\" often mark the right sequencing."
+  },
+  {
+   "h": "Pace",
+   "b": "63 items in 120 minutes is about 1 minute 54 seconds each. Flag and move on after 3 minutes. The pass mark is a scaled 720, and the score report shows percent correct by domain."
+  }
+ ],
+ "domains": [
+  {
+   "num": 3,
+   "title": "Integration",
+   "weight": 19,
+   "objectives": [
+    {
+     "o": "Capability bloat in tool and agent configuration",
+     "items": [
+      {
+       "s": "An agent has 100+ tools from several MCP servers; tool definitions eat tens of thousands of tokens; the agent picks the wrong tool more often.",
+       "p": "Tool search with defer_loading, keeping the 3–5 most-used tools loaded. Consolidate overlapping tools and namespace names by service (github_, slack_).",
+       "w": "Anthropic's docs say selection accuracy degrades past roughly 30–50 visible tools; deferred definitions stay out of context until searched, which typically cuts definition tokens by over 85%. Tool search is suggested from about 10 tools or 10k tokens of definitions.",
+       "t": "A bigger context window: the tools fit, but the model still chooses among all of them."
+      },
+      {
+       "s": "Tools wrap every API endpoint one-to-one (list_users, get_user, update_user_email…).",
+       "p": "Consolidate into fewer task-shaped tools that do the multi-step work and return meaningful identifiers (names, not opaque UUIDs).",
+       "w": "Anthropic's tool-writing guidance: more tools do not mean better outcomes; tools should match how a person would do the task.",
+       "t": "Adding more examples to the system prompt to explain all 40 endpoints."
+      },
+      {
+       "s": "A support role only needs to read tickets and draft replies, but the agent can also refund and delete accounts (the official sample question).",
+       "p": "Remove the tools the role does not need.",
+       "w": "Least privilege removes the attack surface. Logging and confirmation prompts are compensating controls, not removal.",
+       "t": "Keep the tools and add a confirmation step or audit logging."
+      }
+     ]
+    },
+    {
+     "o": "Authentication and authorisation gaps",
+     "items": [
+      {
+       "s": "A remote MCP server accepts any token from the corporate identity provider, or forwards the user's token to a downstream API.",
+       "p": "Validate that the token's audience is this MCP server, and obtain a separate token for each downstream API. Never pass tokens through.",
+       "w": "The MCP authorization spec requires audience validation (RFC 8707 resource indicators), forbids accepting or transiting other tokens, and forbids tokens in query strings. Pass-through creates confused-deputy attacks.",
+       "t": "Switching to API keys, or adding rate limiting, which does not close the gap."
+      },
+      {
+       "s": "Which transport needs OAuth?",
+       "p": "Remote HTTP servers use the spec's OAuth 2.1 flow; local stdio servers take credentials from the environment instead.",
+       "w": "The spec says stdio implementations should not follow the HTTP authorization flow.",
+       "t": "Requiring the OAuth browser flow for a local stdio tool."
+      },
+      {
+       "s": "An agent acts for many users against a system with per-user permissions.",
+       "p": "Act with the end user's delegated, scoped identity, request minimal scopes and step up when a tool needs more. Do not use one shared admin service account.",
+       "w": "A shared admin account lets any user reach anything through the agent; per-user delegation keeps the source system's permission model intact.",
+       "t": "One service account with full access plus a prompt rule about which data each user may see."
+      }
+     ]
+    },
+    {
+     "o": "Accuracy and latency trade-offs",
+     "items": [
+      {
+       "s": "A strict p95 latency budget on a user-facing path that also needs multi-step reasoning.",
+       "p": "Route simple requests to a fast tier, parallelise independent steps, cache the stable prefix, and stream output. Keep refinement loops off the hot path.",
+       "w": "Every sequential hop adds latency; caching cuts time to first token on long repeated prefixes.",
+       "t": "Prompt chaining or an evaluator loop to improve accuracy: both add sequential calls."
+      },
+      {
+       "s": "Extended thinking would improve accuracy, but the endpoint has a 1-second budget.",
+       "p": "Leave thinking off on the latency-critical path, and use it on asynchronous or high-stakes paths where time allows.",
+       "w": "Thinking adds output tokens and latency.",
+       "t": "Turning thinking on everywhere \"for quality\"."
+      }
+     ]
+    },
+    {
+     "o": "Observability and monitoring at scale",
+     "items": [
+      {
+       "s": "A multi-step agent sometimes gives wrong answers, and only the final output is logged.",
+       "p": "Trace every step under one request or trace ID: prompts, tool calls, tool results, tokens, latency, model and prompt version.",
+       "w": "Agent failures happen at intermediate steps; without step traces you cannot locate them or turn them into eval cases.",
+       "t": "Logging the final answer in more detail, or adding a model to rewrite answers."
+      },
+      {
+       "s": "Monitoring an agent in production without storing sensitive conversation content.",
+       "p": "Monitor high-level interaction patterns and structure (decisions, tool choices, error rates), with redaction for sensitive fields.",
+       "w": "Anthropic's multi-agent post describes monitoring decision patterns rather than conversation contents, to protect user privacy.",
+       "t": "Logging everything verbatim, which creates a new store of sensitive data."
+      }
+     ]
+    },
+    {
+     "o": "RAG pipeline design: chunking and indexing",
+     "items": [
+      {
+       "s": "The knowledge base is small: under about 200,000 tokens (roughly 500 pages) and changes rarely.",
+       "p": "Skip RAG. Put the whole corpus in the prompt with prompt caching.",
+       "w": "Anthropic's contextual retrieval post recommends this below ~200k tokens; caching makes it fast and cheap and removes retrieval failure modes.",
+       "t": "Building a vector database, chunker and reranker anyway."
+      },
+      {
+       "s": "Chunks lose their meaning out of context, such as \"Revenue grew 3%\" with no company or period.",
+       "p": "Contextual retrieval: generate a short chunk-specific context from the full document and prepend it before building both the embedding and BM25 indexes.",
+       "w": "Anthropic measured retrieval failures (1 minus recall@20) falling 35% with contextual embeddings, 49% adding contextual BM25, and 67% adding reranking.",
+       "t": "Larger chunk overlap, or asking the model to guess the missing context."
+      },
+      {
+       "s": "Choosing a chunking strategy.",
+       "p": "Chunk on the document's own structure (headings, sections, clauses, table boundaries) with modest overlap, keep tables intact, and store metadata such as source, section, date, owner and access group with each chunk.",
+       "w": "Structure-aware chunks keep a unit of meaning together; metadata enables filtering, freshness and citations.",
+       "t": "Fixed-size character splits that cut tables and clauses in half, or tiny chunks sent 50 at a time."
+      },
+      {
+       "s": "Users may only see documents they are entitled to.",
+       "p": "Enforce permissions at retrieval time: filter by each user's access groups in the index query. Never retrieve everything and ask the model to hide what is restricted.",
+       "w": "Once content is in the context, the model can leak it; access control belongs in the data layer.",
+       "t": "A system-prompt instruction not to reveal restricted documents."
+      },
+      {
+       "s": "Documents change often, and answers quote outdated policy.",
+       "p": "Incremental re-indexing triggered by document changes, versioned chunks with effective dates, deletion of superseded chunks, and freshness metadata used in ranking.",
+       "w": "Stale chunks in the index are a retrieval problem, not a model problem.",
+       "t": "Switching to a newer model."
+      }
+     ]
+    },
+    {
+     "o": "Retrieval strategy matched to data shape and query pattern",
+     "items": [
+      {
+       "s": "Queries contain exact identifiers: error codes, SKUs, legal citations, names.",
+       "p": "Hybrid search: BM25 or keyword search alongside embeddings, with the result lists merged.",
+       "w": "Embeddings capture meaning but miss exact strings; lexical search catches them.",
+       "t": "A bigger embedding model, or raising top-k to 200."
+      },
+      {
+       "s": "Recall is good, but the top few results passed to the model are often not the most relevant.",
+       "p": "Retrieve a broad candidate set, then rerank and pass only the best (for example, top 150 down to top 20).",
+       "w": "Reranking improves precision at the point that matters, the context Claude actually reads.",
+       "t": "Passing all 150 chunks to the model."
+      },
+      {
+       "s": "Questions are aggregations over structured data: \"total refunds by region last quarter\".",
+       "p": "Query the structured source with a SQL or API tool. Do not embed rows into a vector index.",
+       "w": "Semantic search over rows cannot sum or filter reliably; match the retrieval method to the data shape.",
+       "t": "Vector search over a table export."
+      },
+      {
+       "s": "Questions need several hops across documents, or the agent must explore a large, changing corpus.",
+       "p": "Agentic, just-in-time retrieval: give the agent search and read tools and let it iterate, or use a hybrid of some up-front retrieval plus exploration.",
+       "w": "Anthropic's context engineering post: agents keep lightweight references and load data at runtime, as Claude Code does with grep and glob.",
+       "t": "One embedding lookup with a larger top-k."
+      },
+      {
+       "s": "Answers must be traceable to their sources (legal, regulated, support).",
+       "p": "Return citations to source chunks and show them to users; evaluate citation accuracy as its own metric.",
+       "w": "Grounding with citations lets users verify, and makes hallucinations visible.",
+       "t": "Telling the model \"only use the provided documents\" without any citation mechanism."
+      }
+     ]
+    },
+    {
+     "o": "Selecting the integration mechanism (MCP, API/CLI, agent-to-agent)",
+     "items": [
+      {
+       "s": "A fixed back-office job owned by one service calls Claude on data the code already fetched.",
+       "p": "Direct Messages API calls from application code.",
+       "w": "MCP pays off when a capability is reused across many clients or agents, or when the model must decide what to fetch.",
+       "t": "Building an MCP server first because it is \"the standard\"."
+      },
+      {
+       "s": "Several assistants (Claude apps, Claude Code, internal agents) all need the same internal system.",
+       "p": "One MCP server for that system, reused by every client.",
+       "w": "MCP is the reusable, standard interface; it avoids N custom integrations.",
+       "t": "Embedding custom API code in each assistant separately."
+      },
+      {
+       "s": "Independently owned agents, possibly from different vendors, must hand tasks to each other.",
+       "p": "An agent-to-agent protocol.",
+       "w": "MCP connects a model to tools and data; agent-to-agent protocols coordinate peer agents.",
+       "t": "Modelling the other agent as just another MCP tool when it has its own goals and lifecycle."
+      }
+     ]
+    },
+    {
+     "o": "Progressive discovery vs monolithic context",
+     "items": [
+      {
+       "s": "Many procedures, tools or documents are possible, but each task needs only a few.",
+       "p": "Progressive disclosure: Agent Skills (only name and description load until needed), tool search, just-in-time file reads.",
+       "w": "Context is a finite attention budget; loading everything causes context rot and higher cost.",
+       "t": "Putting everything in one cached system prompt: cheaper, but it still fills and dilutes the context."
+      },
+      {
+       "s": "A small, stable set of instructions that every request needs.",
+       "p": "Monolithic is fine: put it in the system prompt and cache it.",
+       "w": "Progressive discovery adds a search step; it is worth it only when most content is irrelevant to most tasks.",
+       "t": "Adding tool search or Skills for five short, always-used instructions."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "num": 1,
+   "title": "Solution Design & Architecture",
+   "weight": 17,
+   "objectives": [
+    {
+     "o": "Choosing the pattern: workflow, agent, augmented LLM",
+     "items": [
+      {
+       "s": "Is it a workflow or an agent?",
+       "p": "If the steps are knowable at design time, use a workflow (predefined code paths). If the number of steps cannot be predicted, use an agent.",
+       "w": "This is Anthropic's definition in Building Effective Agents. Complexity of the task alone is not the trigger.",
+       "t": "\"The task is complex, so use an autonomous agent.\""
+      },
+      {
+       "s": "Inputs fall into distinct, known categories that need different handling.",
+       "p": "Routing: classify, then send each category to a specialised prompt or model (simple ones to a cheap tier).",
+       "w": "Specialised prompts beat one prompt for every case, without degrading the others.",
+       "t": "Routing when categories overlap heavily: misroutes cannot recover."
+      },
+      {
+       "s": "Clear evaluation criteria exist and first drafts miss them.",
+       "p": "Evaluator-optimizer: generate, check against the criteria, revise.",
+       "w": "It works only when there is a rubric and feedback measurably helps.",
+       "t": "Evaluator-optimizer with subjective criteria: the evaluator has no signal."
+      },
+      {
+       "s": "Fixed subtasks that are independent of each other.",
+       "p": "Sectioning (parallel calls on different parts) for speed. Voting (the same task N times) for confidence.",
+       "w": "Sectioning is decided in code; voting multiplies cost to buy confidence.",
+       "t": "Voting to reduce cost; it increases cost."
+      },
+      {
+       "s": "The subtasks depend on the input and cannot be listed in advance.",
+       "p": "Orchestrator-workers: a lead model decides the subtasks and delegates them.",
+       "w": "This is the one parallel pattern where the model, not the code, decides the split.",
+       "t": "Hard-coding sections that do not fit many inputs."
+      }
+     ]
+    },
+    {
+     "o": "Multi-agent systems and orchestration",
+     "items": [
+      {
+       "s": "Breadth-first research over many independent sources, with high-value output.",
+       "p": "A lead agent spawning parallel subagents, each with its own context, returning condensed findings (often 1–2k tokens).",
+       "w": "Anthropic's research system (Opus lead, Sonnet subagents) beat single-agent Opus by 90.2% on its internal eval. Multi-agent runs use about 15× the tokens of chat (single agents about 4×), so the value must justify it.",
+       "t": "Shared context across all agents, or claiming multi-agent saves cost."
+      },
+      {
+       "s": "Coding, shared state, or tight dependencies between subtasks.",
+       "p": "A single agent, possibly with read-only exploration subagents.",
+       "w": "Anthropic notes most coding tasks have fewer parallelisable parts, and agents cannot coordinate edits in real time.",
+       "t": "Several parallel writer agents plus a merger agent."
+      },
+      {
+       "s": "Long-running agents in production need updates.",
+       "p": "Rainbow deployments: shift traffic gradually while old and new versions run together. Checkpoint so agents resume, not restart.",
+       "w": "Redeploying mid-run breaks in-flight agents; restarting from zero wastes cost and annoys users.",
+       "t": "A big-bang deploy, or restarting failed agents from scratch."
+      }
+     ]
+    },
+    {
+     "o": "End-to-end architecture and feedback loops",
+     "items": [
+      {
+       "s": "Humans correct the system's outputs, and the team wants it to improve.",
+       "p": "Capture each correction with its input and output, add it to the eval set, and change prompts only when the eval shows improvement.",
+       "w": "Closing the loop through evaluation prevents silent regressions.",
+       "t": "Nightly automatic fine-tuning, or a model that rewrites its own system prompt."
+      },
+      {
+       "s": "An action is irreversible (payments, deletions, external messages).",
+       "p": "Put a deterministic validator or a human checkpoint before the action, not after.",
+       "w": "Checks after an irreversible action cannot undo it.",
+       "t": "Logging it for later audit only."
+      }
+     ]
+    },
+    {
+     "o": "Decomposition and business value",
+     "items": [
+      {
+       "s": "A large structured deliverable such as a 200-page submission or report.",
+       "p": "Chain with gates: an approved outline, then sections drafted in parallel, then a cross-section consistency check.",
+       "w": "Each step is reviewable and the structure is known, so it is a workflow.",
+       "t": "One giant generation, or an open-ended agent loop."
+      },
+      {
+       "s": "The sponsor asks why the solution is worth it.",
+       "p": "Tie the design to a value pillar with a baseline metric: cost per case, cycle time, throughput, a quality or SLA metric.",
+       "w": "Business value is measured against the current process, not model benchmarks.",
+       "t": "Quoting model accuracy or benchmark scores alone."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "num": 4,
+   "title": "Evaluation, Testing & Optimization",
+   "weight": 16,
+   "objectives": [
+    {
+     "o": "Defining metrics",
+     "items": [
+      {
+       "s": "What should success criteria look like?",
+       "p": "Specific, measurable, achievable and relevant, across several dimensions: task accuracy, latency (p50/p95), cost per task, safety, and security behaviour.",
+       "w": "Anthropic's \"define success criteria\" guidance: one vague goal (\"good answers\") cannot be tested.",
+       "t": "A single overall accuracy number."
+      },
+      {
+       "s": "Choosing the primary metric for an A/B test.",
+       "p": "One primary metric that reflects the business outcome, plus guardrail metrics that must not regress (latency, cost, safety).",
+       "w": "Several primary metrics invite cherry-picking; guardrails catch hidden costs.",
+       "t": "Optimising whatever metric moved most."
+      }
+     ]
+    },
+    {
+     "o": "Eval datasets and mixed methods",
+     "items": [
+      {
+       "s": "Building the eval set.",
+       "p": "Real queries sampled from production or the pilot, with edge cases and adversarial cases; enough volume to see the effect sizes you care about.",
+       "w": "It must reflect the real task distribution. Anthropic's research team started with about 20 real queries because early changes have large effects.",
+       "t": "Synthetic cases generated by the same model, or ten cases picked because they pass."
+      },
+      {
+       "s": "How to grade.",
+       "p": "Code-based grading where an exact answer exists, an LLM judge with a clear rubric for open-ended output (checked against human labels), and human review for nuance.",
+       "w": "Anthropic found a single LLM-judge call with a rubric was consistent and aligned with humans, but human testers still caught issues automation missed.",
+       "t": "An unvalidated LLM judge as the only signal."
+      }
+     ]
+    },
+    {
+     "o": "A/B testing and iteration",
+     "items": [
+      {
+       "s": "Offline eval improved; the owner wants to ship today.",
+       "p": "A canary or A/B test on a fixed traffic share, with the metric, sample size and rollback criteria fixed in advance.",
+       "w": "Offline gains do not always transfer; controlled exposure limits the damage.",
+       "t": "Shipping to everyone, peeking until it looks significant, or comparing week over week."
+      },
+      {
+       "s": "A model upgrade is available.",
+       "p": "Run the existing eval suite on the new model, compare, then canary. Pin model versions in production.",
+       "w": "New models can change behaviour; the eval suite is the regression gate.",
+       "t": "Switching an alias to the newest model in production without evaluation."
+      }
+     ]
+    },
+    {
+     "o": "Diagnosing failures",
+     "items": [
+      {
+       "s": "Confident but wrong answers after a document refresh; model and latency unchanged (the official sample question).",
+       "p": "Investigate retrieval and indexing first: a broken re-index, stale chunks, mismatched embeddings.",
+       "w": "The change coincided with the data, not the model.",
+       "t": "Assuming the model weights changed, or adjusting temperature."
+      },
+      {
+       "s": "Quality dropped only on hard inputs after switching to a cheaper model.",
+       "p": "Model mismatch: route the hard inputs to a larger model.",
+       "w": "A regression confined to complex inputs that starts with a model change points to capability.",
+       "t": "Caching, temperature or injection explanations."
+      },
+      {
+       "s": "Hallucinated facts in answers.",
+       "p": "Ground answers in retrieved sources with citations, allow \"I don't know\", ask for supporting quotes first, and measure hallucination rate in evals.",
+       "w": "Anthropic's hallucination guidance: give the model permission to say it doesn't know, and require direct quotes.",
+       "t": "A bigger model alone."
+      },
+      {
+       "s": "Recall degrades late in a long agent session.",
+       "p": "Context rot: compact, clear old tool results, keep notes outside the context, or isolate work in subagents.",
+       "w": "Anthropic: recall drops gradually as the window fills; every token draws on the attention budget.",
+       "t": "Blaming model capability and upgrading the model."
+      }
+     ]
+    },
+    {
+     "o": "Optimising tokens, latency and cost",
+     "items": [
+      {
+       "s": "Cost levers, cheapest and safest first.",
+       "p": "1. Trim tool output and context. 2. Prompt caching for repeated prefixes. 3. Batch API for asynchronous work (50% off). 4. Route easy work to smaller models. 5. Only then consider architectural changes.",
+       "w": "These keep quality while cutting spend. Batch and caching discounts can stack, with cache hits best-effort in batches.",
+       "t": "Downgrading the model for everything first."
+      },
+      {
+       "s": "Tool results are huge, but the agent uses only a few fields.",
+       "p": "Return only the needed fields, or add a concise/detailed response format option.",
+       "w": "Anthropic's tool-writing guidance: tool responses should be token-efficient and high-signal.",
+       "t": "Lowering max_tokens, which only limits output."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "num": 5,
+   "title": "Governance, Safety & Risk Management",
+   "weight": 14,
+   "objectives": [
+    {
+     "o": "Guardrails and safety controls",
+     "items": [
+      {
+       "s": "Designing guardrails.",
+       "p": "Layers: input screening (a cheap, fast classifier running in parallel with the main call), constrained tools and permissions, structured outputs, output checks, and a human gate on high-risk actions.",
+       "w": "No single layer is enough; parallel screening adds little latency.",
+       "t": "One system-prompt instruction as the whole safety strategy."
+      },
+      {
+       "s": "An agent reads untrusted content (email, web, documents) and can take actions.",
+       "p": "Treat the content as data; least-privilege tools; human approval for outbound or irreversible actions while untrusted content is in context.",
+       "w": "Prompt injection cannot be fully prevented by instructions; limit what a manipulated agent can do.",
+       "t": "\"Ignore instructions in emails\" alone, or a bigger model."
+      }
+     ]
+    },
+    {
+     "o": "Risks, limitations and failure modes",
+     "items": [
+      {
+       "s": "Listing LLM failure modes to design for.",
+       "p": "Hallucination, prompt injection, data leakage through context, tool misuse, overreliance, bias, drift after model or data changes.",
+       "w": "Each maps to a control: grounding, isolation, permissions, review, evals, monitoring.",
+       "t": "Treating the model as deterministic."
+      }
+     ]
+    },
+    {
+     "o": "Human-in-the-loop",
+     "items": [
+      {
+       "s": "Where to put the human.",
+       "p": "On decisions that are high-impact, irreversible, legally significant or low-confidence. Let deterministic validators handle mechanical checks.",
+       "w": "Reviewing every step kills throughput and does not fix systematic errors.",
+       "t": "A human checkpoint on every step \"for safety\"."
+      },
+      {
+       "s": "Automated decisions with legal or similarly significant effect in the EU (credit, hiring).",
+       "p": "Meaningful human review of adverse decisions, plus explanation and the right to contest.",
+       "w": "GDPR Article 22 safeguards apply even where automation is permitted.",
+       "t": "Disclosure in the terms of service, or after-the-fact sampling audits."
+      }
+     ]
+    },
+    {
+     "o": "Regulatory compliance",
+     "items": [
+      {
+       "s": "A client with zero data retention (ZDR) wants cost savings.",
+       "p": "Prompt caching is ZDR-eligible. The Batch API (29-day result retention), the Files API, code execution and Agent Skills are not.",
+       "w": "Anthropic's data retention page: stateful features cannot be zero-retention. Under HIPAA readiness, non-eligible features return a 400 error.",
+       "t": "The Batch API because it has the biggest discount."
+      },
+      {
+       "s": "Data residency or sovereignty requirements.",
+       "p": "Use the platform's residency controls and the client's required cloud (for example, Claude through Amazon Bedrock or Google Cloud in the required region), and document the data flow.",
+       "w": "On cloud platforms the cloud provider is the data processor; residency is a configuration and contract decision.",
+       "t": "Assuming any endpoint satisfies residency."
+      },
+      {
+       "s": "Which Anthropic data protections still have exceptions?",
+       "p": "Even with ZDR, Anthropic may retain data where the law requires it or where trust and safety systems flag it (flagged content up to 2 years).",
+       "w": "Compliance answers should acknowledge these documented exceptions.",
+       "t": "\"ZDR means nothing is ever stored, under any circumstances.\""
+      }
+     ]
+    },
+    {
+     "o": "Ethical AI: bias, fairness, transparency",
+     "items": [
+      {
+       "s": "Screening or scoring people.",
+       "p": "Measure outcome rates by group on representative labelled data before launch, check for proxy features, monitor after launch, keep humans deciding, document limitations.",
+       "w": "Fairness is measured, not asserted.",
+       "t": "\"Be unbiased\" in the prompt, or removing names only."
+      },
+      {
+       "s": "Users interact with an AI system.",
+       "p": "Disclose that it is AI, explain what it can and cannot do, and provide an escalation path to a human.",
+       "w": "Transparency builds appropriate trust and is required by many policies, including the high-risk use requirements in Anthropic's Usage Policy.",
+       "t": "Presenting AI output as human-written."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "num": 6,
+   "title": "Stakeholder Communication & Lifecycle Management",
+   "weight": 14,
+   "objectives": [
+    {
+     "o": "Structured discovery",
+     "items": [
+      {
+       "s": "The first workshop: \"We want AI for X.\"",
+       "p": "Map the current process and baseline metrics (volumes, times, errors); identify the users, data sources, owners and constraints (compliance, access, retention); agree what success means.",
+       "w": "The baseline gives the business case its numbers; the constraints decide feasibility.",
+       "t": "Demoing, choosing a model, or committing to a date before scoping."
+      },
+      {
+       "s": "Deciding whether to build at all.",
+       "p": "Assess feasibility and fit: is the task language-heavy, tolerant of probabilistic output, with available data and a measurable outcome? Consider buying or adapting an existing product.",
+       "w": "Not every problem is an LLM problem; build versus buy is part of discovery.",
+       "t": "Starting a proof of concept to find out."
+      }
+     ]
+    },
+    {
+     "o": "Communicating decisions and trade-offs",
+     "items": [
+      {
+       "s": "Explaining an architecture to different audiences.",
+       "p": "Executives: outcomes, cost, risk. Security and legal: data flows, retention, controls, audit trail. Engineers: components, interfaces, failure handling.",
+       "w": "The same decision needs a different framing per audience.",
+       "t": "One technical deck for everyone."
+      },
+      {
+       "s": "Recording why a decision was made.",
+       "p": "Architecture decision records (ADRs): context, options, decision, consequences.",
+       "w": "They let later teams understand and revisit decisions.",
+       "t": "Decisions living only in meetings or chat."
+      }
+     ]
+    },
+    {
+     "o": "Feedback loops, expectations and SLAs",
+     "items": [
+      {
+       "s": "A sponsor asks for 100% accuracy.",
+       "p": "Measurable SLAs: accuracy on an agreed eval set, p95 latency, availability, plus human escalation for uncertain cases and a review cadence.",
+       "w": "Probabilistic systems need statistical targets and fallbacks.",
+       "t": "Agreeing and adding a disclaimer, or refusing any targets."
+      },
+      {
+       "s": "A pilot needs an exit decision.",
+       "p": "Define success and kill criteria at the start of the pilot, not at the end.",
+       "w": "Pre-agreed criteria prevent moving the goalposts.",
+       "t": "Deciding after seeing the results."
+      }
+     ]
+    },
+    {
+     "o": "Documentation and lifecycle support",
+     "items": [
+      {
+       "s": "Handing over to an operations team.",
+       "p": "ADRs, a runbook with incident and rollback steps, monitoring dashboards, the prompt and model version registry, and an eval suite they can rerun.",
+       "w": "Without the eval suite, every later change is unmeasured.",
+       "t": "Commented code or a slide deck only."
+      },
+      {
+       "s": "Good accuracy but low adoption.",
+       "p": "Investigate workflow fit, trust and enablement with users before touching the model.",
+       "w": "Adoption problems are rarely model problems.",
+       "t": "A bigger model, a bigger pilot, or more features."
+      },
+      {
+       "s": "The phases.",
+       "p": "Discovery, design, proof of concept, pilot, production rollout, handoff, monitoring, iteration. Each has its own exit criteria.",
+       "w": "Questions often hinge on which phase the scenario is in.",
+       "t": "Applying production controls in discovery, or discovery shortcuts in production."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "num": 2,
+   "title": "Claude Models, Prompting & Context Engineering",
+   "weight": 13,
+   "objectives": [
+    {
+     "o": "Model selection",
+     "items": [
+      {
+       "s": "High-volume, latency-sensitive classification or extraction with a small quality gap between tiers.",
+       "p": "The smallest fast tier (Haiku class), routing low-confidence cases to a larger model.",
+       "w": "A small accuracy gain rarely justifies a several-fold cost and latency increase at scale.",
+       "t": "The largest model everywhere."
+      },
+      {
+       "s": "Complex planning, ambiguous reasoning, or the lead role in multi-agent.",
+       "p": "The most capable tier as planner or lead, with cheaper tiers as workers.",
+       "w": "Spend capability where the decisions are made.",
+       "t": "One tier for every role."
+      },
+      {
+       "s": "Choosing between tiers in general.",
+       "p": "Decide with your own eval on your task, weighing quality, latency and cost; re-run it when new models ship.",
+       "w": "Benchmarks do not predict your task; evals do.",
+       "t": "Choosing by public benchmark rank."
+      }
+     ]
+    },
+    {
+     "o": "System prompts, templates and guardrails",
+     "items": [
+      {
+       "s": "Writing a system prompt.",
+       "p": "The \"right altitude\": the minimal set of information that fully defines behaviour, organised into sections (XML tags or headers), with a few diverse canonical examples. Start minimal and add rules to fix observed failures.",
+       "w": "Anthropic's context engineering guidance warns against both brittle if-else rules and vague guidance.",
+       "t": "Listing every edge case as a rule."
+      },
+      {
+       "s": "The output must be machine-parsed.",
+       "p": "Structured outputs with a JSON schema; strict tool use for tool inputs.",
+       "w": "Constrained decoding guarantees schema-valid output; prompting only makes it likely.",
+       "t": "\"Respond ONLY in JSON\", few-shot examples alone, or retry loops."
+      }
+     ]
+    },
+    {
+     "o": "Prompting techniques",
+     "items": [
+      {
+       "s": "Zero-shot, few-shot or chain-of-thought?",
+       "p": "Zero-shot for clear, simple tasks. Few-shot (3–5 diverse examples) for format or style consistency. Chain-of-thought or extended thinking for multi-step reasoning when latency allows.",
+       "w": "Each technique addresses a different failure: format drift, or reasoning errors.",
+       "t": "Chain-of-thought on a 1-second classification path."
+      },
+      {
+       "s": "Long documents in the prompt.",
+       "p": "Put long documents first and the question last, wrap each in tags with metadata, and ask for relevant quotes before the answer.",
+       "w": "Anthropic's long-context tips: queries at the end improve response quality.",
+       "t": "Question first, then 100 pages of text."
+      }
+     ]
+    },
+    {
+     "o": "Context windows and token usage",
+     "items": [
+      {
+       "s": "Context fills up during a long task.",
+       "p": "In order: retrieve just in time instead of stuffing, isolate work in subagents, take notes outside the context, and compact last. Clearing old tool results is the lightest form of compaction.",
+       "w": "Anthropic's three long-horizon techniques: compaction for conversational continuity, note-taking for milestone work, subagents for parallel exploration.",
+       "t": "Waiting for the window to overflow."
+      }
+     ]
+    },
+    {
+     "o": "Prompt reuse: caching, modular prompts, Skills",
+     "items": [
+      {
+       "s": "The same large prefix repeats across requests, with a short varying part (the official sample question).",
+       "p": "Put static content first (tools, then system, then messages), and enable prompt caching with the breakpoint after the static part.",
+       "w": "A cache hit needs an exact prefix match. Default TTL is 5 minutes, refreshed on each hit; a 1-hour option exists. Writes cost more than base input, reads far less (0.1× on many models).",
+       "t": "Truncating the policy, or moving it into few-shot examples."
+      },
+      {
+       "s": "A cache hit rate near zero.",
+       "p": "Something volatile sits in the prefix (a timestamp or per-user data at the top), the prefix is below the model's minimum cacheable length, or tool definitions keep changing. Fix the order first.",
+       "w": "Changing tool definitions invalidates the whole cache; volatile content must come after the breakpoint.",
+       "t": "A longer TTL, or more breakpoints behind the changing content."
+      },
+      {
+       "s": "Many reusable procedures, each needed only occasionally.",
+       "p": "Agent Skills: progressive disclosure, so only the name and description stay in context until a skill is used.",
+       "w": "Lean context, with every procedure still available in full.",
+       "t": "Concatenating all of them into one cached system prompt."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "num": 7,
+   "title": "Developer Productivity & Operational Enablement",
+   "weight": 7,
+   "objectives": [
+    {
+     "o": "Configuring Claude Code for teams",
+     "items": [
+      {
+       "s": "An organisation-wide rule that developers cannot override.",
+       "p": "Managed settings with deny rules.",
+       "w": "Precedence from highest: managed, command-line flags, project local (.claude/settings.local.json), shared project (.claude/settings.json), user (~/.claude/settings.json). Rules are evaluated deny, then ask, then allow; a deny at any level cannot be allowed elsewhere.",
+       "t": "A CLAUDE.md instruction (guidance, not enforcement), or user settings."
+      },
+      {
+       "s": "Sharing team conventions and project context.",
+       "p": "A project CLAUDE.md committed to the repository, plus shared .claude/settings.json for permissions and hooks; personal preferences go in local or user files.",
+       "w": "Shared files go through version control and code review; local files stay personal.",
+       "t": "Each developer configuring everything by hand."
+      },
+      {
+       "s": "Something must happen every time, deterministically (formatting after edits, blocking a command).",
+       "p": "A hook (for example PreToolUse or PostToolUse).",
+       "w": "Hooks run as code; prompt instructions can be forgotten.",
+       "t": "A memory or CLAUDE.md rule."
+      }
+     ]
+    },
+    {
+     "o": "AI-assisted workflows and operational support",
+     "items": [
+      {
+       "s": "Automated reviews or fixes in CI.",
+       "p": "Headless mode (claude -p) with an explicit, narrow list of allowed tools, and credentials from the CI secret store scoped to the job.",
+       "w": "There is no human to answer prompts, so permissions must be decided up front.",
+       "t": "Skipping permissions on a shared runner with production credentials, or a personal token."
+      },
+      {
+       "s": "Connecting Claude Code to internal systems.",
+       "p": "MCP servers configured at the right scope (a project .mcp.json shared through git, or user scope for personal servers).",
+       "w": "One standard integration for the whole team.",
+       "t": "Ad hoc scripts pasted into prompts."
+      },
+      {
+       "s": "Rolling Claude Code out to a team.",
+       "p": "Start with a pilot group, share settings and CLAUDE.md, define permissions centrally, monitor usage and cost with OpenTelemetry metrics, and collect feedback before scaling.",
+       "w": "Operational readiness comes before scale.",
+       "t": "Licences for everyone on day one with no shared configuration."
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

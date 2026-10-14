@@ -1,0 +1,26 @@
+name: Report a question
+description: A wrong answer, outdated fact, broken link or confusing wording.
+title: "[EXAM] Question #ID"
+labels: ["question-report"]
+body:
+  - type: input
+    id: exam
+    attributes:
+      label: Exam
+      description: CCAR-P or CCDV-F
+    validations:
+      required: true
+  - type: input
+    id: question_id
+    attributes:
+      label: Question ID
+      description: Shown on the question card, for example BZ-D2-001 or 104
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: What is wrong?
+      description: Include a link to the Anthropic documentation that shows the correct answer, if you have one.
+    validations:
+      required: true

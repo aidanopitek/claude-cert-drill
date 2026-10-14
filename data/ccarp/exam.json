@@ -1,0 +1,65 @@
+{
+ "id": "ccarp",
+ "key": "ccarp",
+ "code": "CCAR-P",
+ "short": "Architect · Professional",
+ "eyebrow": "Claude Certified Architect · Professional",
+ "lede": "A scenario guide built on the official exam objectives, the prep kit's quick-recall notes, and 105 scenario questions with the answer shown the moment you choose.",
+ "facts": [
+  "<b>63</b> items",
+  "<b>120</b> min",
+  "pass <b>720</b>/1000",
+  "<b>$175</b>",
+  "no labs on the exam"
+ ],
+ "items": 63,
+ "weights": {
+  "Integration": 19,
+  "Solution Design & Architecture": 17,
+  "Evaluation, Testing & Optimization": 16,
+  "Governance, Safety & Risk Management": 14,
+  "Stakeholder Communication & Lifecycle Management": 14,
+  "Claude Models, Prompting & Context Engineering": 13,
+  "Developer Productivity & Operational Enablement": 7
+ },
+ "tabs": [
+  [
+   "guide",
+   "Scenario guide"
+  ],
+  [
+   "cheat",
+   "Quick recall"
+  ],
+  [
+   "quiz",
+   "Quiz"
+  ]
+ ],
+ "banks": [
+  [
+   "fresh",
+   "Fresh 30, exam-weighted"
+  ],
+  [
+   "original",
+   "Prep kit 75"
+  ],
+  [
+   "matrix",
+   "Assess each statement (7)"
+  ],
+  [
+   "",
+   "All banks (112)"
+  ]
+ ],
+ "bankNotes": {
+  "fresh": "Written against the CCAR-P Exam Guide objectives. Option lengths are balanced, so length gives nothing away.",
+  "original": "From girishr/ClaudeCertifiedArchitect-Professional-Prep. In single-answer items the correct option is usually the longest; judge on content.",
+  "": "All banks mixed. Each question shows which bank it comes from.",
+  "matrix": "Each question lists several statements; pick a value from the dropdown next to each. A question counts as correct only when every row is right."
+ },
+ "defaultBank": "fresh",
+ "footer": "Fresh questions #101–130 written by Claude against the objectives in Anthropic's CCAR-P Exam Guide v1.0 and checked against current Anthropic and MCP docs in October 2026; all 105 Architect questions were re-checked against Anthropic docs in October 2026 (4 corrected), and the scenario guide and quick recall were fact-checked too (8 quick-recall items corrected); flag any you still doubt. Other content built from <a href=\"https://github.com/girishr/ClaudeCertifiedArchitect-Professional-Prep\" target=\"_blank\" rel=\"noopener\">girishr/ClaudeCertifiedArchitect-Professional-Prep</a> (CC BY 4.0)."
+}

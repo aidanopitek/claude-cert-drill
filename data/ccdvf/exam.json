@@ -1,0 +1,67 @@
+{
+ "id": "ccdvf",
+ "key": "ccdvf",
+ "code": "CCDV-F",
+ "short": "Developer · Foundations",
+ "eyebrow": "Claude Certified Developer · Foundations",
+ "lede": "Cheat sheets and study notes from three MIT-licensed prep repos, and 419 practice questions with the answer shown the moment you choose. Domain weights come from Anthropic's CCDV-F Exam Guide v1.0.",
+ "facts": [
+  "<b>53</b> items",
+  "<b>120</b> min",
+  "pass <b>720</b>/1000",
+  "<b>$125</b>",
+  "multiple choice + multiple response"
+ ],
+ "items": 53,
+ "weights": {
+  "Agents and Workflows": 14.7,
+  "Applications and Integration": 33.1,
+  "Claude Code": 3.1,
+  "Eval, Testing, and Debugging": 2.6,
+  "Model Selection and Optimization": 16.8,
+  "Prompt and Context Engineering": 11.0,
+  "Security and Safety": 8.1,
+  "Tools and MCPs": 10.6
+ },
+ "tabs": [
+  [
+   "docs",
+   "Cheat sheets"
+  ],
+  [
+   "quiz",
+   "Quiz"
+  ]
+ ],
+ "banks": [
+  [
+   "",
+   "All banks (426)"
+  ],
+  [
+   "breeganzo",
+   "Breeganzo 178"
+  ],
+  [
+   "amey",
+   "Amey-Thakur 79"
+  ],
+  [
+   "nirav",
+   "NiravRVaghasiya 162"
+  ],
+  [
+   "matrix",
+   "Assess each statement (7)"
+  ]
+ ],
+ "bankNotes": {
+  "amey": "79 questions from Amey-Thakur (MIT), with option lengths rebalanced so length gives nothing away.",
+  "breeganzo": "178 questions from Breeganzo (MIT), with option lengths rebalanced so length gives nothing away.",
+  "nirav": "162 questions from NiravRVaghasiya (MIT), with option lengths rebalanced so length gives nothing away.",
+  "": "All banks mixed. Each question shows which bank it comes from.",
+  "matrix": "Each question lists several statements; pick a value from the dropdown next to each. A question counts as correct only when every row is right."
+ },
+ "defaultBank": "",
+ "footer": "Questions and reading material from <a href=\"https://github.com/Amey-Thakur/CLAUDE-CERTIFICATIONS\" target=\"_blank\" rel=\"noopener\">Amey-Thakur/CLAUDE-CERTIFICATIONS</a>, <a href=\"https://github.com/Breeganzo/CCDV-F-Preparation\" target=\"_blank\" rel=\"noopener\">Breeganzo/CCDV-F-Preparation</a> and <a href=\"https://github.com/NiravRVaghasiya/Claude-Developer-Foundations\" target=\"_blank\" rel=\"noopener\">NiravRVaghasiya/Claude-Developer-Foundations</a>, all MIT licensed. Every question was checked against Anthropic documentation in October 2026: 33 corrected, 4 removed, and references point to Anthropic docs (a few general engineering items have none). The cheat sheets were checked the same way, with 26 outdated statements corrected. Domain weights from Anthropic's CCDV-F Exam Guide v1.0."
+}
